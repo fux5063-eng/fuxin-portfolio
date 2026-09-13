@@ -11,6 +11,56 @@
   const proj = (d, slug) => d && d.projects.find(p => p.slug === slug);
   const tags = (arr, cls) => (arr || []).map(t => `<span class="${cls || 'tag'}">${esc(t)}</span>`).join('');
 
+  /* 3D 模型面板（页面里的一块展示，不是整屏背景） */
+  let viewers = [];
+  function modelPanel(m, opt = {}) {
+    if (!m || !m.src) return '';
+    return `
+      <figure class="m3d ${opt.light ? 'm3d--light' : ''}">
+        <div class="m3d__cv-wrap">
+          <canvas class="m3d__cv" data-model="${esc(m.src)}" data-theme="${opt.light ? 'light' : 'dark'}" data-line="${m.line ? '1' : '0'}"></canvas>
+          <span class="m3d__chip">3D 模型</span>
+          <span class="m3d__hint">按住拖动旋转 · 滚轮缩放</span>
+          <span class="m3d__load">模型载入中…</span>
+        </div>
+        <figcaption>
+          <b>${esc(m.title || '3D 模型')}</b>
+          <span>${esc(m.note || '本人建模文件导出，可自由旋转查看')}</span>
+        </figcaption>
+      </figure>`;
+  }
+
+  /* 模型懒加载：滚到附近才下载 GLB，切页时销毁 */
+  function mountModels(scope) {
+    const cvs = scope.querySelectorAll('canvas[data-model]');
+    window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
+    if (!cvs.length) return;
+    import('./model3d.js').then(mod => {
+      window.__m3dState.imported = true;
+      cvs.forEach(cv => {
+        const wrap = cv.parentElement;
+        const load = wrap && wrap.querySelector('.m3d__load');
+        const io = new IntersectionObserver(ents => {
+          ents.forEach(e => {
+            if (!e.isIntersecting) return;
+            io.unobserve(cv);
+            if (load) load.hidden = true;
+            const v = new mod.ModelViewer(cv, {
+              src: cv.dataset.model, theme: cv.dataset.theme || 'dark',
+              autoRotate: true, speed: 0.32, explodeScale: 1.0, explodeZoom: 0, ring: false,
+              line: cv.dataset.line === '1',
+              onError() { if (load) { load.hidden = false; load.textContent = '模型加载失败'; } },
+            });
+            viewers.push(v);
+            window.__m3dState.mounted = viewers.length;
+          });
+        }, { rootMargin: '300px 0px' });
+        io.observe(cv);
+      });
+    }).catch(err => { window.__m3dState.err = String(err && err.message || err); console.warn('3D 模块加载失败：', err); });
+  }
+  function disposeModels() { viewers.forEach(v => { try { v.dispose(); } catch (e) {} }); viewers = []; window.__m3d = viewers; }
+
   /* ================= 视图 ================= */
 
   function viewHome() {
@@ -84,6 +134,34 @@
     </div>
 
     <div class="marquee" aria-hidden="true"><div class="marquee__row">${mq}</div></div>
+
+    <div class="sheet">
+      <section class="sec" id="modelBand">
+        <div class="wrap">
+          <div class="sec__head">
+            <div>
+              <div class="en-label">REAL MODEL · 3D</div>
+              <h2>不是渲染图，是可以自己转的模型</h2>
+              <p>下面这块放的是建模文件本身。按住拖动就能从任意角度看体量、分件和曲面关系——比一张静态渲染图更能说明设计。</p>
+            </div>
+          </div>
+          <div class="modelband">
+            <div class="rv">
+              <ul class="m3d-list">
+                <li><b>直接看模型</b><span>不用点开下载文件，页面上就能转</span></li>
+                <li><b>体量与比例</b><span>真实建模尺寸关系，不是摆拍角度</span></li>
+                <li><b>多个项目都有</b><span>牵引绳 / 航标灯 / 落水报警终端 / 灯具，各自的页面里都能转</span></li>
+              </ul>
+              <div class="hero__cta" style="margin-top:18px">
+                <a class="btn btn--ghost mag" href="#id/doggie">看 DOGGIE 项目<span class="btn__ar">→</span></a>
+                <a class="btn btn--ghost mag" href="#id">工业设计方向<span class="btn__ar">→</span></a>
+              </div>
+            </div>
+            <div class="rv">${modelPanel(HOME_MODEL, { light: true })}</div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <div class="sheet">
       <section class="sec" id="aboutTeaser">
@@ -186,25 +264,67 @@
     const i = d.projects.indexOf(p);
     const prev = d.projects[i - 1], next = d.projects[i + 1];
     const facts = (p.facts || []).map(f => `<div class="fact"><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('');
-    const bodyHtml = (p.body || []).map(b => `
-      <div><h4>${esc(b.h)}</h4><ul>${b.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
-    const shots = p.images.map((src, k) => `<div class="shot${k === 0 ? ' shot--wide' : ''}"><img src="${src}" alt="${esc(p.title)} ${k + 1}" loading="lazy"></div>`).join('');
     const links = (p.links || []).map(l => `<a class="btn mag" href="${l.u}"${/^https?:/.test(l.u) ? ' target="_blank" rel="noopener"' : ''}>${esc(l.t)}<span class="btn__ar">→</span></a>`).join('');
+
+    /* 图片块：fig--wide 占两列，fig--plate 占整行 */
+    const fig = (f, cls) => `
+      <figure class="fig ${f.wide ? 'fig--wide' : ''} ${cls || ''}">
+        <img src="${f.f}" alt="${esc(f.cap || p.title)}" loading="lazy">
+        ${f.cap ? `<figcaption>${esc(f.cap)}</figcaption>` : ''}
+      </figure>`;
+    const figs = list => (list && list.length) ? `<div class="figs">${list.map(f => fig(f)).join('')}</div>` : '';
+
+    /* 章节：有 sections 用新叙事；老项目退回 body 字段，但用同一套版式 */
+    const secs = p.sections || (p.body || []).map(b => ({ h: b.h, items: b.items }));
+    const secHtml = secs.map((s, k) => `
+      <section class="cs__sec rv">
+        <div class="cs__side">
+          <span class="cs__no">${String(k + 1).padStart(2, '0')}</span>
+          ${s.en ? `<span class="cs__en">${esc(s.en)}</span>` : ''}
+        </div>
+        <div class="cs__main">
+          <h2>${esc(s.h)}</h2>
+          ${s.lead ? `<p class="cs__lead">${esc(s.lead)}</p>` : ''}
+          ${(s.items || []).length ? `<ul class="cs__list">${s.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+          ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
+          ${figs(s.figures)}
+          ${p.model && p.model.after === k ? modelPanel(p.model, { light: true }) : ''}
+          ${p.model2 && p.model2.after === k ? modelPanel(p.model2, { light: true }) : ''}
+        </div>
+      </section>`).join('');
+
+    const hero = p.hero ? `
+      <figure class="heroFig">
+        <img src="${p.hero.f}" alt="${esc(p.hero.cap || p.title)}" loading="lazy">
+        ${p.hero.cap ? `<figcaption>${esc(p.hero.cap)}</figcaption>` : ''}
+      </figure>` : '';
+    const plates = (p.plates && p.plates.length)
+      ? `<div class="plates">${p.plates.map(f => fig(f, 'fig--plate')).join('')}</div>` : '';
+    /* 老项目：整页图仍作为图集放在最后 */
+    const legacy = (!p.sections && p.images && p.images.length)
+      ? `<div class="plates" style="margin-top:26px">${p.images.map(f => fig({ f }, 'fig--plate')).join('')}</div>` : '';
+    const modelLoose = p.model && p.model.after === undefined ? modelPanel(p.model, { light: true }) : '';
+    const model2Loose = p.model2 && p.model2.after === undefined ? modelPanel(p.model2, { light: true }) : '';
 
     return `
     <section class="pd"><div class="wrap">
       <a class="backlink" href="#${d.id}">← ${esc(d.label)}</a>
-      <div class="pd__head" style="margin-top:18px">
+      <div class="pd__head pd__hero" style="margin-top:18px">
         <div class="en-label">${esc(p.en)}</div>
         <h1>${esc(p.title)}</h1>
         <p class="pd__lead">${esc(p.summary)}</p>
         <div class="tags" style="margin-top:16px">${tags(p.tags)}</div>
         <div class="pd__facts">${facts}</div>
       </div>
-      <div class="pd__body">${bodyHtml}</div>
+      ${hero}
+      <div class="cs">${secHtml}</div>
+      ${modelLoose}
+      ${model2Loose}
+      ${plates}
+      ${legacy}
       ${links ? `<div class="pd__links">${links}</div>` : ''}
-      <div class="gallery">${shots}</div>
-      <p class="note">以上图片为完整作品集 PDF 的对应页面，点开可放大。完整版含全部过程页：<a href="${d.pdf}" download style="border-bottom:1px solid currentColor">下载 ${esc(d.label)}作品集 PDF</a></p>
+      <p class="note">页面图片均取自本人作品集（商业项目已按公开边界匿名化处理），点开可放大；完整过程页见
+        <a href="${d.pdf}" download style="border-bottom:1px solid currentColor">${esc(d.label)}作品集 PDF</a>。</p>
       <div class="pd__nav">
         ${prev ? `<a href="#${d.id}/${prev.slug}">← 上一个：${esc(prev.title)}</a>` : '<span></span>'}
         ${next ? `<a href="#${d.id}/${next.slug}">下一个：${esc(next.title)} →</a>` : `<a href="#${d.id}">回到${esc(d.label)} →</a>`}
@@ -291,6 +411,8 @@
     app.innerHTML = html;
     document.title = title;
     body.classList.toggle('on-home', isHome);
+    disposeModels();
+    mountModels(app);
 
     app.classList.remove('view-enter');
     void app.offsetWidth;
@@ -503,10 +625,10 @@
   function stepLb(n) { idx = (idx + n + shots.length) % shots.length; lbImg.src = shots[idx]; }
 
   app.addEventListener('click', e => {
-    const shot = e.target.closest('.shot');
+    const shot = e.target.closest('.shot, .fig');
     if (!shot) return;
-    const list = [...app.querySelectorAll('.shot img')].map(i => i.getAttribute('src'));
-    openLb(list, Math.max(0, [...app.querySelectorAll('.shot')].indexOf(shot)));
+    const list = [...app.querySelectorAll('.shot img, .fig img')].map(i => i.getAttribute('src'));
+    openLb(list, Math.max(0, [...app.querySelectorAll('.shot, .fig')].indexOf(shot)));
   });
   document.getElementById('lb-close').onclick = closeLb;
   document.getElementById('lb-prev').onclick = () => stepLb(-1);

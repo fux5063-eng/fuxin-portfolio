@@ -2,3 +2,5 @@ tmp-shots/
 .DS_Store
 Thumbs.db
 __pycache__/
+_lab/
+assets/img/folio/
