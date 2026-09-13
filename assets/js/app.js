@@ -190,7 +190,6 @@
                 const load = panel ? panel.querySelector('.m3d__load') : null;
                 if (load) { load.hidden = false; load.textContent = '模型载入中…'; }
                 v.setSrc(cycle[k]);
-                const cap = panel ? panel.querySelector('figcaption b') : null;
               });
               v.opts.onLoad = () => { if (panel) { const load = panel.querySelector('.m3d__load'); if (load) load.hidden = true; } };
             }
