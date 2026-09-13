@@ -398,3 +398,12 @@ body:not(.on-home) #app{padding-top:66px}
 .m3d--light figcaption{background:#fff;border-top:1px solid #e8edf2}
 .m3d--light figcaption b{color:#171c22}
 .m3d--light figcaption span{color:#5f6b78}
+
+/* ===== 线稿卡：纸面白底（用户选定的线稿风格） ===== */
+.m3d--light{background:#f8f6f2;border:1px solid #e8e4dc}
+.m3d--light .m3d__cv-wrap{background-color:#f8f6f2;background-image:
+  radial-gradient(120% 120% at 60% 34%,#fdfcfa 0%,#f8f6f2 62%,#f2efe9 100%),
+  linear-gradient(rgba(30,40,52,.038) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(30,40,52,.038) 1px,transparent 1px);
+  background-size:auto,32px 32px,32px 32px}
+.m3d--light figcaption{background:#fbfaf7;border-top:1px solid #eae6de}

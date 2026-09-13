@@ -120,7 +120,15 @@ export class ModelViewer {
         if (isPart) this.parts.push({ obj: o, base: o.position.clone(), world0: wc.clone(), idx: i });
         i++;
       });
-      if (this.opts.line) this._toLine();
+      if (this.opts.line) {
+        try {
+          this._toLine();
+        } catch (e) {
+          /* 线稿模式失败也不能让整张卡空掉：退回普通实体渲染 */
+          console.warn('线稿模式失败，退回实体渲染', e);
+          this.opts.line = false;
+        }
+      }
       const fit = this._fit();
       this.center.copy(fit.center);
       this.baseCenter.copy(fit.center);
@@ -157,7 +165,7 @@ export class ModelViewer {
     const cw = this.canvas.clientWidth || 760, ch = this.canvas.clientHeight || 430;
     const vFov = this.camera.fov * Math.PI / 180;
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * (cw / Math.max(1, ch)));
-    const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * 1.05;
+    const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * (this.opts.fill != null ? this.opts.fill : 0.94);
     this.camera.position.set(center.x + dist * 0.58, center.y + dist * 0.40, center.z + dist * 0.78);
     this.camera.near = Math.max(dist / 240, 0.05);
     this.camera.far = dist * 45;
@@ -206,29 +214,47 @@ export class ModelViewer {
     }
   }
 
-  /* 线框模式：把实体网格换成"特征边"线，
-     好处是模型网格精度不够时不会显得粗糙，反而像技术图纸/结构草图 */
+  /* 线稿模式（工业线稿效果）：
+     ① 外壳描边：复制一层反面网格、以零件自身中心放大一点 -> 得到干净的外轮廓粗线
+     ② 特征线：EdgesGeometry(高阈值) 只留结构转折/开孔/分件缝，去掉曲面上的三角网格线
+     ③ 极淡填充：保留一点体量，不抢线
+     —— 这样才是"线稿"，而不是满屏的三角网格 */
   _toLine() {
     const light = !this.dark;
-    const col = this.opts.lineColor || (light ? 0x1c232b : 0xdde7f1);
-    const colSoft = light ? 0x9aa6b3 : 0x5d6b7a;
-    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 14;   // 阈值越小线越多越细
+    const ink = this.opts.lineColor || (light ? 0x232a31 : 0xe6eef6);
+    const soft = light ? 0x7c8894 : 0x8ea0b2;
+    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 42;   // 阈值越大越干净（去掉曲面三角线）
+    const hullScale = this.opts.hullScale != null ? this.opts.hullScale : 1.014;
     let n = 0;
     this.model.traverse(o => {
       if (!o.isMesh || o.userData.__lined) return;
       const g = o.geometry;
+      /* ① 外壳描边 */
+      try {
+        const g2 = g.clone();
+        g2.computeBoundingBox();
+        const c = g2.boundingBox.getCenter(new THREE.Vector3());
+        g2.translate(-c.x, -c.y, -c.z);
+        const hull = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({
+          color: ink, side: THREE.BackSide, transparent: true, opacity: 0.95,
+        }));
+        hull.position.copy(c);
+        hull.scale.setScalar(hullScale);
+        o.add(hull);
+      } catch (e) { /* 忽略单个零件的描边失败 */ }
+      /* ② 特征线 */
       let eg = null;
       try {
         eg = new THREE.EdgesGeometry(g, thr);
       } catch (e) { eg = null; }
-      if (!eg || !eg.attributes.position || eg.attributes.position.count < 2) return;
-      const lm = new THREE.LineBasicMaterial({ color: n % 5 === 4 ? colSoft : col, transparent: true, opacity: light ? 0.92 : 0.85 });
-      const ls = new THREE.LineSegments(eg, lm);
-      o.add(ls);                                    // 挂在网格下，随零件一起被移动/旋转
-      /* 极淡的面：给线稿一点体量感，同时不破坏图纸感 */
+      if (eg && eg.attributes.position && eg.attributes.position.count >= 2) {
+        const lm = new THREE.LineBasicMaterial({ color: soft, transparent: true, opacity: light ? 0.85 : 0.7 });
+        o.add(new THREE.LineSegments(eg, lm));
+      }
+      /* ③ 极淡填充 */
       o.material = new THREE.MeshBasicMaterial({
-        color: light ? 0x1b2228 : 0x33506b, transparent: true,
-        opacity: light ? 0.075 : 0.14, depthWrite: false, side: THREE.DoubleSide,
+        color: light ? 0xffffff : 0x22303d, transparent: true,
+        opacity: light ? 0.93 : 0.9, depthWrite: true, side: THREE.DoubleSide,
       });
       o.userData.__lined = true;
       n++;
