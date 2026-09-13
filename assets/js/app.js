@@ -433,7 +433,7 @@
       </section>`).join('');
 
     const hero = p.hero ? `
-      <figure class="heroFig">
+      <figure class="heroFig shot">
         <img src="${p.hero.f}" alt="${esc(p.hero.cap || p.title)}" loading="lazy">
         ${p.hero.cap ? `<figcaption>${esc(p.hero.cap)}</figcaption>` : ''}
       </figure>` : '';
