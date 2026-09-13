@@ -11,13 +11,23 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const MOVABLE = ['part', 'node', 'mesh', 'solid', 'body', 'shell'];
+/* 产品渲染配色：{c 颜色, m 金属度, r 粗糙度} —— 主体浅色 + 结构深色 + 少量金属，
+   让模型读起来像"产品渲染"而不是一团灰 */
 const PALETTE = [
-  0xe6eaef, 0xcdd5de, 0xb6c1cc, 0x9fabb8, 0x8e9aa8, 0xacb7c3,
-  0xe8590c, 0xff9a52, 0x76828f, 0xd8dfe7, 0x828f9d, 0xf2f5f8,
+  { c: 0xeaeef2, m: 0.08, r: 0.42 },
+  { c: 0x2e363f, m: 0.34, r: 0.36 },
+  { c: 0xd9e0e7, m: 0.10, r: 0.48 },
+  { c: 0x8d99a6, m: 0.62, r: 0.28 },
+  { c: 0xf4f7fa, m: 0.05, r: 0.55 },
+  { c: 0x39434e, m: 0.20, r: 0.44 },
 ];
 const PALETTE_LIGHT = [
-  0xdfe3e8, 0xc6cdd5, 0xadb6c0, 0x949eaa, 0x838e9b, 0xb9c2cc,
-  0xe8590c, 0xff8a3d, 0x6d7885, 0xd2d9e0, 0x79848f, 0xeceff3,
+  { c: 0xe4e9ee, m: 0.08, r: 0.44 },
+  { c: 0x333c46, m: 0.30, r: 0.36 },
+  { c: 0xd3dae2, m: 0.10, r: 0.50 },
+  { c: 0x9aa6b2, m: 0.58, r: 0.30 },
+  { c: 0xf2f5f8, m: 0.05, r: 0.55 },
+  { c: 0x404a55, m: 0.18, r: 0.46 },
 ];
 
 export class ModelViewer {
@@ -30,9 +40,11 @@ export class ModelViewer {
       backdrop: false,            // true: 当页面背景用（压暗 + 雾化融入 + 单色灰）
       explodeZoom: 0.55,          // 分解时相机后退量（0=不退）
       ring: true,                 // 地面定位环（页面卡片里建议关掉）
-      line: false,                // true: 线框（技术图纸）模式——网格精度不够时用线条更干净
+      mode: 'solid',              // 'solid' 实体产品渲染 | 'line' 线稿图纸
+      line: false,                // 兼容旧参数：true 等于 mode='line'
       lineColor: null,            // 自定义线条颜色
       lineAngle: null,            // 线框阈值角度（默认 14°，越小细节线越多）
+      outline: true,              // 实体模式下是否加一圈极细描边（增加轮廓清晰度）
     }, opts);
     this.parts = [];
     this.explode = this.opts.explode;
@@ -97,6 +109,7 @@ export class ModelViewer {
   }
 
   load(src) {
+    if (this.model) this._clearModel();
     new GLTFLoader().load(src, gltf => {
       const root = gltf.scene;
       this.model = root;
@@ -108,27 +121,35 @@ export class ModelViewer {
         if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();  // 兜底
         const nm = (o.name || '').toLowerCase();
         const isPart = MOVABLE.some(k => nm.includes(k)) || root.children.length > 1;
-        const mat = new THREE.MeshStandardMaterial({
-          color: (this.opts.mono || this.opts.backdrop) ? pal[i % 6] : pal[i % pal.length],
-          metalness: this.opts.backdrop ? 0.26 : 0.34, roughness: 0.46,
+        const spec = pal[i % pal.length];
+        /* 实体材质：产品渲染质感（浅色主体 + 深色结构件 + 少量金属） */
+        const solid = new THREE.MeshStandardMaterial({
+          color: spec.c,
+          metalness: this.opts.backdrop ? Math.min(spec.m, 0.2) : spec.m,
+          roughness: spec.r,
           envMapIntensity: this.opts.env, side: THREE.DoubleSide,
           wireframe: this.opts.wire, flatShading: false,
         });
-        o.material = mat;
+        o.material = solid;
+        o.userData.solidMat = solid;
+        /* 线稿模式用的填充材质（纸白，遮住背面线） */
+        o.userData.fillMat = new THREE.MeshBasicMaterial({
+          color: this.dark ? 0x1a232c : 0xffffff, transparent: true,
+          opacity: this.dark ? 0.92 : 0.94, side: THREE.DoubleSide,
+        });
         const wc = new THREE.Vector3();
         o.getWorldPosition(wc);
         if (isPart) this.parts.push({ obj: o, base: o.position.clone(), world0: wc.clone(), idx: i });
         i++;
       });
-      if (this.opts.line) {
-        try {
-          this._toLine();
-        } catch (e) {
-          /* 线稿模式失败也不能让整张卡空掉：退回普通实体渲染 */
-          console.warn('线稿模式失败，退回实体渲染', e);
-          this.opts.line = false;
-        }
+      /* 两种表现层都先建好，之后可随时切换（实体 / 线稿） */
+      try {
+      this._buildLayers();
+      } catch (e) {
+      console.warn('线稿层构建失败，只保留实体渲染', e);
+      this.opts.mode = 'solid';
       }
+      this.setMode(this.opts.line ? 'line' : (this.opts.mode || 'solid'));
       const fit = this._fit();
       this.center.copy(fit.center);
       this.baseCenter.copy(fit.center);
@@ -214,52 +235,105 @@ export class ModelViewer {
     }
   }
 
-  /* 线稿模式（工业线稿效果）：
-     ① 外壳描边：复制一层反面网格、以零件自身中心放大一点 -> 得到干净的外轮廓粗线
-     ② 特征线：EdgesGeometry(高阈值) 只留结构转折/开孔/分件缝，去掉曲面上的三角网格线
-     ③ 极淡填充：保留一点体量，不抢线
-     —— 这样才是"线稿"，而不是满屏的三角网格 */
-  _toLine() {
+  /* 建"线稿层"（默认隐藏）：
+     ① 外壳描边：复制一层反面网格、以零件自身中心放大 -> 干净的外轮廓线
+     ② 特征线：EdgesGeometry(高阈值) 只留结构转折 / 开孔 / 分件缝，去掉曲面三角网格线
+     ③ 实体模式下用极细的同类描边做轮廓强化（让实体渲染更清晰、不是一团灰） */
+  _buildLayers() {
     const light = !this.dark;
     const ink = this.opts.lineColor || (light ? 0x232a31 : 0xe6eef6);
     const soft = light ? 0x7c8894 : 0x8ea0b2;
-    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 42;   // 阈值越大越干净（去掉曲面三角线）
+    const thin = light ? 0x6d7a87 : 0x2b3742;
+    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 42;
     const hullScale = this.opts.hullScale != null ? this.opts.hullScale : 1.014;
+    const outScale = this.opts.outlineScale != null ? this.opts.outlineScale : 1.0035;
     let n = 0;
     this.model.traverse(o => {
       if (!o.isMesh || o.userData.__lined) return;
       const g = o.geometry;
-      /* ① 外壳描边 */
+      let c = null, g2 = null;
       try {
-        const g2 = g.clone();
+        g2 = g.clone();
         g2.computeBoundingBox();
-        const c = g2.boundingBox.getCenter(new THREE.Vector3());
+        c = g2.boundingBox.getCenter(new THREE.Vector3());
         g2.translate(-c.x, -c.y, -c.z);
+      } catch (e) { g2 = null; }
+      if (g2 && c) {
+        /* 线稿：粗一点的外轮廓 */
         const hull = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({
           color: ink, side: THREE.BackSide, transparent: true, opacity: 0.95,
         }));
-        hull.position.copy(c);
-        hull.scale.setScalar(hullScale);
-        o.add(hull);
-      } catch (e) { /* 忽略单个零件的描边失败 */ }
-      /* ② 特征线 */
-      let eg = null;
-      try {
-        eg = new THREE.EdgesGeometry(g, thr);
-      } catch (e) { eg = null; }
-      if (eg && eg.attributes.position && eg.attributes.position.count >= 2) {
-        const lm = new THREE.LineBasicMaterial({ color: soft, transparent: true, opacity: light ? 0.85 : 0.7 });
-        o.add(new THREE.LineSegments(eg, lm));
+        hull.position.copy(c); hull.scale.setScalar(hullScale);
+        o.add(hull); o.userData.hull = hull;
+        /* 实体：极细描边，强化轮廓 */
+        if (this.opts.outline) {
+          const ol = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({
+            color: thin, side: THREE.BackSide, transparent: true, opacity: light ? 0.55 : 0.42,
+          }));
+          ol.position.copy(c); ol.scale.setScalar(outScale);
+          o.add(ol); o.userData.outlineMesh = ol;
+        }
       }
-      /* ③ 极淡填充 */
-      o.material = new THREE.MeshBasicMaterial({
-        color: light ? 0xffffff : 0x22303d, transparent: true,
-        opacity: light ? 0.93 : 0.9, depthWrite: true, side: THREE.DoubleSide,
-      });
+      let eg = null;
+      try { eg = new THREE.EdgesGeometry(g, thr); } catch (e) { eg = null; }
+      if (eg && eg.attributes.position && eg.attributes.position.count >= 2) {
+        const ls = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({
+          color: soft, transparent: true, opacity: light ? 0.8 : 0.62,
+        }));
+        o.add(ls); o.userData.edges = ls;
+      }
       o.userData.__lined = true;
       n++;
     });
     this.lineCount = n;
+  }
+
+  /* 实体 / 线稿 切换（页面上的按钮直接调它） */
+  setMode(mode) {
+    if (mode !== 'solid' && mode !== 'line') mode = 'solid';
+    this.mode = mode;
+    this.opts.mode = mode;
+    if (!this.model) return;
+    if (mode === 'line' && !this.lineCount) { try { this._buildLayers(); } catch (e) { } }
+    const lineOn = mode === 'line';
+    this.model.traverse(o => {
+      if (!o.isMesh || !o.userData.__lined) return;
+      if (o.userData.solidMat) o.material = lineOn ? o.userData.fillMat : o.userData.solidMat;
+      if (o.userData.hull) o.userData.hull.visible = lineOn;
+      if (o.userData.edges) o.userData.edges.visible = lineOn;
+      if (o.userData.outlineMesh) o.userData.outlineMesh.visible = !lineOn;
+    });
+    if (this._gt) {
+      for (const m of this._gt.children) {
+        if (m.material && m.material.map) m.material.opacity = (this.dark ? 0.9 : 0.34) * (lineOn ? 0.55 : 1);
+      }
+    }
+    if (this.opts.onMode) this.opts.onMode(mode);
+  }
+
+  /* 兼容旧调用 */
+  _toLine() { this._buildLayers(); this.setMode('line'); }
+
+  /* 换一个模型（首屏"换一个"按钮 / 轮播用） */
+  _clearModel() {
+    if (!this.model) return;
+    this.scene.remove(this.model);
+    this.model.traverse(o => {
+      if (o.geometry && o.geometry.dispose) o.geometry.dispose();
+      const m = o.material;
+      if (m) (Array.isArray(m) ? m : [m]).forEach(x => x && x.dispose && x.dispose());
+    });
+    this.model = null;
+    this.parts = [];
+    this.lineCount = 0;
+    if (this._gt) { this.scene.remove(this._gt); this._gt = null; }
+  }
+
+  setSrc(src) {
+    if (!src) return;
+    this.opts.src = src;
+    this.ready = false;
+    this.load(src);
   }
 
   setExplode(v) {

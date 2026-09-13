@@ -23,11 +23,17 @@ const MARQUEE = ['AI 产品', '工业设计', '机器人产品', 'DesignDNA', 'R
 
 /* 首页展示的模型（换模型只改这里） */
 const HOME_MODEL = {
-  line: true,
   src: 'assets/models/doggie.glb',
   title: 'DOGGIE 多功能宠物牵引绳 · 真实建模文件',
   note: '按建模尺寸关系导出，按住拖动可从任意角度查看体量与曲面'
 };
+/* 首屏"换一个"可轮换的模型（都是我自己的建模文件） */
+const HOME_MODELS = [
+  'assets/models/doggie.glb',
+  'assets/models/lamp-a.glb',
+  'assets/models/lamp-b.glb',
+  'assets/models/wenning.glb',
+];
 
 const DOWNLOADS = [
   { t: 'AI 产品方向作品集', d: '49 页 · 机器人产品 / DesignDNA / 个人 AI 工具 / 实体产品', f: 'download/付昕-AI产品方向作品集.pdf', s: '4.4 MB' },
@@ -245,7 +251,7 @@ const DIRECTIONS = [
         summary: '把牵引、互动玩具携带与简单清洁集成到一个随身产品，减少外出携带负担。',
         facts: [['角色', '调研整理 · 产品定义 · 造型 · 建模 · 渲染 · 品牌包装'], ['功能', '牵引 / 握持 / 可拆卸清洁刷 / 玩具球仓 / 垃圾袋收纳'], ['过程', '连续 Rhino 阶段文件可追溯']],
         hero: { f: 'assets/img/case/id/doggie-hero.jpg', cap: '成品配色阵列：主色 + 多套 CMF 方案（作品集 p17）' },
-        model: { src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型', note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计', line: true },
+        model: { src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型', note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -311,8 +317,8 @@ const DIRECTIONS = [
         summary: '一盏可收纳的居家照明设备：通过折叠灯臂、物理控制与柜体收纳适配居家多场景。',
         facts: [['角色', '产品定义 · 功能整合 · 造型 · Rhino 建模 · 视觉表达'], ['周期', '灯具设计课程约 4 周'], ['重点', '展开 / 收纳状态的空间占用']],
         hero: { f: 'assets/img/case/id/lumora-hero.jpg', cap: '居家阅读场景：灯臂展开状态与暖光表达（作品集 p27）' },
-        model: { src: 'assets/models/lamp-a.glb', after: 2, line: true, title: '方案 A · 可以直接转的模型', note: '展开态建模文件的线框视图（保留原始比例），可旋转查看灯臂、关节与灯头的比例关系' },
-        model2: { src: 'assets/models/lamp-b.glb', after: 2, line: true, title: '方案 B · 可以直接转的模型', note: '同课程另一造型方案，用于对比体量与轮廓差异（线框视图，保留原始比例）' },
+        model: { src: 'assets/models/lamp-a.glb', after: 2, title: '方案 A · 可以直接转的模型', note: '展开态建模文件的线框视图（保留原始比例），可旋转查看灯臂、关节与灯头的比例关系' },
+        model2: { src: 'assets/models/lamp-b.glb', after: 2, title: '方案 B · 可以直接转的模型', note: '同课程另一造型方案，用于对比体量与轮廓差异（线框视图，保留原始比例）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -362,7 +368,7 @@ const DIRECTIONS = [
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
         hero: { f: 'assets/img/id/wateralarm-p37.jpg', cap: '穿戴与落水识别场景表达（作品集原页，已匿名化）' },
-        model: { src: 'assets/models/wenning.glb', after: 2, line: true, title: '最终选定方案 · 可以直接转的模型', note: '由本人建模文件导出的线框视图，用于查看外形体量与分件关系；客户信息与未公开内容已按匿名化规则处理' },
+        model: { src: 'assets/models/wenning.glb', after: 2, title: '最终选定方案 · 可以直接转的模型', note: '由本人建模文件导出的线框视图，用于查看外形体量与分件关系；客户信息与未公开内容已按匿名化规则处理' },
         sections: [
           {
             h: '为什么做', en: 'WHY',

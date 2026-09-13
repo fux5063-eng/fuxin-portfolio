@@ -15,11 +15,18 @@
   let viewers = [];
   function modelPanel(m, opt = {}) {
     if (!m || !m.src) return '';
+    const light = !!opt.light;
+    const cycle = opt.cycle || null;
     return `
-      <figure class="m3d ${opt.light ? 'm3d--light' : ''}">
+      <figure class="m3d ${light ? 'm3d--light' : 'm3d--dark'} ${opt.cls || ''}">
         <div class="m3d__cv-wrap">
-          <canvas class="m3d__cv" data-model="${esc(m.src)}" data-theme="${opt.light ? 'light' : 'dark'}" data-line="${m.line ? '1' : '0'}"></canvas>
+          <canvas class="m3d__cv" data-model="${esc(m.src)}" data-theme="${light ? 'light' : 'dark'}" data-line="${m.line ? '1' : '0'}"${cycle ? ` data-cycle="${esc(cycle.join(','))}"` : ''}></canvas>
           <span class="m3d__chip">3D 模型</span>
+          ${cycle ? '<button type="button" class="m3d__next">换一个 →</button>' : ''}
+          <div class="m3d__tabs" role="group" aria-label="显示方式">
+            <button type="button" class="m3d__tab on" data-mode="solid">实体</button>
+            <button type="button" class="m3d__tab" data-mode="line">线稿</button>
+          </div>
           <span class="m3d__hint">按住拖动旋转 · 滚轮缩放</span>
           <span class="m3d__load">模型载入中…</span>
         </div>
@@ -48,10 +55,32 @@
             const v = new mod.ModelViewer(cv, {
               src: cv.dataset.model, theme: cv.dataset.theme || 'dark',
               autoRotate: true, speed: 0.32, explodeScale: 1.0, explodeZoom: 0, ring: false,
-              line: cv.dataset.line === '1',
+              mode: cv.dataset.line === '1' ? 'line' : 'solid',
               onError() { if (load) { load.hidden = false; load.textContent = '模型加载失败'; } },
             });
             viewers.push(v);
+            /* 实体 / 线稿 切换 */
+            const panel = cv.closest('.m3d');
+            const tabs = panel ? panel.querySelectorAll('.m3d__tab') : [];
+            tabs.forEach(btn => btn.addEventListener('click', () => {
+              v.setMode(btn.dataset.mode);
+              tabs.forEach(b => b.classList.toggle('on', b === btn));
+            }));
+            /* 首屏"换一个模型"：在候选列表里轮换 */
+            const cycle = (cv.dataset.cycle || '').split(',').map(s => s.trim()).filter(Boolean);
+            if (cycle.length) {
+              let k = 0;
+              if (cycle[0] !== cv.dataset.model) k = Math.max(0, cycle.indexOf(cv.dataset.model));
+              const next = panel ? panel.querySelector('.m3d__next') : null;
+              if (next) next.addEventListener('click', () => {
+                k = (k + 1) % cycle.length;
+                const load = panel ? panel.querySelector('.m3d__load') : null;
+                if (load) { load.hidden = false; load.textContent = '模型载入中…'; }
+                v.setSrc(cycle[k]);
+                const cap = panel ? panel.querySelector('figcaption b') : null;
+              });
+              v.opts.onLoad = () => { if (panel) { const load = panel.querySelector('.m3d__load'); if (load) load.hidden = true; } };
+            }
             window.__m3dState.mounted = viewers.length;
           });
         }, { rootMargin: '300px 0px' });
@@ -104,6 +133,7 @@
           </div>
         </div>
         <div class="hero__panel fade-in">
+          ${modelPanel(HOME_MODEL, { cycle: HOME_MODELS, cls: 'm3d--hero' })}
           <div class="hero__facts">
             <div><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
             <div><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
@@ -112,10 +142,6 @@
         </div>
       </div>
       <div class="hero__scroll"><i></i><span>SCROLL ↓</span></div>
-      <div class="hero__qr">
-        <img src="${SITE.qrSite}" alt="作品集网站二维码">
-        <div><b>扫码看本站</b><span>${esc(SITE.siteUrl.replace('https://', ''))}</span></div>
-      </div>
     </section>
 
     <div class="sheet">
@@ -216,12 +242,12 @@
               </div>
             </div>
           </div>
-          <div class="qrbox">
-            <img src="${SITE.qrSite}" alt="作品集网站二维码">
+          <div class="qrbox qrbox--link">
             <div>
-              <b>扫码看作品集网站</b>
-              <p>首页两个方向入口，点进去可以看项目过程、边界说明，还有可在线玩的原型。</p>
+              <b>这个网站本身也是作品</b>
+              <p>两个方向入口在里面，可以看项目过程、边界说明，还有可在线玩的原型。</p>
               <code>${esc(SITE.siteUrl)}</code>
+              <button class="cp" data-copy="${esc(SITE.siteUrl)}" data-label="网址">复制网址</button>
             </div>
           </div>
         </div>
@@ -376,7 +402,7 @@
           <span style="color:var(--accent-d);font-weight:700;font-size:13px">打开网站 →</span>
         </a>
       </div>
-      <p class="note">PDF 由本人作品集源文件导出，内容与页面一致；商业项目均按公开边界匿名化处理。也欢迎扫码：<img src="${SITE.qrSite}" alt="二维码" style="width:88px;display:inline-block;vertical-align:middle;margin-left:8px;border:1px solid var(--line);border-radius:8px"></p>
+      <p class="note">PDF 由本人作品集源文件导出，内容与页面一致；商业项目均按公开边界匿名化处理。页面里的模型与原型都可以直接在网页上操作。</p>
     </div></section>`;
   }
 
@@ -473,15 +499,18 @@
       parts = Array.from({ length: n }, () => ({
         x: Math.random() * W, y: Math.random() * H,
         vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3,
-        r: Math.random() * 1.6 + .7, hot: Math.random() < .19
+        r: Math.random() * 1.6 + .7, hot: Math.random() < .19,
+        /* 每个粒子自己的相位 + 生命周期：避免所有粒子锁到同一条流线上"糊成一条线" */
+        ph: Math.random() * 6.283, age: Math.random() * 500, life: 320 + Math.random() * 700
       }));
     }
 
     function frame(t) {
       ctx.clearRect(0, 0, W, H);
       for (const p of parts) {
-        const a = (Math.sin((p.x + t * .00012) * .0026) + Math.cos((p.y + t * .00009) * .0031)) * Math.PI;
-        p.vx += Math.cos(a) * .013; p.vy += Math.sin(a) * .013;
+        const a = (Math.sin((p.x + t * .00012) * .0026 + p.ph) + Math.cos((p.y + t * .00009) * .0031 + p.ph * 1.7)) * Math.PI;
+        p.vx += Math.cos(a) * .013 + (Math.random() - .5) * .028;   // 随机扰动：不让粒子对齐成线
+        p.vy += Math.sin(a) * .013 + (Math.random() - .5) * .028;
         if (mouse.on) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
           if (d2 < 31000 && d2 > 1) {
@@ -495,14 +524,21 @@
         p.x += p.vx; p.y += p.vy;
         if (p.x < -24) p.x = W + 24; else if (p.x > W + 24) p.x = -24;
         if (p.y < -24) p.y = H + 24; else if (p.y > H + 24) p.y = -24;
+        /* 到寿命就换个位置重生 */
+        p.age++;
+        if (p.age > p.life) {
+          p.x = Math.random() * W; p.y = Math.random() * H;
+          p.vx = (Math.random() - .5) * .3; p.vy = (Math.random() - .5) * .3;
+          p.age = 0; p.life = 320 + Math.random() * 700; p.ph = Math.random() * 6.283;
+        }
       }
       ctx.lineWidth = 1;
       for (let i = 0; i < parts.length; i++) {
         const a = parts[i];
         for (let j = i + 1; j < parts.length; j++) {
           const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-          if (d2 < 21000) {
-            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 155) * .5).toFixed(3) + ')';
+          if (d2 < 15000) {
+            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 122) * .34).toFixed(3) + ')';
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
