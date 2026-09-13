@@ -21,13 +21,14 @@ const PALETTE = [
   { c: 0xf4f7fa, m: 0.05, r: 0.55 },
   { c: 0x39434e, m: 0.20, r: 0.44 },
 ];
+/* 浅色底（纸白卡片）用的配色：必须比背景深，否则白底上看白模型 = 看不见 */
 const PALETTE_LIGHT = [
-  { c: 0xe4e9ee, m: 0.08, r: 0.44 },
-  { c: 0x333c46, m: 0.30, r: 0.36 },
-  { c: 0xd3dae2, m: 0.10, r: 0.50 },
-  { c: 0x9aa6b2, m: 0.58, r: 0.30 },
-  { c: 0xf2f5f8, m: 0.05, r: 0.55 },
-  { c: 0x404a55, m: 0.18, r: 0.46 },
+  { c: 0xc2ccd7, m: 0.10, r: 0.40 },
+  { c: 0x39424d, m: 0.34, r: 0.34 },
+  { c: 0xa8b4c1, m: 0.14, r: 0.46 },
+  { c: 0x6d7b89, m: 0.55, r: 0.30 },
+  { c: 0xd8dfe6, m: 0.08, r: 0.52 },
+  { c: 0x4a5560, m: 0.22, r: 0.42 },
 ];
 
 export class ModelViewer {
@@ -127,7 +128,7 @@ export class ModelViewer {
           color: spec.c,
           metalness: this.opts.backdrop ? Math.min(spec.m, 0.2) : spec.m,
           roughness: spec.r,
-          envMapIntensity: this.opts.env, side: THREE.DoubleSide,
+          envMapIntensity: this.opts.env != null ? this.opts.env : 1.15, side: THREE.DoubleSide,
           wireframe: this.opts.wire, flatShading: false,
         });
         o.material = solid;

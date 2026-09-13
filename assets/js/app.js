@@ -353,13 +353,10 @@
               </div>
             </div>
           </div>
-          <div class="qrbox qrbox--link">
-            <div>
-              <b>这个网站本身也是作品</b>
-              <p>两个方向入口在里面，可以看项目过程、边界说明，还有可在线玩的原型。</p>
-              <code>${esc(SITE.siteUrl)}</code>
-              <button class="cp" data-copy="${esc(SITE.siteUrl)}" data-label="网址">复制网址</button>
-            </div>
+          <div class="qrbox">
+            <img class="qrbox__img" src="${SITE.qrSite}" alt="作品集网站二维码">
+            <div class="qrbox__txt"><b>扫码看作品集网站</b><span>${esc(SITE.siteUrl.replace('https://', ''))}</span></div>
+          </div>
           </div>
         </div>
       </div>
@@ -572,7 +569,9 @@
       window.scrollTo(0, 0);
     }
 
-    if (!reduce) requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
+    /* 入场动效：不再因为系统"减少动态效果"而被静默关闭（站主要动效），并加兜底 */
+    requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
+    setTimeout(() => document.querySelector('.hero')?.classList.add('in'), 800);
     revealNow();
     updateNav();
     isHome ? FX.start() : FX.stop();
@@ -684,7 +683,7 @@
 
     return {
       start() {
-        if (reduce || on) return;
+        if (on) return;                 /* 动效是首页的识别特征，不随 prefers-reduced-motion 关闭 */
         on = true; size(); raf = requestAnimationFrame(frame);
       },
       stop() { on = false; if (raf) cancelAnimationFrame(raf); raf = 0; ctx.clearRect(0, 0, W, H); }
@@ -692,7 +691,7 @@
   })();
 
   /* ================= 光标 / 倾斜 / 磁吸 ================= */
-  if (fine && !reduce) {
+  if (fine) {
     const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
     let mx = -100, my = -100, rx = -100, ry = -100;
     window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
@@ -711,7 +710,7 @@
     document.getElementById('cur-ring')?.remove();
   }
 
-  if (fine && !reduce) {
+  if (fine) {
     // 卡片倾斜（首页 gate）
     app.addEventListener('mousemove', e => {
       const g = e.target.closest('.gate');
@@ -794,6 +793,16 @@
     if (e.key === 'Escape') closeLb();
     if (e.key === 'ArrowLeft') stepLb(-1);
     if (e.key === 'ArrowRight') stepLb(1);
+  });
+
+  /* 站内锚点点击保险：即使有别的层干扰默认行为，也保证会跳转 */
+  app.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#' || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (location.hash === href) render(); else location.hash = href;
   });
 
   window.addEventListener('hashchange', render);
