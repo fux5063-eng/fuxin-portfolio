@@ -1,0 +1,83 @@
+{
+ "covers": {
+  "ai": "assets/img/cover/ai-cover.jpg",
+  "id": "assets/img/cover/id-cover.jpg"
+ },
+ "projects": {
+  "ai": {
+   "robot": [
+    "assets/img/ai/robot-p06.jpg",
+    "assets/img/ai/robot-p08.jpg",
+    "assets/img/ai/robot-p09.jpg",
+    "assets/img/ai/robot-p13.jpg",
+    "assets/img/ai/robot-p15.jpg"
+   ],
+   "designdna": [
+    "assets/img/ai/designdna-p18.jpg",
+    "assets/img/ai/designdna-p19.jpg",
+    "assets/img/ai/designdna-p20.jpg",
+    "assets/img/ai/designdna-p22.jpg",
+    "assets/img/ai/designdna-p25.jpg"
+   ],
+   "toolset": [
+    "assets/img/ai/toolset-p27.jpg",
+    "assets/img/ai/toolset-p29.jpg",
+    "assets/img/ai/toolset-p32.jpg",
+    "assets/img/ai/toolset-p33.jpg",
+    "assets/img/ai/toolset-p37.jpg"
+   ],
+   "internship": [
+    "assets/img/ai/internship-p39.jpg"
+   ],
+   "entity": [
+    "assets/img/ai/entity-p41.jpg",
+    "assets/img/ai/entity-p45.jpg",
+    "assets/img/ai/entity-p47.jpg"
+   ]
+  },
+  "id": {
+   "navlight": [
+    "assets/img/id/navlight-p04.jpg",
+    "assets/img/id/navlight-p05.jpg",
+    "assets/img/id/navlight-p06.jpg",
+    "assets/img/id/navlight-p09.jpg"
+   ],
+   "doggie": [
+    "assets/img/id/doggie-p12.jpg",
+    "assets/img/id/doggie-p16.jpg",
+    "assets/img/id/doggie-p18.jpg",
+    "assets/img/id/doggie-p24.jpg",
+    "assets/img/id/doggie-p26.jpg"
+   ],
+   "lumora": [
+    "assets/img/id/lumora-p27.jpg",
+    "assets/img/id/lumora-p29.jpg",
+    "assets/img/id/lumora-p31.jpg",
+    "assets/img/id/lumora-p34.jpg"
+   ],
+   "wateralarm": [
+    "assets/img/id/wateralarm-p37.jpg",
+    "assets/img/id/wateralarm-p38.jpg",
+    "assets/img/id/wateralarm-p40.jpg"
+   ],
+   "smartlock": [
+    "assets/img/id/smartlock-p41.jpg",
+    "assets/img/id/smartlock-p43.jpg",
+    "assets/img/id/smartlock-p44.jpg"
+   ],
+   "aid": [
+    "assets/img/id/aid-p45.jpg",
+    "assets/img/id/aid-p46.jpg",
+    "assets/img/id/aid-p47.jpg"
+   ],
+   "visual": [
+    "assets/img/id/visual-p48.jpg",
+    "assets/img/id/visual-p49.jpg"
+   ],
+   "exercises": [
+    "assets/img/id/exercises-p50.jpg"
+   ]
+  }
+ },
+ "portrait": "assets/img/about/portrait.jpg"
+}
