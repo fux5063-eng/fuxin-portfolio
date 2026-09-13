@@ -56,6 +56,25 @@
   }
 
   /* 旧的清理函数（切页时调用，避免监听器堆积） */
+  /* 细节切换器：点标签换大图 + 说明（纯 DOM 切换，最稳） */
+  function tabsBlock(list) {
+    if (!list || !list.length) return '';
+    return `
+      <div class="tabs" data-tabs>
+        <div class="tabs__chips" role="tablist">
+          ${list.map((x, i) => `<button type="button" class="tabs__chip${i === 0 ? ' on' : ''}" data-i="${i}" role="tab">${esc(x.t)}</button>`).join('')}
+        </div>
+        <div class="tabs__panes">
+          ${list.map((x, i) => `
+            <div class="tabs__pane${i === 0 ? ' on' : ''}" data-i="${i}" role="tabpanel">
+              <figure class="shot"><img src="${esc(x.f)}" alt="${esc(x.t)}" loading="lazy"></figure>
+              <div class="tabs__txt"><b>${esc(x.t)}</b><p>${esc(x.d || '')}</p></div>
+            </div>`).join('')}
+        </div>
+        <div class="tabs__foot">点上面的标签切换细节 · 点图可放大</div>
+      </div>`;
+  }
+
   let cleanups = [];
   function runCleanups() { cleanups.forEach(f => { try { f(); } catch (e) {} }); cleanups = []; }
 
@@ -91,6 +110,19 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     cleanups.push(() => { window.removeEventListener('scroll', onScroll); rail.remove(); });
+  }
+
+  /* 细节切换器交互 */
+  function initTabs(scope) {
+    scope.querySelectorAll('[data-tabs]').forEach(box => {
+      const chips = [...box.querySelectorAll('.tabs__chip')];
+      const panes = [...box.querySelectorAll('.tabs__pane')];
+      chips.forEach(c => c.addEventListener('click', () => {
+        const i = +c.dataset.i;
+        chips.forEach((x, k) => x.classList.toggle('on', k === i));
+        panes.forEach((x, k) => x.classList.toggle('on', k === i));
+      }));
+    });
   }
 
   /* 对比滑块：拖动 / 点击 / 触摸都能用 */
@@ -394,6 +426,7 @@
           ${(s.items || []).length ? `<ul class="cs__list">${s.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
+          ${tabsBlock(s.tabs)}
           ${compareBlock(s.compare)}
           ${p.model && p.model.after === k ? modelPanel(p.model, { light: true }) : ''}
           ${p.model2 && p.model2.after === k ? modelPanel(p.model2, { light: true }) : ''}
@@ -525,6 +558,7 @@
     const domSecs = [...app.querySelectorAll('.cs__sec')].map(s => ({ h: (s.querySelector('h2') || {}).textContent || '' }));
     if (domSecs.length) initRail(app, domSecs);
     initCompare(app);
+    initTabs(app);
 
     app.classList.remove('view-enter');
     void app.offsetWidth;

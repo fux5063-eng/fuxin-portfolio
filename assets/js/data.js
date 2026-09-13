@@ -293,12 +293,14 @@ const DIRECTIONS = [
               '包装与场景：盒体与手持包装展示，配合真实使用场景图。'
             ],
             figures: [
-              { f: 'assets/img/case/id/doggie-d1.jpg', cap: '细节 01 · 防滑握持' },
-              { f: 'assets/img/case/id/doggie-d2.jpg', cap: '细节 02 · 可拆卸清洁刷' },
-              { f: 'assets/img/case/id/doggie-d3.jpg', cap: '细节 03 · 高抗拉织带' },
-              { f: 'assets/img/case/id/doggie-d4.jpg', cap: '细节 04 · 后部功能件' },
               { f: 'assets/img/case/id/doggie-pack.jpg', cap: '包装设计：盒体与手持展示（p25）', wide: true },
               { f: 'assets/img/case/id/doggie-scene.jpg', cap: '使用场景（p26）' }
+            ],
+            tabs: [
+              { t: '防滑握持', f: 'assets/img/case/id/doggie-d1.jpg', d: '主握持区保持简洁，握感与防滑靠表面处理解决，不额外增加零件。' },
+              { t: '可拆卸清洁刷', f: 'assets/img/case/id/doggie-d2.jpg', d: '清洁刷用于清理宠物脚底的灰尘与污物，可拆下单独清洗。' },
+              { t: '高抗拉织带', f: 'assets/img/case/id/doggie-d3.jpg', d: '织带与主体的连接按受力方向布置，避免应力集中在单一位置。' },
+              { t: '后部功能件', f: 'assets/img/case/id/doggie-d4.jpg', d: '把手内部的垃圾袋收纳属于最终功能，后部功能件承担开合与固定。' }
             ]
           },
           {

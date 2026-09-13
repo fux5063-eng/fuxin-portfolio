@@ -478,3 +478,20 @@ body:not(.on-home) #app{padding-top:66px}
 .fig img{transition:transform .4s cubic-bezier(.2,.7,.3,1)}
 .heroFig{transition:transform .3s ease,box-shadow .3s ease}
 .heroFig:hover{box-shadow:0 18px 44px rgba(15,20,28,.16)}
+
+/* ===== 细节切换器（点标签换大图） ===== */
+.tabs{margin:20px 0 8px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.tabs__chips{display:flex;flex-wrap:wrap;gap:8px;padding:14px 14px 10px}
+.tabs__chip{appearance:none;cursor:pointer;border:1px solid var(--line);background:#f7f9fb;color:var(--muted);
+  font:600 13px/1 inherit;padding:9px 13px;border-radius:999px;transition:all .18s ease}
+.tabs__chip:hover{color:var(--ink);border-color:#cfd7e0;transform:translateY(-1px)}
+.tabs__chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.tabs__pane{display:none}
+.tabs__pane.on{display:grid;grid-template-columns:1.45fr 1fr;gap:0;border-top:1px solid var(--line)}
+.tabs__pane figure{margin:0;background:#eef1f4;cursor:zoom-in}
+.tabs__pane img{width:100%;display:block}
+.tabs__txt{padding:20px 20px 22px}
+.tabs__txt b{font-size:16.5px;display:block;margin-bottom:9px;color:var(--ink)}
+.tabs__txt p{margin:0;font-size:14.6px;line-height:1.85;color:#3a434e}
+.tabs__foot{padding:10px 14px;font-size:12px;color:var(--muted);background:#f7f9fb;border-top:1px solid var(--line)}
+@media(max-width:780px){.tabs__pane.on{grid-template-columns:1fr}}
