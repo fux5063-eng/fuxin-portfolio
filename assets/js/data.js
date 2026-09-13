@@ -6,11 +6,20 @@ const SITE = {
   school: '华南师范大学 · 产品设计 2023–2027',
   city: '深圳 / 广州',
   email: '3188201179@qq.com',
+  wechat: 'zmdjan',
+  siteUrl: 'https://fux5063-eng.github.io/fuxin-portfolio/',
+  qrSite: 'assets/img/qr/site-512.png',
+  qrSiteHi: 'assets/img/qr/site-1024.png',
+  wechatQr: '',            /* 如需展示微信二维码，把图片放到 assets/img/qr/wechat.png 并在这里填路径 */
   heroKicker: 'PORTFOLIO 2026 · 2027 届校招',
   heroRole: '工业设计 × AI 产品 · 从概念到原型落地',
-  heroTitle: '把设计判断，<br>变成<span class="mk">可重复的流程</span>',
+  heroTitle1: '把设计判断，',
+  heroTitle2: '变成<span class="mk">可重复的流程</span>',
   heroLead: '产品设计背景，两个方向并行：一边做真实的工业设计与商业改款（建模、渲染、整套视觉交付），一边把机器人、语音交互和 AI 工具做成能跑起来的原型。'
 };
+
+const MARQUEE = ['AI 产品', '工业设计', '机器人产品', 'DesignDNA', 'Rhino 建模', 'KeyShot 渲染',
+  '语音闭环', '商业改款', '工作流工具', 'CMF', '结构整合', '视觉交付'];
 
 const DOWNLOADS = [
   { t: 'AI 产品方向作品集', d: '49 页 · 机器人产品 / DesignDNA / 个人 AI 工具 / 实体产品', f: 'download/付昕-AI产品方向作品集.pdf', s: '4.4 MB' },
