@@ -38,6 +38,86 @@
   }
 
   /* 模型懒加载：滚到附近才下载 GLB，切页时销毁 */
+  /* 草图 ↔ 成品：可拖动对比滑块 */
+  function compareBlock(c) {
+    if (!c || !c.before || !c.after) return '';
+    return `
+      <figure class="cmpwrap">
+        <div class="cmp" data-cmp>
+          <img src="${esc(c.before.f)}" alt="${esc(c.before.label || '过程')}">
+          <div class="cmp__after"><img src="${esc(c.after.f)}" alt="${esc(c.after.label || '成品')}"></div>
+          <span class="cmp__line"></span>
+          <span class="cmp__knob">↔</span>
+          <span class="cmp__tag cmp__tag--l">${esc(c.before.label || '过程')}</span>
+          <span class="cmp__tag cmp__tag--r">${esc(c.after.label || '成品')}</span>
+        </div>
+        ${c.cap ? `<div class="cmp__cap"><b>拖动对比：</b>${esc(c.cap)}</div>` : ''}
+      </figure>`;
+  }
+
+  /* 旧的清理函数（切页时调用，避免监听器堆积） */
+  let cleanups = [];
+  function runCleanups() { cleanups.forEach(f => { try { f(); } catch (e) {} }); cleanups = []; }
+
+  /* 章节轨道：进度 + 点击跳转 */
+  function initRail(scope, secs) {
+    const wrap = scope.querySelector('.cs');
+    if (!wrap || !secs || secs.length < 2) return;
+    const items = [...wrap.querySelectorAll('.cs__sec')];
+    if (items.length < 2) return;
+    const rail = document.createElement('nav');
+    rail.className = 'rail';
+    rail.innerHTML = '<span class="rail__wrap"></span><i class="rail__bar"></i>' +
+      items.map((s, i) => `<a href="#" data-i="${i}"><b>${String(i + 1).padStart(2, '0')}</b><span>${esc(secs[i].h)}</span></a>`).join('');
+    document.body.appendChild(rail);
+    const bar = rail.querySelector('.rail__bar');
+    const links = [...rail.querySelectorAll('a')];
+    links.forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = items[+a.dataset.i];
+      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
+    }));
+    const tops = () => items.map(s => s.getBoundingClientRect().top + window.scrollY);
+    const onScroll = () => {
+      const t = tops();
+      const y = window.scrollY + window.innerHeight * 0.34;
+      let act = 0;
+      t.forEach((v, i) => { if (v <= y) act = i; });
+      links.forEach((a, i) => a.classList.toggle('on', i === act));
+      const first = t[0], last = t[t.length - 1] + items[items.length - 1].offsetHeight;
+      const p = Math.max(0, Math.min(1, (window.scrollY + 240 - first) / Math.max(1, last - first)));
+      bar.style.transform = `scaleY(${p})`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    cleanups.push(() => { window.removeEventListener('scroll', onScroll); rail.remove(); });
+  }
+
+  /* 对比滑块：拖动 / 点击 / 触摸都能用 */
+  function initCompare(scope) {
+    scope.querySelectorAll('[data-cmp]').forEach(el => {
+      const after = el.querySelector('.cmp__after');
+      const line = el.querySelector('.cmp__line');
+      const knob = el.querySelector('.cmp__knob');
+      let dragging = false;
+      const set = clientX => {
+        const r = el.getBoundingClientRect();
+        let p = (clientX - r.left) / Math.max(1, r.width);
+        p = Math.max(0.02, Math.min(0.98, p));
+        after.style.width = (p * 100) + '%';
+        line.style.left = (p * 100) + '%';
+        knob.style.left = (p * 100) + '%';
+      };
+      const down = e => { dragging = true; set(e.clientX); el.setPointerCapture?.(e.pointerId); };
+      const move = e => { if (dragging) set(e.clientX); };
+      const up = () => { dragging = false; };
+      el.addEventListener('pointerdown', down);
+      el.addEventListener('pointermove', move);
+      window.addEventListener('pointerup', up);
+      cleanups.push(() => { window.removeEventListener('pointerup', up); });
+    });
+  }
+
   function mountModels(scope) {
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
@@ -314,6 +394,7 @@
           ${(s.items || []).length ? `<ul class="cs__list">${s.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
+          ${compareBlock(s.compare)}
           ${p.model && p.model.after === k ? modelPanel(p.model, { light: true }) : ''}
           ${p.model2 && p.model2.after === k ? modelPanel(p.model2, { light: true }) : ''}
         </div>
@@ -437,8 +518,13 @@
     app.innerHTML = html;
     document.title = title;
     body.classList.toggle('on-home', isHome);
+    runCleanups();                       // 清掉上一页的轨道/滑块监听
     disposeModels();
     mountModels(app);
+    /* 项目页：章节轨道 + 草图↔成品对比滑块 */
+    const domSecs = [...app.querySelectorAll('.cs__sec')].map(s => ({ h: (s.querySelector('h2') || {}).textContent || '' }));
+    if (domSecs.length) initRail(app, domSecs);
+    initCompare(app);
 
     app.classList.remove('view-enter');
     void app.offsetWidth;

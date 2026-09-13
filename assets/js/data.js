@@ -228,6 +228,7 @@ const DIRECTIONS = [
           },
           {
             h: '做出什么', en: 'WHAT',
+            compare: { before: { f: 'assets/img/id/navlight-p06.jpg', label: '形体推敲' }, after: { f: 'assets/img/id/navlight-p04.jpg', label: '改款外观' }, cap: '从形体推敲到最终外观的同项目对照（作品集原页）。' },
             lead: '交付覆盖外观造型推进、Rhino 建模与 KeyShot 视觉表达，用于方案评审与后续量产落地的前置沟通。',
             items: [
               '外观方案：在既有平台边界内完成造型升级，并留出系列延展的空间。',
@@ -284,6 +285,7 @@ const DIRECTIONS = [
           },
           {
             h: '做出什么', en: 'WHAT',
+            compare: { before: { f: 'assets/img/case/id/doggie-sketch.jpg', label: '草图探索' }, after: { f: 'assets/img/case/id/doggie-hero.jpg', label: '成品配色' }, cap: '左边是草图发散页，右边是成品配色阵列——同一个造型从推演到收敛。' },
             lead: '交付包含产品外观、多套配色、局部细节、三视图、爆炸示意与包装设计。同一个模型也放在这一节里，可以自己转着看。',
             items: [
               '外观与配色：主色方案 + 多套 CMF，用于不同使用人群与场景。',
@@ -345,6 +347,7 @@ const DIRECTIONS = [
           },
           {
             h: '做出什么', en: 'WHAT',
+            compare: { before: { f: 'assets/img/case/id/lumora-p3.jpg', label: '草图发散' }, after: { f: 'assets/img/case/id/lumora-hero.jpg', label: '居家场景成品' }, cap: '从草图发散到居家场景里的成品状态。' },
             lead: '课程结束时交付两个造型方案：造型方向不同，但共用同一套功能与收纳逻辑。下面两个模型保留原始比例，可以直接转动对比。',
             items: [
               '方案 A：以折叠灯臂与柜体收纳为主，展开态作为主要使用姿态。',
@@ -391,6 +394,7 @@ const DIRECTIONS = [
           },
           {
             h: '做出什么', en: 'WHAT',
+            compare: { before: { f: 'assets/img/id/wateralarm-p38.jpg', label: '三方向形态' }, after: { f: 'assets/img/id/wateralarm-p37.jpg', label: '场景与成品' }, cap: '从形态方向对比到场景表达（作品集原页，已匿名化）。' },
             lead: '交付包含多方向造型对比、模型迭代与 CMF / 场景表达，用于方案评审与后续收敛。',
             items: [
               'CMF 与场景：同一产品在不同材料与使用语境下保持识别一致。',
