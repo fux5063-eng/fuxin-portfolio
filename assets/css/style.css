@@ -452,7 +452,7 @@ body:not(.on-home) #app{padding-top:66px}
 .rail a.on::before{background:var(--accent-d);transform:scale(1.25)}
 .rail__bar{position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent-d),rgba(232,89,12,.2));border-radius:2px;transform-origin:top;transform:scaleY(0);transition:transform .12s linear}
 .rail__wrap{position:absolute;left:-12px;top:14px;bottom:14px;width:2px;background:rgba(20,30,42,.08);border-radius:2px}
-@media(max-width:1400px){.rail{display:none}}
+@media(max-width:1560px){.rail{display:none}}
 
 /* 草图 ↔ 成品：可拖动的对比滑块 */
 .cmp{position:relative;margin:20px 0 8px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#eef1f4;

@@ -17,16 +17,17 @@
     if (!m || !m.src) return '';
     const light = !!opt.light;
     const cycle = opt.cycle || null;
+    const plain = !!opt.plain;          /* 纯展示：不带任何工具按钮（首页用） */
     return `
       <figure class="m3d ${light ? 'm3d--light' : 'm3d--dark'} ${opt.cls || ''}">
         <div class="m3d__cv-wrap">
           <canvas class="m3d__cv" data-model="${esc(m.src)}" data-theme="${light ? 'light' : 'dark'}" data-line="${m.line ? '1' : '0'}"${cycle ? ` data-cycle="${esc(cycle.join(','))}"` : ''}></canvas>
           <span class="m3d__chip">3D 模型</span>
-          ${cycle ? '<button type="button" class="m3d__next">换一个 →</button>' : ''}
-          <div class="m3d__tabs" role="group" aria-label="显示方式">
+          ${(!plain && cycle) ? '<button type="button" class="m3d__next">换一个 →</button>' : ''}
+          ${plain ? '' : `<div class="m3d__tabs" role="group" aria-label="显示方式">
             <button type="button" class="m3d__tab on" data-mode="solid">实体</button>
             <button type="button" class="m3d__tab" data-mode="line">线稿</button>
-          </div>
+          </div>`}
           <span class="m3d__hint">按住拖动旋转 · 滚轮缩放</span>
           <span class="m3d__load">模型载入中…</span>
         </div>
@@ -245,7 +246,6 @@
           </div>
         </div>
         <div class="hero__panel fade-in">
-          ${modelPanel(HOME_MODEL, { cycle: HOME_MODELS, cls: 'm3d--hero' })}
           <div class="hero__facts">
             <div><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
             <div><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
@@ -295,7 +295,7 @@
                 <a class="btn btn--ghost mag" href="#id">工业设计方向<span class="btn__ar">→</span></a>
               </div>
             </div>
-            <div class="rv">${modelPanel(HOME_MODEL, { light: true })}</div>
+            <div class="rv">${modelPanel(HOME_MODEL, { light: true, plain: true })}</div>
           </div>
         </div>
       </section>
@@ -615,7 +615,7 @@
       cv.width = Math.round(W * dpr);
       cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(175, Math.max(44, (W * H) / 13500)));
+      const n = Math.round(Math.min(230, Math.max(60, (W * H) / 11000)));
       parts = Array.from({ length: n }, () => ({
         x: Math.random() * W, y: Math.random() * H,
         vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3,
@@ -657,8 +657,8 @@
         const a = parts[i];
         for (let j = i + 1; j < parts.length; j++) {
           const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-          if (d2 < 15000) {
-            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 122) * .34).toFixed(3) + ')';
+          if (d2 < 20500) {
+            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 148) * .5).toFixed(3) + ')';
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
