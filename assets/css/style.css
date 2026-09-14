@@ -1093,3 +1093,17 @@ body.exp-open{overflow:hidden}
 .qrbox__slot--filled{border-style:solid;border-color:rgba(224,98,45,.30);background:#fff;padding:8px}
 .qrbox__slot--filled img{display:block;width:100%;height:auto;border-radius:8px}
 .qrbox__slot--filled::before,.qrbox__slot--filled::after{display:none}
+
+/* ============ 配图网格（替代横向胶片条：不再需要手动左右滑动） ============ */
+.figs{display:grid;gap:18px;margin:22px 0}
+.figs--one{grid-template-columns:1fr}
+.figs--grid{grid-template-columns:1fr}
+@media(min-width:760px){
+  .figs--grid{grid-template-columns:1fr 1fr;gap:20px}
+}
+.figs .fig{margin:0;display:flex;flex-direction:column;gap:8px}
+.figs .fig img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line);
+  background:#f6f7f9;transition:transform .5s cubic-bezier(.2,.7,.3,1),box-shadow .4s}
+.figs .fig:hover img{transform:translateY(-3px);box-shadow:0 16px 34px rgba(14,18,22,.13)}
+.figs .fig figcaption{font-size:12.6px;color:var(--muted);margin:0}
+.figs .fig--wide{grid-column:1/-1}

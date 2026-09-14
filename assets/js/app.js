@@ -898,13 +898,8 @@
       </figure>`;
     const figs = list => {
       if (!list || !list.length) return '';
-      const many = list.length > 2;
-      return `<div class="figs figstrip${many ? ' figstrip--scroll' : ''}" data-strip>
-          ${many ? '<button type="button" class="figstrip__nav prev" aria-label="上一张">‹</button>' : ''}
-          <div class="figstrip__track">${list.map(f => fig(f)).join('')}</div>
-          ${many ? '<button type="button" class="figstrip__nav next" aria-label="下一张">›</button>' : ''}
-          ${many ? `<span class="figstrip__count">${list.length} 张 · 可左右滑动或点箭头</span>` : ''}
-        </div>`;
+      const grid = list.length > 1 ? 'figs--grid' : 'figs--one';
+      return `<div class="figs ${grid}">${list.map(f => fig(f)).join('')}</div>`;
     };
 
     /* 章节：有 sections 用新叙事；老项目退回 body 字段，但用同一套版式 */
