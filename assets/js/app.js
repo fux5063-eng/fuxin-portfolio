@@ -511,7 +511,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915N').then(mod => {
+    import('./model3d.js?v=20260915P').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -635,7 +635,7 @@
           <div class="hero__cta">
             <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
-            <button type="button" class="btn mag" data-exp>看我的详细经历<span class="btn__ar">→</span></button>
+            <a class="btn mag" href="#about">看我的详细经历<span class="btn__ar">→</span></a>
             </div>
         </div>
         <div class="hero__panel fade-in">
@@ -676,32 +676,7 @@
         </div>
       </section>
     </div>
-    <!-- 详细经历弹层（内容与「关于我」同源） -->
-    <div class="exp" id="expModal" hidden aria-modal="true" role="dialog" aria-label="详细经历">
-      <div class="exp__mask" data-exp-close></div>
-      <div class="exp__panel">
-        <button type="button" class="exp__x" data-exp-close aria-label="关闭">×</button>
-        <div class="exp__head">
-          <span class="exp__en">EXPERIENCE</span>
-          <h2>详细经历</h2>
-        </div>
-        <div class="exp__body">
-          <figure class="exp__pic"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></figure>
-          <div class="exp__col">
-            <h3>经历</h3>
-            <ul class="timeline">${ABOUT.timeline.map(t => `<li><time>${esc(t.time)}</time><div><b>${esc(t.org)}</b><span>${esc(t.desc)}</span></div></li>`).join('')}</ul>
-          </div>
-          <div class="exp__col">
-            <h3>技能</h3>
-            <ul class="timeline">${ABOUT.skills.map(k => `<li><time>${esc(k.k)}</time><div><b>${esc(k.v)}</b></div></li>`).join('')}</ul>
-          </div>
-        </div>
-        <div class="exp__foot">
-          <span>邮箱 <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a> · 微信 <button class="copy-link" data-copy="${esc(SITE.wechat)}" data-label="微信号">${esc(SITE.wechat)}</button></span>
-          <span class="exp__links"><a href="#about" data-exp-close>完整关于我 →</a><a href="#download" data-exp-close>下载简历 PDF →</a></span>
-        </div>
-      </div>
-    </div>
+    
 
 
     <div class="marquee" aria-hidden="true"><div class="marquee__row">${mq}</div></div>
@@ -1000,7 +975,6 @@
     safe('gateFX', () => mountGateFX(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
-    safe('expModal', () => initExpModal(app));
 
 
     /* 导航高亮：标出当前所在方向/页面 */
