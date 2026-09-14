@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915S').then(mod => {
+    import('./model3d.js?v=20260915T').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -626,6 +626,31 @@
     if (cardObs) cvs.forEach(cv => cardObs.observe(cv));
     cleanups.push(() => { if (cardObs) cardObs.disconnect(); });
     return cardFXs.length;
+  }
+
+  /* 胶片条：箭头翻页 + 拖拽滑动 + 滚轮横向 */
+  function initStrips(scope) {
+    scope.querySelectorAll('.figstrip--scroll').forEach(box => {
+      const track = box.querySelector('.figstrip__track');
+      if (!track) return;
+      const step = () => Math.max(280, Math.round(track.clientWidth * .82));
+      box.querySelectorAll('.figstrip__nav').forEach(btn => btn.addEventListener('click', () => {
+        track.scrollBy({ left: (btn.classList.contains('next') ? 1 : -1) * step(), behavior: 'smooth' });
+      }));
+      /* 到边界时把箭头置灰 */
+      const sync = () => {
+        const max = track.scrollWidth - track.clientWidth - 2;
+        box.classList.toggle('at-start', track.scrollLeft <= 2);
+        box.classList.toggle('at-end', track.scrollLeft >= max);
+      };
+      track.addEventListener('scroll', sync, { passive: true });
+      /* 桌面：把竖向滚轮转为横向（在条内滚动时） */
+      track.addEventListener('wheel', e => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { track.scrollLeft += e.deltaY; e.preventDefault(); }
+      }, { passive: false });
+      sync();
+      cleanups.push(() => {});
+    });
   }
 
   /* ================= 视图 ================= */
@@ -865,7 +890,16 @@
         <img src="${f.f}" alt="${esc(f.cap || p.title)}" loading="lazy">
         ${f.cap ? `<figcaption>${esc(f.cap)}</figcaption>` : ''}
       </figure>`;
-    const figs = list => (list && list.length) ? `<div class="figs">${list.map(f => fig(f)).join('')}</div>` : '';
+    const figs = list => {
+      if (!list || !list.length) return '';
+      const many = list.length > 2;
+      return `<div class="figs figstrip${many ? ' figstrip--scroll' : ''}" data-strip>
+          ${many ? '<button type="button" class="figstrip__nav prev" aria-label="上一张">‹</button>' : ''}
+          <div class="figstrip__track">${list.map(f => fig(f)).join('')}</div>
+          ${many ? '<button type="button" class="figstrip__nav next" aria-label="下一张">›</button>' : ''}
+          ${many ? `<span class="figstrip__count">${list.length} 张 · 可左右滑动或点箭头</span>` : ''}
+        </div>`;
+    };
 
     /* 章节：有 sections 用新叙事；老项目退回 body 字段，但用同一套版式 */
     const secs = p.sections || (p.body || []).map(b => ({ h: b.h, items: b.items }));
@@ -1029,6 +1063,7 @@
     safe('gateFlow', () => gateFlowInit());
     safe('gateFX', () => mountGateFX(app));
     safe('cardParticles', () => mountCardFX(app));
+    safe('strips', () => initStrips(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
 
