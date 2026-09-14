@@ -1,7 +1,7 @@
 /* 站点内容数据 —— 全部取自本人作品集（2026-09-13 终审版）与 career/master-profile.md，未新增未经验证的事实 */
 const SITE = {
   /* 低分辨率图片清单（渲染时按原尺寸显示，避免拉伸变糊） */
-  smallImgs: ["assets/img/case/id/doggie-bg-1.jpg", "assets/img/case/id/doggie-bg-1.webp", "assets/img/case/id/doggie-bg-2.jpg", "assets/img/case/id/doggie-bg-2.webp", "assets/img/case/id/doggie-bg-3.jpg", "assets/img/case/id/doggie-bg-3.webp", "assets/img/case/id/doggie-bg-4.jpg", "assets/img/case/id/doggie-bg-4.webp", "assets/img/folio/ai/p02_02.jpg", "assets/img/folio/ai/p02_04.jpg", "assets/img/folio/ai/p02_05.jpg", "assets/img/folio/ai/p02_06.jpg", "assets/img/folio/ai/p02_07.jpg", "assets/img/folio/ai/p02_08.jpg", "assets/img/folio/ai/p02_09.jpg", "assets/img/folio/ai/p02_10.jpg", "assets/img/folio/ai/p02_12.jpg", "assets/img/folio/ai/p02_13.jpg", "assets/img/folio/ai/p02_15.jpg", "assets/img/folio/ai/p02_16.jpg", "assets/img/folio/ai/p08_01.jpg", "assets/img/folio/ai/p08_02.jpg", "assets/img/folio/ai/p08_03.jpg", "assets/img/folio/ai/p08_04.jpg", "assets/img/folio/ai/p08_05.jpg", "assets/img/folio/ai/p08_06.jpg", "assets/img/folio/ai/p08_07.jpg", "assets/img/folio/ai/p08_08.jpg", "assets/img/folio/ai/p29_01.jpg", "assets/img/folio/ai/p30_01.jpg", "assets/img/folio/ai/p31_01.jpg", "assets/img/folio/ai/p37_01.jpg", "assets/img/folio/ai/p37_02.jpg", "assets/img/folio/ai/p41_01.jpg", "assets/img/folio/ai/p42_01.jpg", "assets/img/folio/id/p02_02.jpg", "assets/img/folio/id/p02_04.jpg", "assets/img/folio/id/p02_05.jpg", "assets/img/folio/id/p02_06.jpg", "assets/img/folio/id/p02_07.jpg", "assets/img/folio/id/p02_08.jpg", "assets/img/folio/id/p02_09.jpg", "assets/img/folio/id/p02_10.jpg", "assets/img/folio/id/p02_12.jpg", "assets/img/folio/id/p02_13.jpg", "assets/img/folio/id/p02_15.jpg", "assets/img/folio/id/p02_16.jpg", "assets/img/folio/id/p03_01.jpg", "assets/img/folio/id/p03_03.jpg", "assets/img/folio/id/p05_01.jpg", "assets/img/folio/id/p05_02.jpg", "assets/img/folio/id/p05_03.jpg", "assets/img/folio/id/p36_01.jpg", "assets/img/folio/id/p46_01.jpg", "assets/img/folio/id/p46_02.jpg", "assets/img/folio/id/p46_03.jpg", "assets/img/folio/id/p46_04.jpg", "assets/img/folio/id/p48_01.jpg", "assets/img/qr/dl-ai.png", "assets/img/qr/dl-id.png", "assets/img/qr/download-512.png", "assets/img/qr/site-512.png", "assets/img/qr/site-invert-512.png", "assets/img/qr/site2-512.png"],
+  smallImgs: ["assets/img/case/id/doggie-bg-1.jpg", "assets/img/case/id/doggie-bg-1.webp", "assets/img/case/id/doggie-bg-2.jpg", "assets/img/case/id/doggie-bg-2.webp", "assets/img/case/id/doggie-bg-3.jpg", "assets/img/case/id/doggie-bg-3.webp", "assets/img/case/id/doggie-bg-4.jpg", "assets/img/case/id/doggie-bg-4.webp"],
 
   name: '付昕', en: 'FU XIN',
   role: '产品设计 · 工业设计 · AI 产品',
@@ -262,7 +262,7 @@ const DIRECTIONS = [
       {
         slug: 'internship', title: '硬件联网适配（实习）', en: 'INTERNSHIP · HARDWARE',
         badge: '2026 实习',
-        tags: ['硬件与嵌入式', '异常定位'],
+        tags: ['硬件与嵌入式', '异常定位', '跨学科协作'],
         summary: '实习中完成的连接确认、参数适配、异常定位与复现记录。真实硬件经历让我在定义 AI 功能时，同时考虑设备、网络与异常恢复。',
         facts: [['角色', '产品组实习生'], ['内容', '连接确认 · 参数适配 · 异常定位 · 复现记录'], ['意义', '硬件 + 网络的真实约束']],
         hero: { f: 'assets/img/cover/internship.webp', cap: '硬件联网适配实习记录' },
