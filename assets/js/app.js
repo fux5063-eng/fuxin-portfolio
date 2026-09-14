@@ -231,13 +231,28 @@
 
   /* 内页页头粒子（尺寸小、密度低） */
   let heroFXs = [];
-  function mountHeroFX(scope) {
+  function mountHeroFX(scope, tries) {
+    const n = tries || 0;
+    try { return mountHeroFXRun(scope, n); } catch (e) { try { console.warn('[heroFX]', e); } catch (_) {} }
+  }
+  function mountHeroFXRun(scope, n) {
     heroFXs.forEach(f => f.dispose && f.dispose());
-    heroFXs = [...scope.querySelectorAll('canvas.phero__fx')]
-      .map(cv => createParticles(cv, {
-        density: 9200, maxN: 130, minN: 40, bandBase: .58, bandAmp: .10, bandWidth: 42,
-        freeRatio: .16, link: 126, linkAlpha: .38, speed: 1.9,
-      })).filter(Boolean);
+    heroFXs = [];
+    const cvs = [...scope.querySelectorAll('canvas.phero__fx')];
+    cvs.forEach(cv => {
+      try {
+        const fx = createParticles(cv, {
+          /* 与主页完全同一套观感：同样的带状流动 + 同样的连线密度/透明度 */
+          density: 3400, maxN: 130, minN: 58, bandBase: .56, bandAmp: .115, bandWidth: 74,
+          freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.95, dpr: 1.25,
+        });
+        if (fx && fx.canvas && fx.canvas.width > 1) heroFXs.push(fx);
+      } catch (e) { /* 忽略：下一帧重试 */ }
+    });
+    /* 自愈：画布还没挂上 / 上下文临时不可用 / 尺寸为 0 时，接下来几帧重试 */
+    if (heroFXs.length < Math.max(1, cvs.length) && n < 8) {
+      requestAnimationFrame(() => mountHeroFX(scope, n + 1));
+    }
   }
 
   /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
@@ -432,7 +447,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915G').then(mod => {
+    import('./model3d.js?v=20260915H').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -478,7 +493,13 @@
       });
     }).catch(err => { window.__m3dState.err = String(err && err.message || err); console.warn('3D 模块加载失败：', err); });
   }
-  function disposeModels() { viewers.forEach(v => { try { v.dispose(); } catch (e) {} }); viewers = []; window.__m3d = viewers; }
+  function disposeModels() {
+    try {
+      viewers.forEach(v => { try { v.dispose(); } catch (e) {} });
+      viewers = [];
+      window.__m3d = viewers;
+    } catch (e) { /* 清理失败绝不影响后续渲染 */ }
+  }
 
   /* ================= 视图 ================= */
 
@@ -840,6 +861,9 @@
   /* ================= 路由 ================= */
 
   function render() {
+    /* 组件隔离：任一组件初始化失败，其余照常运行
+       （历史上曾两次因作用域/初始化问题让整页后半段全废：CARD_SEL 的 TDZ、disposeModels） */
+    const safe = (name, fn) => { try { fn(); } catch (e) { try { console.warn('[init]', name, e); } catch (_) {} } };
     const raw = location.hash.replace(/^#\/?/, '');
     const [a, b] = raw.split('/');
     const isHome = !a || a === 'contact';
@@ -862,17 +886,19 @@
     app.innerHTML = html;
     document.title = title;
     body.classList.toggle('on-home', isHome);
-    runCleanups();                       // 清掉上一页的轨道/滑块监听
-    disposeModels();
-    mountModels(app);
+    runCleanups();
+    safe('disposeModels', disposeModels);
+    safe('mountModels', () => mountModels(app));
     /* 项目页：章节轨道 + 草图↔成品对比滑块 */
-    const domSecs = [...app.querySelectorAll('.cs__sec')].map(s => ({ h: (s.querySelector('h2') || {}).textContent || '' }));
-    if (domSecs.length) initRail(app, domSecs);
-    initCompare(app);
-    initTabs(app);
-    gateFlowInit();
-    initCardFX(app);
-    initFilter(app);
+    let domSecs = [];
+    safe('sections', () => { domSecs = [...app.querySelectorAll('.cs__sec')].map(s => ({ h: (s.querySelector('h2') || {}).textContent || '' })); });
+    if (domSecs.length) safe('rail', () => initRail(app, domSecs));
+    safe('compare', () => initCompare(app));
+    safe('tabs', () => initTabs(app));
+    safe('gateFlow', () => gateFlowInit());
+    safe('cardFX', () => initCardFX(app));
+    safe('filter', () => initFilter(app));
+
 
     /* 导航高亮：标出当前所在方向/页面 */
     const cur = '#' + (a || '');
@@ -898,7 +924,7 @@
     /* 入场动效：不再因为系统"减少动态效果"而被静默关闭（站主要动效），并加兜底 */
     requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
     setTimeout(() => document.querySelector('.hero')?.classList.add('in'), 800);
-    mountHeroFX(app);
+    safe('heroFX', () => mountHeroFX(app));
     revealNow();
     updateNav();
     isHome ? FX.start() : FX.stop();
@@ -1006,9 +1032,8 @@
 
   if (fine) {
     // ===== 统一卡片交互：倾斜 + 高光跟随（所有卡片共用同一套行为）=====
-    const CARD_SEL = '.gate,.card,.pick';
     function initCardFX(scope) {
-      const els = [...scope.querySelectorAll(CARD_SEL)];
+      const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
         let raf = 0;
         const strong = el.classList.contains('gate') || el.classList.contains('pick');

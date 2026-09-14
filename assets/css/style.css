@@ -778,7 +778,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
    高级化 v3：页头粒子 / 深转浅过渡 / 吸顶章节 / 卷帘图片
    ============================================================ */
 .phero{position:relative}
-.phero__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:1;opacity:.9}
+.phero__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:1;opacity:1}
 .phero .wrap{z-index:3}
 .phero__fade{height:66px;margin-top:-66px;position:relative;z-index:2;pointer-events:none;
   background:linear-gradient(180deg,rgba(10,13,17,.98),rgba(10,13,17,0))}
