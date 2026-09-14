@@ -489,7 +489,7 @@
       const play = () => {
         if (stopped || box.dataset.auto === '0' || chips.length < 2) return;
         stop();
-        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); }, 4600);
+        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); }, 3000);
       };
       chips.forEach(c => c.addEventListener('click', e => {
         e.preventDefault();

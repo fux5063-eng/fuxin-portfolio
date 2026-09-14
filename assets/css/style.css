@@ -869,10 +869,10 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .tabs__no{font:800 11px/1 ui-monospace,monospace;letter-spacing:.06em;opacity:.55}
 .tabs__chip.on .tabs__no{opacity:.8;color:var(--accent)}
 .tabs__prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;opacity:0}
-.tabs__chip.on .tabs__prog{opacity:1;animation:tprog 4.6s linear forwards}
+.tabs__chip.on .tabs__prog{opacity:1;animation:tprog 3s linear forwards}
 .tabs:hover .tabs__chip.on .tabs__prog{animation-play-state:paused}
 .tabs__chip .tabs__prog{animation:none}
-.tabs__chip.on .tabs__prog{animation:tprog 4.6s linear forwards}
+.tabs__chip.on .tabs__prog{animation:tprog 3s linear forwards}
 @keyframes tprog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .tabs.manual .tabs__prog{opacity:0}
 /* 与切换同步的"做出什么" */
