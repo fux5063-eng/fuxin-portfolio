@@ -954,6 +954,10 @@
         ${prev ? `<a href="#${d.id}/${prev.slug}">← 上一个：${esc(prev.title)}</a>` : '<span></span>'}
         ${next ? `<a href="#${d.id}/${next.slug}">下一个：${esc(next.title)} →</a>` : `<a href="#${d.id}">回到${esc(d.label)} →</a>`}
       </div>
+      <div class="pback">
+        <a class="pback__btn" href="#${d.id}">← 回到${esc(d.label)}</a>
+        <a class="pback__btn pback__btn--ghost" href="#/">回到首页</a>
+      </div>
       </div>
     </section>`;
   }
