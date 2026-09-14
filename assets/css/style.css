@@ -963,3 +963,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 body.exp-open{overflow:hidden}
 @media(max-width:900px){.exp__body{grid-template-columns:1fr}.exp__pic{max-width:180px}}
 @media (prefers-reduced-motion:reduce){.exp__panel,.exp__mask{transition:none}}
+
+/* 首屏三颗入口按钮：同一套外观（描边 → 悬停实心白），窄屏可换行 */
+.hero .hero__cta{flex-wrap:wrap;gap:11px}
+.hero .hero__cta .btn{--h:auto}

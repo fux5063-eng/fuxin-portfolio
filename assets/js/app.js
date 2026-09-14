@@ -483,7 +483,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915L').then(mod => {
+    import('./model3d.js?v=20260915M').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -607,7 +607,7 @@
           <div class="hero__cta">
             <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
-            <button type="button" class="hero__exp" data-exp>或：看我的详细经历 <i>→</i></button>
+            <button type="button" class="btn mag" data-exp>看我的详细经历<span class="btn__ar">→</span></button>
             </div>
         </div>
         <div class="hero__panel fade-in">
