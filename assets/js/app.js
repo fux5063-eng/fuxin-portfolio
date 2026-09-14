@@ -447,7 +447,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915H').then(mod => {
+    import('./model3d.js?v=20260915I').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -500,6 +500,13 @@
       window.__m3d = viewers;
     } catch (e) { /* 清理失败绝不影响后续渲染 */ }
   }
+
+  /* 卡片交互 / 方向卡流光：模块作用域占位
+     （真正的实现定义在下面 if (fine) 块内 —— 那里是自定义光标的分支，
+       但 render() 需要调用它们，所以用占位变量把引用提到模块作用域，
+       避免"块作用域函数在块外不可见"导致整页渲染中断） */
+  let initCardFX = () => 0;
+  let gateFlowInit = () => {};
 
   /* ================= 视图 ================= */
 
@@ -1032,7 +1039,7 @@
 
   if (fine) {
     // ===== 统一卡片交互：倾斜 + 高光跟随（所有卡片共用同一套行为）=====
-    function initCardFX(scope) {
+    initCardFX = function (scope) {
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
         let raf = 0;
@@ -1071,7 +1078,7 @@
     }
 
     // 方向卡的流光背景：指针位置 → CSS 变量（高光跟随）
-    const gateFlowInit = () => {
+    gateFlowInit = () => {
       document.querySelectorAll('.gate[data-flow]').forEach(g => {
         let raf = 0;
         const move = e => {
