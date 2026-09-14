@@ -282,12 +282,20 @@
   }
 
   /* 细节切换器：点标签换大图 + 说明（纯 DOM 切换，最稳） */
-  function tabsBlock(list) {
+  function tabsBlock(list, opts) {
     if (!list || !list.length) return '';
+    const o = Object.assign({ auto: true, sync: '', hint: '' }, opts || {});
+    const hint = o.hint || (list.length + ' 项内容 · 自动轮播 · 可点标签切换');
     return `
-      <div class="tabs" data-tabs>
+      <div class="tabs" data-tabs data-auto="${o.auto ? '1' : '0'}"${o.sync ? ` data-sync="${esc(o.sync)}"` : ''}>
+        <div class="tabs__head">
+          <span class="tabs__hint"><i class="tabs__live"></i>${esc(hint)}</span>
+          <span class="tabs__dots" role="tablist">${list.map((x, i) => `<i data-dot="${i}" class="${i === 0 ? 'on' : ''}"></i>`).join('')}</span>
+        </div>
         <div class="tabs__chips" role="tablist">
-          ${list.map((x, i) => `<button type="button" class="tabs__chip${i === 0 ? ' on' : ''}" data-i="${i}" role="tab">${esc(x.t)}</button>`).join('')}
+          ${list.map((x, i) => `<button type="button" class="tabs__chip${i === 0 ? ' on' : ''}" data-i="${i}" role="tab" aria-selected="${i === 0}">
+            <b class="tabs__no">${String(i + 1).padStart(2, '0')}</b><span>${esc(x.t)}</span><i class="tabs__prog"></i>
+          </button>`).join('')}
         </div>
         <div class="tabs__panes">
           ${list.map((x, i) => `
@@ -296,7 +304,7 @@
               <div class="tabs__txt"><b>${esc(x.t)}</b><p>${esc(x.d || '')}</p></div>
             </div>`).join('')}
         </div>
-        <div class="tabs__foot">点上面的标签切换细节 · 点图可放大</div>
+        <div class="tabs__foot">点标签可切换 · 点图可放大</div>
       </div>`;
   }
 
@@ -362,11 +370,33 @@
     scope.querySelectorAll('[data-tabs]').forEach(box => {
       const chips = [...box.querySelectorAll('.tabs__chip')];
       const panes = [...box.querySelectorAll('.tabs__pane')];
-      chips.forEach(c => c.addEventListener('click', () => {
-        const i = +c.dataset.i;
-        chips.forEach((x, k) => x.classList.toggle('on', k === i));
+      const dots = [...box.querySelectorAll('[data-dot]')];
+      const key = box.dataset.sync || '';
+      const setI = i => {
+        chips.forEach((x, k) => { x.classList.toggle('on', k === i); x.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
         panes.forEach((x, k) => x.classList.toggle('on', k === i));
+        dots.forEach((x, k) => x.classList.toggle('on', k === i));
+        box.dataset.active = i;
+        if (key) {
+          document.querySelectorAll('[data-sync-target="' + key + '"] [data-o]').forEach(x => x.classList.toggle('on', +x.dataset.o === i));
+        }
+      };
+      let idx = 0, timer = null, stopped = false;
+      const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+      const play = () => {
+        if (stopped || box.dataset.auto === '0' || chips.length < 2) return;
+        stop();
+        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); }, 4600);
+      };
+      chips.forEach(c => c.addEventListener('click', e => {
+        e.preventDefault();
+        idx = +c.dataset.i; setI(idx); stopped = true; stop(); box.classList.add('manual');
       }));
+      box.addEventListener('mouseenter', stop);
+      box.addEventListener('mouseleave', () => { if (!stopped) play(); });
+      setI(0);
+      play();
+      cleanups.push(() => { stopped = true; stop(); });
     });
   }
 
@@ -399,7 +429,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914Z').then(mod => {
+    import('./model3d.js?v=20260915A').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -656,6 +686,16 @@
   }
 
   function viewProject(d, p) {
+    /* 若本页有可切换内容，则段3 的"做出什么"与切换同步（每项对应一件工具的产出） */
+    const tabSec = (p.sections || []).find(x => x.tabs && x.tabs.length);
+    const syncOutcomes = sec => {
+      if (!tabSec || sec.syncTo !== 'tabs') return '';
+      return `<div class="cs__outcomes" data-sync-target="${esc(p.slug)}">
+        ${tabSec.tabs.map((x, i) => `<div class="cs__outcome${i === 0 ? ' on' : ''}" data-o="${i}">
+          <b>${esc(x.t)}</b><p>${esc(x.o || x.d || '')}</p></div>`).join('')}
+      </div>`;
+    };
+
     const i = d.projects.indexOf(p);
     const prev = d.projects[i - 1], next = d.projects[i + 1];
     const facts = (p.facts || []).map(f => `<div class="fact"><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('');
@@ -680,7 +720,7 @@
         <div class="cs__main">
           <h2>${esc(s.h)}</h2>
           ${s.lead ? `<p class="cs__lead">${esc(shortText(s.lead, 46))}</p>` : ''}
-          ${itemsBlock(s.items)}
+          ${syncOutcomes(s)}${itemsBlock(s.items)}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
           ${tabsBlock(s.tabs)}

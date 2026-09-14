@@ -850,3 +850,35 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .hero .hero__cta .btn:hover .btn__ar{transform:translateX(4px)}
 @keyframes btnFlick{0%{opacity:1}36%{opacity:.8}54%{opacity:.96}100%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.hero .hero__cta .btn:hover{animation:none}.hero .hero__cta .btn::after{display:none}}
+
+/* ============ 工具切换：自动轮播 + 明确指示 + 与"做出什么"同步 ============ */
+.tabs__head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:4px 0 14px;flex-wrap:wrap}
+.tabs__hint{display:inline-flex;align-items:center;gap:9px;font-size:12.6px;color:var(--muted);letter-spacing:.01em}
+.tabs__live{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:tabLive 1.8s ease-in-out infinite;flex:none}
+@keyframes tabLive{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+.tabs__dots{display:inline-flex;gap:6px}
+.tabs__dots i{width:24px;height:3px;border-radius:2px;background:rgba(14,18,22,.13);transition:background .35s ease}
+.tabs__dots i.on{background:var(--accent)}
+.tabs__chip{position:relative;display:inline-flex;align-items:center;gap:9px;padding:12px 17px;border:1px solid var(--line);
+  border-radius:12px;background:#fff;cursor:pointer;overflow:hidden;font-size:14.6px;font-weight:600;color:var(--ink);
+  transition:transform .34s cubic-bezier(.2,.7,.3,1),border-color .34s ease,background .34s ease,color .34s ease,box-shadow .34s ease}
+.tabs__chip:hover{transform:translateY(-2px);border-color:rgba(224,98,45,.45);box-shadow:0 14px 30px -18px rgba(14,18,22,.35)}
+.tabs__chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs__no{font:800 11px/1 ui-monospace,monospace;letter-spacing:.06em;opacity:.55}
+.tabs__chip.on .tabs__no{opacity:.8;color:var(--accent)}
+.tabs__prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;opacity:0}
+.tabs__chip.on .tabs__prog{opacity:1;animation:tprog 4.6s linear forwards}
+.tabs:hover .tabs__chip.on .tabs__prog{animation-play-state:paused}
+.tabs__chip .tabs__prog{animation:none}
+.tabs__chip.on .tabs__prog{animation:tprog 4.6s linear forwards}
+@keyframes tprog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.tabs.manual .tabs__prog{opacity:0}
+/* 与切换同步的"做出什么" */
+.cs__outcomes{margin:2px 0 16px;min-height:1px}
+.cs__outcome{display:none}
+.cs__outcome.on{display:block;animation:oFade .52s cubic-bezier(.2,.7,.3,1)}
+@keyframes oFade{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.cs__outcome b{display:block;font:800 12px/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-d);margin:0 0 9px}
+.cs__outcome p{margin:0;font-size:15.4px;line-height:1.88;color:var(--ink)}
+@media(max-width:680px){.tabs__chip{padding:10px 13px;font-size:13.6px}.tabs__dots i{width:16px}}
