@@ -413,7 +413,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', '品牌与包装'],
         summary: '把牵引、互动玩具携带与简单清洁集成到一个随身产品，减少外出携带负担。',
         facts: [['角色', '调研整理 · 产品定义 · 造型 · 建模 · 渲染 · 品牌包装'], ['功能', '牵引 / 握持 / 可拆卸清洁刷 / 玩具球仓 / 垃圾袋收纳'], ['过程', '连续 Rhino 阶段文件可追溯']],
-        hero: { f: 'assets/img/case/id/doggie-hero.webp', cap: '成品配色阵列：主色 + 多套 CMF 方案' },
+        hero: { f: 'assets/img/case/id/doggie-hero-16x10.webp', cap: '成品配色阵列：主色 + 多套 CMF 方案' },
         model: { src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型', note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计' },
         sections: [
           {
@@ -447,7 +447,7 @@ const DIRECTIONS = [
           },
           {
             h: '做出什么', en: 'WHAT',
-            compare: { before: { f: 'assets/img/case/id/doggie-sketch.webp', label: '草图探索' }, after: { f: 'assets/img/case/id/doggie-hero.webp', label: '成品配色' }, cap: '左边是草图发散页，右边是成品配色阵列——同一个造型从推演到收敛。' },
+            compare: { before: { f: 'assets/img/case/id/doggie-sketch.webp', label: '草图探索' }, after: { f: 'assets/img/case/id/doggie-hero-16x10.webp', label: '成品配色' }, cap: '左边是草图发散页，右边是成品配色阵列——同一个造型从推演到收敛。' },
             lead: '交付包含产品外观、多套配色、局部细节、三视图、爆炸示意与包装设计。同一个模型也放在这一节里，可以自己转着看。',
             items: [
               '外观与配色：主色方案 + 多套 CMF，用于不同使用人群与场景。',
