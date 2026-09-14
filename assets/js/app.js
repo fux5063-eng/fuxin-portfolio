@@ -483,7 +483,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915J').then(mod => {
+    import('./model3d.js?v=20260915K').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -553,8 +553,8 @@
         <div class="gate__bg gate__flow" data-flow="${i}">
           <i class="flow__blob b1"></i><i class="flow__blob b2"></i><i class="flow__blob b3"></i>
           <i class="flow__grid"></i><i class="flow__grain"></i><i class="flow__sheen"></i>
-          <canvas class="gate__fx" aria-hidden="true"></canvas>
         </div>
+        <canvas class="gate__fx" aria-hidden="true"></canvas>
         <div class="gate__body">
           <div class="gate__en">${esc(d.en)}</div>
           <h3>${esc(d.label)}</h3>
@@ -1083,8 +1083,8 @@
       gateFXs.forEach(f => f.dispose && f.dispose());
       gateFXs = [...scope.querySelectorAll('canvas.gate__fx')]
         .map(cv => createParticles(cv, {
-          density: 2600, maxN: 80, minN: 42, band: true, bandBase: .5, bandAmp: .16, bandWidth: 96,
-          freeRatio: .42, link: 118, linkAlpha: .34, speed: 1.6, dpr: 1.25,
+          density: 1600, maxN: 150, minN: 70, band: true, bandBase: .5, bandAmp: .16, bandWidth: 104,
+          freeRatio: .40, link: 132, linkAlpha: .52, speed: 1.7, dpr: 1.25,
         })).filter(Boolean);
     };
 

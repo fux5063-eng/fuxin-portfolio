@@ -925,5 +925,5 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 @media (prefers-reduced-motion:reduce){.card::before,.pick::before{display:none}}
 
 /* 方向卡内的可交互粒子层 */
-.gate__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:2;opacity:.95}
+.gate__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:1;opacity:1}
 .gate__body{z-index:4}
