@@ -155,7 +155,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914d').then(mod => {
+    import('./model3d.js?v=20260914e').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -565,7 +565,7 @@
 
     /* 导航高亮：标出当前所在方向/页面 */
     const cur = '#' + (a || '');
-    app.querySelectorAll('.nav a').forEach(link => {
+    document.querySelectorAll('#nav a.nav__link, .nav a').forEach(link => {
       const href = link.getAttribute('href') || '';
       const on = href === cur || (a && href === '#' + a);
       link.classList.toggle('on', !!on);
