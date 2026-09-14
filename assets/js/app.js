@@ -628,31 +628,6 @@
     return cardFXs.length;
   }
 
-  /* 胶片条：箭头翻页 + 拖拽滑动 + 滚轮横向 */
-  function initStrips(scope) {
-    scope.querySelectorAll('.figstrip--scroll').forEach(box => {
-      const track = box.querySelector('.figstrip__track');
-      if (!track) return;
-      const step = () => Math.max(280, Math.round(track.clientWidth * .82));
-      box.querySelectorAll('.figstrip__nav').forEach(btn => btn.addEventListener('click', () => {
-        track.scrollBy({ left: (btn.classList.contains('next') ? 1 : -1) * step(), behavior: 'smooth' });
-      }));
-      /* 到边界时把箭头置灰 */
-      const sync = () => {
-        const max = track.scrollWidth - track.clientWidth - 2;
-        box.classList.toggle('at-start', track.scrollLeft <= 2);
-        box.classList.toggle('at-end', track.scrollLeft >= max);
-      };
-      track.addEventListener('scroll', sync, { passive: true });
-      /* 桌面：把竖向滚轮转为横向（在条内滚动时） */
-      track.addEventListener('wheel', e => {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { track.scrollLeft += e.deltaY; e.preventDefault(); }
-      }, { passive: false });
-      sync();
-      cleanups.push(() => {});
-    });
-  }
-
   /* ================= 视图 ================= */
 
   function viewHome() {
@@ -1064,7 +1039,6 @@
     safe('gateFlow', () => gateFlowInit());
     safe('gateFX', () => mountGateFX(app));
     safe('cardParticles', () => mountCardFX(app));
-    safe('strips', () => initStrips(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
 
