@@ -1001,13 +1001,13 @@ body.exp-open{overflow:hidden}
   background:linear-gradient(transparent 63%,rgba(224,98,45,.28) 63%);padding:0 1px;border-radius:2px}
 .cs__more .cs__list li b.kd{background:linear-gradient(transparent 63%,rgba(224,98,45,.20) 63%)}
 
-/* ============ 项目卡粒子（档位 A：悬停淡入 + 中心遮罩保护产品） ============ */
-.card__img{position:relative}
+/* ============ 项目卡粒子（常驻 + 中心遮罩保护产品） ============ */
+.card__img,.pick__img{position:relative}
 .card__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:2;
-  opacity:.78;transition:opacity .5s cubic-bezier(.2,.7,.3,1);
+  opacity:.92;transition:opacity .5s cubic-bezier(.2,.7,.3,1);
   /* 中心挖空：产品所在的中部区域完全透出，粒子只出现在四周留白 */
-  -webkit-mask-image:radial-gradient(58% 52% at 50% 46%,transparent 58%,#000 96%);
-  mask-image:radial-gradient(58% 52% at 50% 46%,transparent 58%,#000 96%)}
-.card:hover .card__fx,.card:focus-visible .card__fx{opacity:1}
+  -webkit-mask-image:radial-gradient(62% 56% at 50% 45%,rgba(0,0,0,.06) 0 30%,rgba(0,0,0,.5) 62%,#000 100%);
+  mask-image:radial-gradient(62% 56% at 50% 45%,rgba(0,0,0,.06) 0 30%,rgba(0,0,0,.5) 62%,#000 100%)}
+.card:hover .card__fx,.card:focus-visible .card__fx,.pick:hover .card__fx{opacity:1}
 .card:hover .card__img img{filter:saturate(1.04)}
 @media (hover:none){.card__fx{display:none}}

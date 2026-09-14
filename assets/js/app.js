@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915R').then(mod => {
+    import('./model3d.js?v=20260915S').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -661,7 +661,7 @@
       const fact = (p.facts || []).find(f => f && f[1]) || ['类型', dir.label];
       return `
       <a class="pick rv" href="#${dirId}/${slug}">
-        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}"></div>
+        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}"><canvas class="card__fx" aria-hidden="true"></canvas></div>
         <div class="pick__body">
           <div class="pick__eyebrow">${esc(dir.label)} · ${esc(fact[0])}</div>
           <h3>${esc(p.title)}</h3>
