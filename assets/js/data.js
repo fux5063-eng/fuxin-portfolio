@@ -1,5 +1,8 @@
 /* 站点内容数据 —— 全部取自本人作品集（2026-09-13 终审版）与 career/master-profile.md，未新增未经验证的事实 */
 const SITE = {
+  /* 低分辨率图片清单（渲染时按原尺寸显示，避免拉伸变糊） */
+  smallImgs: ["assets/img/case/id/doggie-bg-1.jpg", "assets/img/case/id/doggie-bg-1.webp", "assets/img/case/id/doggie-bg-2.jpg", "assets/img/case/id/doggie-bg-2.webp", "assets/img/case/id/doggie-bg-3.jpg", "assets/img/case/id/doggie-bg-3.webp", "assets/img/case/id/doggie-bg-4.jpg", "assets/img/case/id/doggie-bg-4.webp", "assets/img/folio/ai/p02_02.jpg", "assets/img/folio/ai/p02_04.jpg", "assets/img/folio/ai/p02_05.jpg", "assets/img/folio/ai/p02_06.jpg", "assets/img/folio/ai/p02_07.jpg", "assets/img/folio/ai/p02_08.jpg", "assets/img/folio/ai/p02_09.jpg", "assets/img/folio/ai/p02_10.jpg", "assets/img/folio/ai/p02_12.jpg", "assets/img/folio/ai/p02_13.jpg", "assets/img/folio/ai/p02_15.jpg", "assets/img/folio/ai/p02_16.jpg", "assets/img/folio/ai/p08_01.jpg", "assets/img/folio/ai/p08_02.jpg", "assets/img/folio/ai/p08_03.jpg", "assets/img/folio/ai/p08_04.jpg", "assets/img/folio/ai/p08_05.jpg", "assets/img/folio/ai/p08_06.jpg", "assets/img/folio/ai/p08_07.jpg", "assets/img/folio/ai/p08_08.jpg", "assets/img/folio/ai/p29_01.jpg", "assets/img/folio/ai/p30_01.jpg", "assets/img/folio/ai/p31_01.jpg", "assets/img/folio/ai/p37_01.jpg", "assets/img/folio/ai/p37_02.jpg", "assets/img/folio/ai/p41_01.jpg", "assets/img/folio/ai/p42_01.jpg", "assets/img/folio/id/p02_02.jpg", "assets/img/folio/id/p02_04.jpg", "assets/img/folio/id/p02_05.jpg", "assets/img/folio/id/p02_06.jpg", "assets/img/folio/id/p02_07.jpg", "assets/img/folio/id/p02_08.jpg", "assets/img/folio/id/p02_09.jpg", "assets/img/folio/id/p02_10.jpg", "assets/img/folio/id/p02_12.jpg", "assets/img/folio/id/p02_13.jpg", "assets/img/folio/id/p02_15.jpg", "assets/img/folio/id/p02_16.jpg", "assets/img/folio/id/p03_01.jpg", "assets/img/folio/id/p03_03.jpg", "assets/img/folio/id/p05_01.jpg", "assets/img/folio/id/p05_02.jpg", "assets/img/folio/id/p05_03.jpg", "assets/img/folio/id/p36_01.jpg", "assets/img/folio/id/p46_01.jpg", "assets/img/folio/id/p46_02.jpg", "assets/img/folio/id/p46_03.jpg", "assets/img/folio/id/p46_04.jpg", "assets/img/folio/id/p48_01.jpg", "assets/img/qr/dl-ai.png", "assets/img/qr/dl-id.png", "assets/img/qr/download-512.png", "assets/img/qr/site-512.png", "assets/img/qr/site-invert-512.png", "assets/img/qr/site2-512.png"],
+
   name: '付昕', en: 'FU XIN',
   role: '产品设计 · 工业设计 · AI 产品',
   sub: 'Industrial Design × AI Product · 2027 届',
@@ -568,8 +571,8 @@ const DIRECTIONS = [
             chip: '成品渲染', title: '落水报警终端 · 形态对比与 CMF',
             note: '三组形态方向的并列对比与 CMF、使用场景表达，用于说明外形取向与表面处理选择；客户信息已匿名化处理',
             images: [
-              { f: 'assets/img/case/id/wateralarm-p38.webp', cap: '三组形态方向并列对比', alt: '落水报警终端 形态方向对比' },
-              { f: 'assets/img/case/id/wateralarm-p40.webp', cap: 'CMF 与使用场景表达', alt: '落水报警终端 CMF 与使用场景' },
+              { f: 'assets/img/id/wateralarm-p38.webp', cap: '三组形态方向并列对比', alt: '落水报警终端 形态方向对比' },
+              { f: 'assets/img/id/wateralarm-p40.webp', cap: 'CMF 与使用场景表达', alt: '落水报警终端 CMF 与使用场景' },
             ],
           },
         },

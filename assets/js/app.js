@@ -893,7 +893,10 @@
       </figure>`;
     const figs = list => {
       if (!list || !list.length) return '';
-      const grid = list.length > 1 ? 'figs--grid' : 'figs--one';
+      /* 低清图（宽<600px）自动走"小图组"，按原尺寸显示，避免被拉伸变糊 */
+      const smallSet = (SITE.smallImgs || []).map(s => s.split('/').pop());
+      const anySmall = list.some(f => smallSet.indexOf((f.f || '').split('/').pop()) >= 0);
+      const grid = anySmall ? 'figs--small' : (list.length > 1 ? 'figs--grid' : 'figs--one');
       return `<div class="figs ${grid}">${list.map(f => fig(f)).join('')}</div>`;
     };
 
@@ -1200,12 +1203,13 @@
   if (fine) {
     // 方向卡内的粒子层（与主页同一引擎 → 自动获得指针交互）
     let gateFXs = [];
+
     mountGateFX = scope => {
       gateFXs.forEach(f => f.dispose && f.dispose());
       gateFXs = [...scope.querySelectorAll('canvas.gate__fx')]
         .map(cv => createParticles(cv, {
-          density: 1600, maxN: 150, minN: 70, band: true, bandBase: .5, bandAmp: .16, bandWidth: 104,
-          freeRatio: .40, link: 132, linkAlpha: .52, speed: 1.7, dpr: 1.25,
+          density: 2600, maxN: 88, minN: 44, band: true, bandBase: .5, bandAmp: .14, bandWidth: 96,
+          freeRatio: .36, link: 108, linkAlpha: .34, speed: 1.5, dpr: 1.25,
         })).filter(Boolean);
     };
 
