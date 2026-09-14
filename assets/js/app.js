@@ -157,17 +157,41 @@
     let W = 0, H = 0, parts = [], raf = 0, on = false, last = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, o.dpr);
     const mouse = { x: -9999, y: -9999, on: false, r: 150 };
-    /* 指针 → 画布坐标（原来只声明了 mouse 却没人写入，导致斥力永不生效） */
+    /* 指针 → 画布坐标
+       性能要点：原来每个画布各挂一套 window 监听、事件里再 getBoundingClientRect()，
+       一页 20+ 画布 = 每次鼠标移动触发 20+ 次强制布局（这才是交互延迟的元凶）。
+       现改为：全局只挂一套监听；矩形带缓存，滚动/缩放统一换代刷新。 */
+    const FX = (window.__fxReg = window.__fxReg || { list: [], bound: false, gen: 0 });
+    let myRect = null, myGen = -1;
+    function rectNow() {
+      if (myGen !== FX.gen || !myRect) { myRect = cv.getBoundingClientRect(); myGen = FX.gen; }
+      return myRect;
+    }
     function onPointerMove(e) {
-      const r = cv.getBoundingClientRect();
+      const r = rectNow();
       const x = e.clientX - r.left, y = e.clientY - r.top;
       mouse.x = x; mouse.y = y;
       mouse.on = x > -80 && y > -80 && x < r.width + 80 && y < r.height + 80;
     }
     function onPointerLeave() { mouse.on = false; mouse.x = -9999; mouse.y = -9999; }
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerdown', onPointerMove, { passive: true });
-    document.addEventListener('pointerleave', onPointerLeave);
+    FX.list.push({ cv: cv, move: onPointerMove, leave: onPointerLeave });
+    if (!FX.bound) {
+      FX.bound = true;
+      const fire = e => {
+        for (let i = 0; i < FX.list.length; i++) {
+          const it = FX.list[i];
+          if (it.cv.isConnected) it.move(e);
+        }
+      };
+      window.addEventListener('pointermove', fire, { passive: true });
+      window.addEventListener('pointerdown', fire, { passive: true });
+      document.addEventListener('pointerleave', () => {
+        for (let i = 0; i < FX.list.length; i++) { if (FX.list[i].cv.isConnected) FX.list[i].leave(); }
+      });
+      const dirty = () => { FX.gen++; FX.list = FX.list.filter(it => it.cv.isConnected); };
+      window.addEventListener('scroll', dirty, { passive: true });
+      window.addEventListener('resize', dirty, { passive: true });
+    }
 
     function build() {
       const n = Math.round(Math.min(o.maxN, Math.max(o.minN, (W * H) / o.density)));
@@ -1267,19 +1291,21 @@
     initCardFX = function (scope) {
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
-        let raf = 0, lastEv = null;
+        let raf = 0, lastEv = null, rect = null;
         const strong = el.classList.contains('gate') || el.classList.contains('pick');
         const kx = strong ? 13 : 10;      // 旋转幅度（原来 ±3.5°/±2.2° 几乎看不出来，加大一档）
         const ky = strong ? 11 : 8;
         const lift = strong ? 12 : 9;
+        const onEnter = () => { rect = el.getBoundingClientRect(); el.classList.add('is-tilt'); };
         const onMove = e => {
-          lastEv = e;                     // 只记最新事件，坐标在下一帧统一计算（避免丢帧导致跳动）
+          lastEv = e;                     // 只记最新事件，坐标在下一帧统一计算
+          if (!rect) rect = el.getBoundingClientRect();
           if (raf) return;
           raf = requestAnimationFrame(() => {
             raf = 0;
             const ev = lastEv;
             if (!ev) return;
-            const r = el.getBoundingClientRect();
+            const r = rect;
             const px = (ev.clientX - r.left) / r.width - .5;
             const py = (ev.clientY - r.top) / r.height - .5;
             el.style.setProperty('--mx', (px * 2).toFixed(3));
@@ -1289,14 +1315,18 @@
         };
         const onLeave = () => {
           if (raf) { cancelAnimationFrame(raf); raf = 0; }
+          rect = null;
+          el.classList.remove('is-tilt');
           el.style.transform = '';
           el.style.setProperty('--mx', '0');
           el.style.setProperty('--my', '0');
         };
+        el.addEventListener('pointerenter', onEnter);
         el.addEventListener('pointermove', onMove);
         el.addEventListener('pointerleave', onLeave);
         el.classList.add('fxcard');
         cleanups.push(() => {
+          el.removeEventListener('pointerenter', onEnter);
           el.removeEventListener('pointermove', onMove);
           el.removeEventListener('pointerleave', onLeave);
           onLeave();

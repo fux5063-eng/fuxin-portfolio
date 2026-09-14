@@ -1143,8 +1143,9 @@ body.exp-open{overflow:hidden}
 
 /* ==== 交互跟手（性能）：hover 期间把 transform 过渡压到 0.12s，
    避免"每帧写入 + 0.3~0.4s 长过渡"互相打架造成的拖尾与卡顿；并提前提升为合成层 ==== */
-.fxcard{will-change:transform}
-.fxcard:hover{transition:transform .12s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
+.fxcard{will-change:transform;transition:transform .34s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
+/* 跟手期间只过渡阴影：transform 每帧直接写入 → 1:1 跟随鼠标，不再慢一拍 */
+.fxcard.is-tilt{transition:box-shadow .3s ease}
 
 /* ==== 项目卡聚焦高亮（点项目名快速定位时短暂提示） ==== */
 .card--focus{box-shadow:0 0 0 2px var(--acc), 0 22px 48px rgba(224,98,45,.28) !important;
