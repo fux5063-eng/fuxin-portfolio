@@ -460,11 +460,18 @@
     cleanups.push(() => { window.removeEventListener('scroll', onScroll); rail.remove(); });
   }
 
-  /* 项目短名：取 "·" 之前的部分，过长则截断 */
+  /* 项目短名：能放下就用整名；长名按 "·" / 首个英文词 / "：" 自然断点切，避免切到半个词 */
   const shortName = p => {
-    const t = String(p.title || p.slug || '');
-    const cut = t.split(' · ')[0].trim();
-    return cut.length > 11 ? cut.slice(0, 11) : cut;
+    const t = String(p.title || p.slug || '').trim();
+    let byDot = ((t.split(' · ')[0] || t)).trim();
+    byDot = byDot.replace(/[（(][^）)]*[）)]/g, '').trim();   /* 去掉括号补充，如（实习）（可在线玩） */
+    if (byDot.length <= 11) return byDot;
+    const firstTok = (byDot.split(' ')[0] || '').trim();
+    if (/^[A-Za-z]/.test(byDot) && firstTok.length >= 3) return firstTok;
+    const byColon = (byDot.split(/[：:]/)[0] || '').trim();
+    if (byColon.length >= 4 && byColon.length <= 11) return byColon;
+    if (/[\u4e00-\u9fa5]/.test(firstTok) && firstTok.length >= 2) return firstTok;
+    return byDot.slice(0, 11);
   };
 
   /* 方向页：按能力筛选卡片 */
