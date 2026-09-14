@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914T').then(mod => {
+    import('./model3d.js?v=20260914U').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -503,8 +503,8 @@
           </h1>
           <p class="hero__lead">${esc(SITE.heroLead)}</p>
           <div class="hero__cta">
-            <a class="btn btn--light mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
-            <a class="btn btn--outline-light mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
+            <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
+            <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
           </div>
           <div class="hero__meta">
             <span><b>${esc(SITE.name)}</b> ${esc(SITE.sub)}</span>

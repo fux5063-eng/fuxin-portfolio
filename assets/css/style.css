@@ -835,3 +835,18 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .fig.in{transition:opacity .34s ease,clip-path .62s cubic-bezier(.2,.7,.3,1)}
 .fig img{transition:transform .62s cubic-bezier(.2,.7,.3,1)}
 .rv,.rv-em{transition:opacity .55s cubic-bezier(.2,.7,.3,1),transform .55s cubic-bezier(.2,.7,.3,1)}
+
+/* ============================================================
+   首屏两个入口按钮：常态同为低调描边（不再一实一空），悬停变实心白 + 扫光 + 一次轻微闪动
+   ============================================================ */
+.hero .hero__cta .btn{position:relative;overflow:hidden;background:transparent;color:#fff;
+  border-color:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.hero .hero__cta .btn:hover{background:#fff;color:#0e1216;border-color:#fff;transform:translateY(-1px);
+  animation:btnFlick .46s ease 1}
+.hero .hero__cta .btn::after{content:'';position:absolute;top:0;bottom:0;left:0;width:42%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:translateX(-170%) skewX(-14deg);transition:transform .62s cubic-bezier(.2,.7,.3,1);pointer-events:none}
+.hero .hero__cta .btn:hover::after{transform:translateX(260%) skewX(-14deg)}
+.hero .hero__cta .btn:hover .btn__ar{transform:translateX(4px)}
+@keyframes btnFlick{0%{opacity:1}36%{opacity:.8}54%{opacity:.96}100%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero .hero__cta .btn:hover{animation:none}.hero .hero__cta .btn::after{display:none}}
