@@ -66,7 +66,7 @@ const DIRECTIONS = [
     id: 'ai', label: 'AI 产品方向', en: 'AI PRODUCT DIRECTION',
     title: '机器人产品 · AI 产品原型 · 智能硬件',
     lead: '从真实硬件与语音闭环出发，把 AI 能力沉淀成可重复的设计工具与工作流。',
-    cover: 'assets/img/ai/toolset-p33.jpg',
+    cover: 'assets/img/ai/toolset-p33.webp',
     keywords: ['机器人产品', 'AI 设计工具', '智能硬件与后台'],
     pdf: 'download/付昕-AI产品方向作品集.pdf',
     projects: [
@@ -76,7 +76,7 @@ const DIRECTIONS = [
         tags: ['硬件与嵌入式', '语音与交互', '系统架构'],
         summary: '先用真实硬件跑通「唤醒—理解—回复—复位」的语音闭环与八类双眼状态，再进入外壳、结构与整机体验设计。',
         facts: [['角色', '产品定义 · 交互拆解 · 原型验证'], ['状态', '毕业设计进行中'], ['证据', 'ESP32-S3-CAM · 语音闭环 · 私人后台']],
-        hero: { f: 'assets/img/cover/robot.jpg', cap: '桌面陪伴型机器人' },
+        hero: { f: 'assets/img/cover/robot.webp', cap: '桌面陪伴型机器人' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -85,7 +85,7 @@ const DIRECTIONS = [
               '真实硬件：ESP32-S3-CAM + 2.0 英寸竖屏 + 外接扬声器，唤醒、收音、识别、回答与播放全部跑通。',
               '一次对话：唤醒（WakeNet）→ 理解（ASR 转写）→ 回复（生成答案 + TTS）→ 复位回到待机，可再次唤醒。'
             ],
-            figures: [ { f: 'assets/img/ai/robot-p06.jpg', cap: '' }, { f: 'assets/img/ai/robot-p08.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/robot-p06.webp', cap: '' }, { f: 'assets/img/ai/robot-p08.webp', cap: '' } ]
           },
           {
             h: '怎么做', en: 'HOW',
@@ -95,7 +95,7 @@ const DIRECTIONS = [
               '从设备到服务的产品架构：把一次语音交互拆成可观察、可定位、可恢复的链路。',
               '私人后台：运行总览、对话中心、诊断与日志，以及个性与记忆、能力与服务、系统设置等配置模块。'
             ],
-            figures: [ { f: 'assets/img/ai/robot-p09.jpg', cap: '' }, { f: 'assets/img/ai/robot-p13.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/robot-p09.webp', cap: '' }, { f: 'assets/img/ai/robot-p13.webp', cap: '' } ]
           },
           {
             h: '做出什么', en: 'WHAT',
@@ -103,7 +103,7 @@ const DIRECTIONS = [
             items: [
               '验证计划：统一记录口径，持续验证唤醒成功率、端到端耗时、复位与异常恢复。'
             ],
-            figures: [ { f: 'assets/img/ai/robot-p15.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/robot-p15.webp', cap: '' } ]
           },
           {
             h: '边界说明', en: 'BOUNDARY',
@@ -113,7 +113,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/robot-p06.jpg', 'assets/img/ai/robot-p08.jpg', 'assets/img/ai/robot-p09.jpg', 'assets/img/ai/robot-p13.jpg', 'assets/img/ai/robot-p15.jpg']
+        images: ['assets/img/ai/robot-p06.webp', 'assets/img/ai/robot-p08.webp', 'assets/img/ai/robot-p09.webp', 'assets/img/ai/robot-p13.webp', 'assets/img/ai/robot-p15.webp']
       },
       {
         slug: 'designdna', title: 'DesignDNA · AI 设计工作台', en: 'DESIGNDNA · AI DESIGN WORKBENCH',
@@ -121,7 +121,7 @@ const DIRECTIONS = [
         tags: ['AI 工具设计', '约束与评审', '造型与形态'],
         summary: '面向工业设计改款任务的 AI 协同工作台：先用产品 DNA 与约束地图控制探索范围，再通过逐条评审支持人工决策。',
         facts: [['角色', '产品定义 · 流程与交互设计'], ['验证案例', 'Fusion Audio 高端户外便携音响改款'], ['机制', '四步流程 · 全程可回溯']],
-        hero: { f: 'assets/img/cover/designdna.jpg', cap: 'DesignDNA 工作台界面' },
+        hero: { f: 'assets/img/cover/designdna.webp', cap: 'DesignDNA 工作台界面' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -130,7 +130,7 @@ const DIRECTIONS = [
               '约束地图把改款边界分成三层：保留（双扬声器开孔、顶部控制、承重提手）、可控（箱体比例、侧向护梁、表面层级）、自由（色彩、材料、表面处理）。',
               '把跨品类参考转成可执行的设计语言：从运动鞋提取防护分层，从智能手表提取精密边界。'
             ],
-            figures: [ { f: 'assets/img/ai/designdna-p18.jpg', cap: '' }, { f: 'assets/img/ai/designdna-p19.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/designdna-p18.webp', cap: '' }, { f: 'assets/img/ai/designdna-p19.webp', cap: '' } ]
           },
           {
             h: '怎么做', en: 'HOW',
@@ -139,7 +139,7 @@ const DIRECTIONS = [
               '九个造型方向共享同一组硬约束，先拉开轮廓差异再判断。',
               '评审记录逐条落盘，支持人工决策，而不是让模型直接给结论。'
             ],
-            figures: [ { f: 'assets/img/ai/designdna-p20.jpg', cap: '' }, { f: 'assets/img/ai/designdna-p22.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/designdna-p20.webp', cap: '' }, { f: 'assets/img/ai/designdna-p22.webp', cap: '' } ]
           },
           {
             h: '做出什么', en: 'WHAT',
@@ -148,7 +148,7 @@ const DIRECTIONS = [
               'CMF 建立系列识别：矿物色、沙岩色、石墨色与户外包胶关系。',
               '按识别度、握持可行性、分件合理性与系列延展，收敛为石墨灰与矿物橙两个方向。'
             ],
-            figures: [ { f: 'assets/img/ai/designdna-p25.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/designdna-p25.webp', cap: '' } ]
           },
           {
             h: '边界说明', en: 'BOUNDARY',
@@ -158,7 +158,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/designdna-p18.jpg', 'assets/img/ai/designdna-p19.jpg', 'assets/img/ai/designdna-p20.jpg', 'assets/img/ai/designdna-p22.jpg', 'assets/img/ai/designdna-p25.jpg'],
+        images: ['assets/img/ai/designdna-p18.webp', 'assets/img/ai/designdna-p19.webp', 'assets/img/ai/designdna-p20.webp', 'assets/img/ai/designdna-p22.webp', 'assets/img/ai/designdna-p25.webp'],
         links: [{ t: 'DesignDNA 界面走查（在线演示）', u: 'demo/designdna/' }]
       },
       {
@@ -167,7 +167,7 @@ const DIRECTIONS = [
         tags: ['AI 工具设计', '可回滚设计', '隐私边界'],
         summary: '围绕素材采集、技能管理、资源观察与运行环境切换，为自己的设计工作流搭的四件工具。',
         facts: [['角色', '需求定义 · 交互设计 · 实现与迭代'], ['形态', '桌面常驻工具 + 浏览器扩展'], ['原则', '高风险动作可回滚、凭据不外传']],
-        hero: { f: 'assets/img/cover/toolset.jpg', cap: '个人 AI 工具组界面' },
+        hero: { f: 'assets/img/cover/toolset.webp', cap: '个人 AI 工具组界面' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -175,17 +175,17 @@ const DIRECTIONS = [
             items: [
               '四条原则：展示层与治理层分开、高风险动作可回滚、本机快照优先、凭据不外传。'
             ],
-            figures: [ { f: 'assets/img/ai/toolset-p33.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/toolset-p33.webp', cap: '' } ]
           },
           {
             h: '四个工具', en: 'FOUR TOOLS',
             lead: '点下面的标签，逐个看这四件工具分别解决什么问题。',
             items: [],
             tabs: [
-              { t: 'AIGC Skill Hub', o: '把 34 项 Skill 收进一个注册表：总入口负责找，管理页负责改，跨端同步只补齐缺失项、不静默覆盖同名。', f: 'assets/img/ai/toolset-p27.jpg', d: '当前注册表收录 34 项 Skill，统一处理发现、分类、调用与跨端同步；总入口负责找，管理页负责改；同步原则是补齐缺失项，不静默覆盖同名 Skill。' },
-              { t: 'Codex Camera', o: '现实画面一次操作进入输入流：唤起、镜像预览、拍照保存、复制到剪贴板合成一个动作。', f: 'assets/img/ai/toolset-p29.jpg', d: '把唤起、镜像预览、拍照保存与复制剪贴板压缩为一次操作，让现实画面直接进入输入流。' },
-              { t: '模式切换器', o: '切换成为一次可回滚事务：先识别当前线路再选目标；高风险动作前弹窗交代影响范围与同步范围。', f: 'assets/img/ai/toolset-p32.jpg', d: '把不同线路放进同一决策界面；切换做成一次可回滚事务，先识别当前线路再选择目标方案，高风险动作前弹窗交代影响范围与同步范围。' },
-              { t: 'Codex Meter', o: '桌面常驻胶囊随时显示各账户可用状态与近期用量，点开即看明细，设置页拆开常驻行为与视觉参数。', f: 'assets/img/ai/toolset-p37.jpg', d: '桌面常驻胶囊显示各账户当前可用状态与近期用量，点击展开明细；设置页把常驻行为、同步来源与视觉参数拆开。' }
+              { t: 'AIGC Skill Hub', o: '把 34 项 Skill 收进一个注册表：总入口负责找，管理页负责改，跨端同步只补齐缺失项、不静默覆盖同名。', f: 'assets/img/ai/toolset-p27.webp', d: '当前注册表收录 34 项 Skill，统一处理发现、分类、调用与跨端同步；总入口负责找，管理页负责改；同步原则是补齐缺失项，不静默覆盖同名 Skill。' },
+              { t: 'Codex Camera', o: '现实画面一次操作进入输入流：唤起、镜像预览、拍照保存、复制到剪贴板合成一个动作。', f: 'assets/img/ai/toolset-p29.webp', d: '把唤起、镜像预览、拍照保存与复制剪贴板压缩为一次操作，让现实画面直接进入输入流。' },
+              { t: '模式切换器', o: '切换成为一次可回滚事务：先识别当前线路再选目标；高风险动作前弹窗交代影响范围与同步范围。', f: 'assets/img/ai/toolset-p32.webp', d: '把不同线路放进同一决策界面；切换做成一次可回滚事务，先识别当前线路再选择目标方案，高风险动作前弹窗交代影响范围与同步范围。' },
+              { t: 'Codex Meter', o: '桌面常驻胶囊随时显示各账户可用状态与近期用量，点开即看明细，设置页拆开常驻行为与视觉参数。', f: 'assets/img/ai/toolset-p37.webp', d: '桌面常驻胶囊显示各账户当前可用状态与近期用量，点击展开明细；设置页把常驻行为、同步来源与视觉参数拆开。' }
             ]
           },
           {
@@ -194,7 +194,7 @@ const DIRECTIONS = [
             items: [
               '所有工具都遵循"可回滚 + 凭据不外传"，异常时先给影响范围再动作。'
             ],
-            figures: [ { f: 'assets/img/ai/toolset-p33.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/toolset-p33.webp', cap: '' } ]
           },
           {
             h: '边界说明', en: 'BOUNDARY',
@@ -204,7 +204,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/toolset-p27.jpg', 'assets/img/ai/toolset-p29.jpg', 'assets/img/ai/toolset-p32.jpg', 'assets/img/ai/toolset-p33.jpg', 'assets/img/ai/toolset-p37.jpg']
+        images: ['assets/img/ai/toolset-p27.webp', 'assets/img/ai/toolset-p29.webp', 'assets/img/ai/toolset-p32.webp', 'assets/img/ai/toolset-p33.webp', 'assets/img/ai/toolset-p37.webp']
       },
       {
         slug: 'proto', title: '快速原型实验（可在线玩）', en: 'QUICK PROTOTYPES',
@@ -212,7 +212,7 @@ const DIRECTIONS = [
         tags: ['交互原型', '规则拆解', '调试记录'],
         summary: '一组 HTML / Canvas 快速原型：俄罗斯方块、切西瓜、打方块。用来练习规则拆解、状态管理与问题定位。',
         facts: [['形式', '网页原型 · 点开即玩'], ['能力指向', '快速原型 / 规则拆解 / 测试意识'], ['边界', '玩法类型并非原创，属于借助 AI 的交互实验']],
-        hero: { f: 'assets/img/cover/proto.jpg', cap: '可在线玩的原型实验（俄罗斯方块原型截图）' },
+        hero: { f: 'assets/img/cover/proto.webp', cap: '可在线玩的原型实验（俄罗斯方块原型截图）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -227,9 +227,9 @@ const DIRECTIONS = [
             lead: '三个原型都能直接在线玩；下面用标签逐个切换。',
             items: [],
             tabs: [
-              { t: '俄罗斯方块', f: 'assets/img/ai/proto-tetris.jpg', d: 'Canvas 渲染、7-bag 随机、消行 / 等级 / 计分、落点影子、移动端控制、声音与本地最高分，并根据实际操作反馈修改硬降与提示。' },
-              { t: '切西瓜', f: 'assets/img/ai/proto-fruit.jpg', d: '同批原型之一，用于练习物理近似、切割判定与状态管理。' },
-              { t: '打方块', f: 'assets/img/ai/proto-breakout.jpg', d: '同批原型之一，用于练习碰撞检测、关卡参数与节奏控制。' }
+              { t: '俄罗斯方块', f: 'assets/img/ai/proto-tetris.webp', d: 'Canvas 渲染、7-bag 随机、消行 / 等级 / 计分、落点影子、移动端控制、声音与本地最高分，并根据实际操作反馈修改硬降与提示。' },
+              { t: '切西瓜', f: 'assets/img/ai/proto-fruit.webp', d: '同批原型之一，用于练习物理近似、切割判定与状态管理。' },
+              { t: '打方块', f: 'assets/img/ai/proto-breakout.webp', d: '同批原型之一，用于练习碰撞检测、关卡参数与节奏控制。' }
             ]
           },
           {
@@ -249,7 +249,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/proto-tetris.jpg', 'assets/img/ai/proto-fruit.jpg', 'assets/img/ai/proto-breakout.jpg'],
+        images: ['assets/img/ai/proto-tetris.webp', 'assets/img/ai/proto-fruit.webp', 'assets/img/ai/proto-breakout.webp'],
         links: [
           { t: '玩俄罗斯方块', u: 'demo/games/tetris/index.html' },
           { t: '玩切西瓜', u: 'demo/games/fruit/index.html' },
@@ -262,7 +262,7 @@ const DIRECTIONS = [
         tags: ['硬件与嵌入式', '异常定位'],
         summary: '实习中完成的连接确认、参数适配、异常定位与复现记录。真实硬件经历让我在定义 AI 功能时，同时考虑设备、网络与异常恢复。',
         facts: [['角色', '产品组实习生'], ['内容', '连接确认 · 参数适配 · 异常定位 · 复现记录'], ['意义', '硬件 + 网络的真实约束']],
-        hero: { f: 'assets/img/cover/internship.jpg', cap: '硬件联网适配实习记录' },
+        hero: { f: 'assets/img/cover/internship.webp', cap: '硬件联网适配实习记录' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -279,7 +279,7 @@ const DIRECTIONS = [
               '把每一次异常都留成可复现的记录，避免同类问题重复排查。',
               '记录口径统一：现象、环境、复现步骤、修改与验证结果。'
             ],
-            figures: [ { f: 'assets/img/ai/internship-p39.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/internship-p39.webp', cap: '' } ]
           },
           {
             h: '这件事的意义', en: 'SO WHAT',
@@ -298,7 +298,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/internship-p39.jpg']
+        images: ['assets/img/ai/internship-p39.webp']
       },
       {
         slug: 'entity', title: '实体产品设计：DOGGIE & Lumora', en: 'PHYSICAL PRODUCT DESIGN',
@@ -306,7 +306,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', 'CMF'],
         summary: '两个实体产品：DOGGIE 多功能宠物牵引绳与 Lumora 光健康伴护仪，从使用任务到产品架构、曲面建模与 CMF。',
         facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品 + 居家康养照明'], ['证据', '连续 Rhino / KeyShot 工程']],
-        hero: { f: 'assets/img/cover/entity.jpg', cap: 'DOGGIE 与 Lumora 两个实体产品' },
+        hero: { f: 'assets/img/cover/entity.webp', cap: 'DOGGIE 与 Lumora 两个实体产品' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -323,7 +323,7 @@ const DIRECTIONS = [
               '透明球仓收纳玩具球，可拆卸清洁刷清理宠物脚底，垃圾袋收纳位于把手内部。',
               '连续 Rhino 与 KeyShot 文件记录从造型发散、分件、概念结构到最终渲染的推进过程。'
             ],
-            figures: [ { f: 'assets/img/ai/entity-p41.jpg', cap: '' } ],
+            figures: [ { f: 'assets/img/ai/entity-p41.webp', cap: '' } ],
             links: [ { t: '看 DOGGIE 完整案例（含可拖动模型）', u: '#id/doggie' } ]
           },
           {
@@ -333,7 +333,7 @@ const DIRECTIONS = [
               '灯臂收入柜体侧面，降低非使用状态的空间占用。',
               '尺寸与收纳关系在建模阶段持续校验，统一展开态与收纳态的尺寸基准。'
             ],
-            figures: [ { f: 'assets/img/ai/entity-p45.jpg', cap: '' }, { f: 'assets/img/ai/entity-p47.jpg', cap: '' } ],
+            figures: [ { f: 'assets/img/ai/entity-p45.webp', cap: '' }, { f: 'assets/img/ai/entity-p47.webp', cap: '' } ],
             links: [ { t: '看 Lumora 完整案例', u: '#id/lumora' } ]
           },
           {
@@ -344,7 +344,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/entity-p41.jpg', 'assets/img/ai/entity-p45.jpg', 'assets/img/ai/entity-p47.jpg']
+        images: ['assets/img/ai/entity-p41.webp', 'assets/img/ai/entity-p45.webp', 'assets/img/ai/entity-p47.webp']
       }
     ]
   },
@@ -352,7 +352,7 @@ const DIRECTIONS = [
     id: 'id', label: '工业设计方向', en: 'INDUSTRIAL DESIGN DIRECTION',
     title: '产品定义 · 造型设计 · 建模与视觉交付',
     lead: '真实商业项目中的造型推进、方案迭代与整套视觉交付，加上个人项目的完整设计叙事。',
-    cover: 'assets/img/id/navlight-p04.jpg',
+    cover: 'assets/img/id/navlight-p04.webp',
     keywords: ['真实商业改款', '造型与建模', 'Rhino + KeyShot 交付'],
     pdf: 'download/付昕-工业设计作品集.pdf',
     projects: [
@@ -362,7 +362,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', 'Rhino 建模', 'KeyShot 交付'],
         summary: '在既有海上导航设备平台上完成外观协作改款，强化海事设备识别，并建立可延展的系列设计语言。',
         facts: [['角色', '造型推进 · Rhino 建模 · KeyShot 视觉表达'], ['约束', '沿用既有结构、光学组件与安装维护边界'], ['目标', '外观升级 + 系列设计语言']],
-        hero: { f: 'assets/img/cover/navlight.jpg', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
+        hero: { f: 'assets/img/cover/navlight.webp', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -372,7 +372,7 @@ const DIRECTIONS = [
               '设计机会：保留光学、安装与维护边界，通过轮廓比例、散热格栅与灯带层次做外观升级。'
             ],
             figures: [
-              { f: 'assets/img/id/navlight-p05.jpg', cap: '竞品与参考观察' }
+              { f: 'assets/img/id/navlight-p05.webp', cap: '竞品与参考观察' }
             ]
           },
           {
@@ -384,13 +384,13 @@ const DIRECTIONS = [
               '把 V 形分割、纵向格栅与提手连接统一到同一设计语言，并同步考虑散热、安装孔位与维护操作。'
             ],
             figures: [
-              { f: 'assets/img/id/navlight-p06.jpg', cap: '造型推敲与形体比较', wide: true },
-              { f: 'assets/img/id/navlight-p09.jpg', cap: '结构拆解与尺寸关系（沿用既有平台边界）', wide: true }
+              { f: 'assets/img/id/navlight-p06.webp', cap: '造型推敲与形体比较', wide: true },
+              { f: 'assets/img/id/navlight-p09.webp', cap: '结构拆解与尺寸关系（沿用既有平台边界）', wide: true }
             ]
           },
           {
             h: '做出什么', en: 'WHAT',
-            compare: { before: { f: 'assets/img/id/navlight-p06.jpg', label: '形体推敲' }, after: { f: 'assets/img/id/navlight-p04.jpg', label: '改款外观' }, cap: '从形体推敲到最终外观的同项目对照。' },
+            compare: { before: { f: 'assets/img/id/navlight-p06.webp', label: '形体推敲' }, after: { f: 'assets/img/id/navlight-p04.webp', label: '改款外观' }, cap: '从形体推敲到最终外观的同项目对照。' },
             lead: '交付覆盖外观造型推进、Rhino 建模与 KeyShot 视觉表达，用于方案评审与后续量产落地的前置沟通。',
             items: [
               '外观方案：在既有平台边界内完成造型升级，并留出系列延展的空间。',
@@ -413,7 +413,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', '品牌与包装'],
         summary: '把牵引、互动玩具携带与简单清洁集成到一个随身产品，减少外出携带负担。',
         facts: [['角色', '调研整理 · 产品定义 · 造型 · 建模 · 渲染 · 品牌包装'], ['功能', '牵引 / 握持 / 可拆卸清洁刷 / 玩具球仓 / 垃圾袋收纳'], ['过程', '连续 Rhino 阶段文件可追溯']],
-        hero: { f: 'assets/img/case/id/doggie-hero.jpg', cap: '成品配色阵列：主色 + 多套 CMF 方案' },
+        hero: { f: 'assets/img/case/id/doggie-hero.webp', cap: '成品配色阵列：主色 + 多套 CMF 方案' },
         model: { src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型', note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计' },
         sections: [
           {
@@ -425,10 +425,10 @@ const DIRECTIONS = [
             ],
             quote: ['设计机会', '把互动与随手清洁变成结构上顺手就能完成的动作，而不是额外多带一件东西。'],
             figures: [
-              { f: 'assets/img/case/id/doggie-bg-1.jpg', cap: '使用场景：遛狗与互动' },
-              { f: 'assets/img/case/id/doggie-bg-2.jpg', cap: '现有产品形态参考' },
-              { f: 'assets/img/case/id/doggie-bg-3.jpg', cap: '手持方式与材质' },
-              { f: 'assets/img/case/id/doggie-bg-4.jpg', cap: '功能细节参考' }
+              { f: 'assets/img/case/id/doggie-bg-1.webp', cap: '使用场景：遛狗与互动' },
+              { f: 'assets/img/case/id/doggie-bg-2.webp', cap: '现有产品形态参考' },
+              { f: 'assets/img/case/id/doggie-bg-3.webp', cap: '手持方式与材质' },
+              { f: 'assets/img/case/id/doggie-bg-4.webp', cap: '功能细节参考' }
             ]
           },
           {
@@ -439,15 +439,15 @@ const DIRECTIONS = [
               'KeyShot 覆盖主页图、三视图、爆炸图、功能特写与配色展示。'
             ],
             figures: [
-              { f: 'assets/img/case/id/doggie-sketch.jpg', cap: '草图发散与形态推演', wide: true },
-              { f: 'assets/img/case/id/doggie-story.jpg', cap: '故事板：把使用流程拆成连续动作' },
-              { f: 'assets/img/case/id/doggie-threeview.jpg', cap: '三视图与尺寸关系' },
-              { f: 'assets/img/case/id/doggie-explode.jpg', cap: '爆炸示意：表达部件关系，不等同于工程结构设计' }
+              { f: 'assets/img/case/id/doggie-sketch.webp', cap: '草图发散与形态推演', wide: true },
+              { f: 'assets/img/case/id/doggie-story.webp', cap: '故事板：把使用流程拆成连续动作' },
+              { f: 'assets/img/case/id/doggie-threeview.webp', cap: '三视图与尺寸关系' },
+              { f: 'assets/img/case/id/doggie-explode.webp', cap: '爆炸示意：表达部件关系，不等同于工程结构设计' }
             ]
           },
           {
             h: '做出什么', en: 'WHAT',
-            compare: { before: { f: 'assets/img/case/id/doggie-sketch.jpg', label: '草图探索' }, after: { f: 'assets/img/case/id/doggie-hero.jpg', label: '成品配色' }, cap: '左边是草图发散页，右边是成品配色阵列——同一个造型从推演到收敛。' },
+            compare: { before: { f: 'assets/img/case/id/doggie-sketch.webp', label: '草图探索' }, after: { f: 'assets/img/case/id/doggie-hero.webp', label: '成品配色' }, cap: '左边是草图发散页，右边是成品配色阵列——同一个造型从推演到收敛。' },
             lead: '交付包含产品外观、多套配色、局部细节、三视图、爆炸示意与包装设计。同一个模型也放在这一节里，可以自己转着看。',
             items: [
               '外观与配色：主色方案 + 多套 CMF，用于不同使用人群与场景。',
@@ -455,14 +455,14 @@ const DIRECTIONS = [
               '包装与场景：盒体与手持包装展示，配合真实使用场景图。'
             ],
             figures: [
-              { f: 'assets/img/case/id/doggie-pack.jpg', cap: '包装设计：盒体与手持展示', wide: true },
-              { f: 'assets/img/case/id/doggie-scene.jpg', cap: '使用场景' }
+              { f: 'assets/img/case/id/doggie-pack.webp', cap: '包装设计：盒体与手持展示', wide: true },
+              { f: 'assets/img/case/id/doggie-scene.webp', cap: '使用场景' }
             ],
             tabs: [
-              { t: '防滑握持', f: 'assets/img/case/id/doggie-d1.jpg', d: '主握持区保持简洁，握感与防滑靠表面处理解决，不额外增加零件。' },
-              { t: '可拆卸清洁刷', f: 'assets/img/case/id/doggie-d2.jpg', d: '清洁刷用于清理宠物脚底的灰尘与污物，可拆下单独清洗。' },
-              { t: '高抗拉织带', f: 'assets/img/case/id/doggie-d3.jpg', d: '织带与主体的连接按受力方向布置，避免应力集中在单一位置。' },
-              { t: '后部功能件', f: 'assets/img/case/id/doggie-d4.jpg', d: '把手内部的垃圾袋收纳属于最终功能，后部功能件承担开合与固定。' }
+              { t: '防滑握持', f: 'assets/img/case/id/doggie-d1.webp', d: '主握持区保持简洁，握感与防滑靠表面处理解决，不额外增加零件。' },
+              { t: '可拆卸清洁刷', f: 'assets/img/case/id/doggie-d2.webp', d: '清洁刷用于清理宠物脚底的灰尘与污物，可拆下单独清洗。' },
+              { t: '高抗拉织带', f: 'assets/img/case/id/doggie-d3.webp', d: '织带与主体的连接按受力方向布置，避免应力集中在单一位置。' },
+              { t: '后部功能件', f: 'assets/img/case/id/doggie-d4.webp', d: '把手内部的垃圾袋收纳属于最终功能，后部功能件承担开合与固定。' }
             ]
           },
           {
@@ -482,7 +482,7 @@ const DIRECTIONS = [
         tags: ['灯具设计', '功能整合', '结构设计'],
         summary: '一盏可收纳的居家照明设备：通过折叠灯臂、物理控制与柜体收纳适配居家多场景。',
         facts: [['角色', '产品定义 · 功能整合 · 造型 · Rhino 建模 · 视觉表达'], ['周期', '灯具设计课程约 4 周'], ['重点', '展开 / 收纳状态的空间占用']],
-        hero: { f: 'assets/img/cover/lumora.jpg', cap: '居家阅读场景：灯臂展开状态与暖光表达' },
+        hero: { f: 'assets/img/cover/lumora.webp', cap: '居家阅读场景：灯臂展开状态与暖光表达' },
         model: { src: 'assets/models/lamp-a.glb', after: 2, title: '方案 A · 可以直接转的模型', note: '展开态建模文件的线框视图（保留原始比例），可旋转查看灯臂、关节与灯头的比例关系' },
         model2: { src: 'assets/models/lamp-b.glb', after: 2, title: '方案 B · 可以直接转的模型', note: '同课程另一造型方案，用于对比体量与轮廓差异（线框视图，保留原始比例）' },
         sections: [
@@ -494,7 +494,7 @@ const DIRECTIONS = [
               '体量：灯臂收入柜体侧面，降低非使用状态的空间占用。'
             ],
             figures: [
-              { f: 'assets/img/case/id/lumora-p2.jpg', cap: '用户分析与使用场景梳理', wide: true }
+              { f: 'assets/img/case/id/lumora-p2.webp', cap: '用户分析与使用场景梳理', wide: true }
             ]
           },
           {
@@ -505,13 +505,13 @@ const DIRECTIONS = [
               'Rhino 尺寸视图统一展开态、收纳态与移动状态的尺寸基准；细节围绕操作可达性与收纳状态展开。'
             ],
             figures: [
-              { f: 'assets/img/case/id/lumora-p3.jpg', cap: '草图发散：灯臂、关节与灯头的形态推演', wide: true },
-              { f: 'assets/img/case/id/lumora-p4.jpg', cap: '功能与结构：灯臂运动、收纳关系与操作件', wide: true }
+              { f: 'assets/img/case/id/lumora-p3.webp', cap: '草图发散：灯臂、关节与灯头的形态推演', wide: true },
+              { f: 'assets/img/case/id/lumora-p4.webp', cap: '功能与结构：灯臂运动、收纳关系与操作件', wide: true }
             ]
           },
           {
             h: '做出什么', en: 'WHAT',
-            compare: { before: { f: 'assets/img/case/id/lumora-p3.jpg', label: '草图发散' }, after: { f: 'assets/img/case/id/lumora-hero.jpg', label: '居家场景成品' }, cap: '从草图发散到居家场景里的成品状态。' },
+            compare: { before: { f: 'assets/img/case/id/lumora-p3.webp', label: '草图发散' }, after: { f: 'assets/img/case/id/lumora-hero.webp', label: '居家场景成品' }, cap: '从草图发散到居家场景里的成品状态。' },
             lead: '课程结束时交付两个造型方案：造型方向不同，但共用同一套功能与收纳逻辑。下面两个模型保留原始比例，可以直接转动对比。',
             items: [
               '方案 A：以折叠灯臂与柜体收纳为主，展开态作为主要使用姿态。',
@@ -534,7 +534,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', '模型迭代', '视觉与版式'],
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
-        hero: { f: 'assets/img/cover/wateralarm.jpg', cap: '穿戴与落水识别场景表达（已匿名化）' },
+        hero: { f: 'assets/img/cover/wateralarm.webp', cap: '穿戴与落水识别场景表达（已匿名化）' },
         model: { src: 'assets/models/wenning.glb', after: 2, title: '最终选定方案 · 可以直接转的模型', note: '由本人建模文件导出的线框视图，用于查看外形体量与分件关系；客户信息与未公开内容已按匿名化规则处理' },
         sections: [
           {
@@ -553,19 +553,19 @@ const DIRECTIONS = [
               '三个方向均为阶段性探索，未在该阶段收敛；页面保留归纳出的造型语言与后续优化重点。'
             ],
             figures: [
-              { f: 'assets/img/id/wateralarm-p38.jpg', cap: '三组形态方向并列对比', wide: true }
+              { f: 'assets/img/id/wateralarm-p38.webp', cap: '三组形态方向并列对比', wide: true }
             ]
           },
           {
             h: '做出什么', en: 'WHAT',
-            compare: { before: { f: 'assets/img/id/wateralarm-p38.jpg', label: '三方向形态' }, after: { f: 'assets/img/id/wateralarm-p37.jpg', label: '场景与成品' }, cap: '从形态方向对比到场景表达（已匿名化）。' },
+            compare: { before: { f: 'assets/img/id/wateralarm-p38.webp', label: '三方向形态' }, after: { f: 'assets/img/id/wateralarm-p37.webp', label: '场景与成品' }, cap: '从形态方向对比到场景表达（已匿名化）。' },
             lead: '交付包含多方向造型对比、模型迭代与 CMF / 场景表达，用于方案评审与后续收敛。',
             items: [
               'CMF 与场景：同一产品在不同材料与使用语境下保持识别一致。',
               '按匿名化规则移除客户名称、Logo 与未公开信息，仅展示本人参与的造型与视觉部分。'
             ],
             figures: [
-              { f: 'assets/img/id/wateralarm-p40.jpg', cap: 'CMF 与使用场景表达', wide: true }
+              { f: 'assets/img/id/wateralarm-p40.webp', cap: 'CMF 与使用场景表达', wide: true }
             ]
           },
           {
@@ -584,7 +584,7 @@ const DIRECTIONS = [
         tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '根据前期需求与草图制作 Rhino 模型，承担模型修改、KeyShot 渲染与效果图制作，持续支持商业改款节奏。',
         facts: [['角色', '建模 · 模型修改 · 渲染 · 效果图'], ['内容', '3D 效果 / 海报 / 包装 / 专利多视图 / 修图改字'], ['边界', '持续执行型协作，不作为独立原创项目']],
-        hero: { f: 'assets/img/cover/smartlock.jpg', cap: '商业改款的效果图交付（客户信息已匿名化）' },
+        hero: { f: 'assets/img/cover/smartlock.webp', cap: '商业改款的效果图交付（客户信息已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -593,7 +593,7 @@ const DIRECTIONS = [
               '根据前期需求与草图建立 Rhino 模型，按反馈持续修改造型与细节。',
               '参与一项外观专利文件的建模与修改，处于申请准备阶段。'
             ],
-            figures: [ { f: 'assets/img/id/smartlock-p41.jpg', cap: '' }, { f: 'assets/img/id/smartlock-p43.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/id/smartlock-p41.webp', cap: '' }, { f: 'assets/img/id/smartlock-p43.webp', cap: '' } ]
           },
           {
             h: '怎么做', en: 'HOW',
@@ -602,7 +602,7 @@ const DIRECTIONS = [
               '交付覆盖 KeyShot 渲染、效果图、海报、包装与专利多视图等。',
               '在改款循环里承担模型与视觉的执行环节，保证造型与素材一致。'
             ],
-            figures: [ { f: 'assets/img/id/smartlock-p44.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/id/smartlock-p44.webp', cap: '' } ]
           },
           {
             h: '做出什么', en: 'WHAT',
@@ -622,7 +622,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/id/smartlock-p41.jpg', 'assets/img/id/smartlock-p43.jpg', 'assets/img/id/smartlock-p44.jpg']
+        images: ['assets/img/id/smartlock-p41.webp', 'assets/img/id/smartlock-p43.webp', 'assets/img/id/smartlock-p44.webp']
       },
       {
         slug: 'aid', title: 'AI 能力在产品设计中的两种应用', en: 'AI & PRODUCT DESIGN',
@@ -630,7 +630,7 @@ const DIRECTIONS = [
         tags: ['交互原型', 'AI 工具设计', '产品定义'],
         summary: '毕业设计呈现智能产品原型，DesignDNA 把 AI 能力沉淀为可重复的设计工作流。',
         facts: [['形式', '毕业设计呈现 + 自研工作流'], ['关联', '与 AI 产品方向同一套项目'], ['价值', '设计判断可回溯、可复用']],
-        hero: { f: 'assets/img/cover/aid.jpg', cap: '毕业设计与 AI 工作流的关系' },
+        hero: { f: 'assets/img/cover/aid.webp', cap: '毕业设计与 AI 工作流的关系' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -647,7 +647,7 @@ const DIRECTIONS = [
               '真实硬件跑通闭环，双眼状态承担情感表达。',
               '后台提供运行总览、对话中心与诊断日志，让链路可观察。'
             ],
-            figures: [ { f: 'assets/img/id/aid-p45.jpg', cap: '' } ],
+            figures: [ { f: 'assets/img/id/aid-p45.webp', cap: '' } ],
             links: [ { t: '看这个项目的完整案例', u: '#ai/robot' } ]
           },
           {
@@ -657,7 +657,7 @@ const DIRECTIONS = [
               '任务简报 → 约束地图 → 变体树 → 评审记录，全程可回溯。',
               '让"设计判断"变成可以复用、可以解释的流程。'
             ],
-            figures: [ { f: 'assets/img/id/aid-p46.jpg', cap: '' }, { f: 'assets/img/id/aid-p47.jpg', cap: '' } ],
+            figures: [ { f: 'assets/img/id/aid-p46.webp', cap: '' }, { f: 'assets/img/id/aid-p47.webp', cap: '' } ],
             links: [ { t: '看这个项目的完整案例', u: '#ai/designdna' } ]
           },
           {
@@ -668,7 +668,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/id/aid-p45.jpg', 'assets/img/id/aid-p46.jpg', 'assets/img/id/aid-p47.jpg']
+        images: ['assets/img/id/aid-p45.webp', 'assets/img/id/aid-p46.webp', 'assets/img/id/aid-p47.webp']
       },
       {
         slug: 'visual', title: '视觉设计：平面与品牌标识', en: 'VISUAL DESIGN',
@@ -676,7 +676,7 @@ const DIRECTIONS = [
         tags: ['视觉与版式', '品牌与包装', '产品定义'],
         summary: '平面与海报设计（版式、图像节奏与氛围表达）以及品牌标识设计（标识构思、形态推演与应用呈现）。',
         facts: [['内容', '海报 / 版式 / 品牌标识'], ['能力', '视觉节奏与识别一致性'], ['用途', '商业交付与产品包装']],
-        hero: { f: 'assets/img/cover/visual.jpg', cap: '平面与品牌标识产出' },
+        hero: { f: 'assets/img/cover/visual.webp', cap: '平面与品牌标识产出' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -692,7 +692,7 @@ const DIRECTIONS = [
             items: [
               '把产品信息拆成主次层级，用图像节奏控制阅读顺序。'
             ],
-            figures: [ { f: 'assets/img/id/visual-p48.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/id/visual-p48.webp', cap: '' } ]
           },
           {
             h: '品牌标识', en: 'IDENTITY',
@@ -701,7 +701,7 @@ const DIRECTIONS = [
               '标识在不同尺寸与材质上保持一致识别。',
               '标识与产品造型语言互相呼应。'
             ],
-            figures: [ { f: 'assets/img/id/visual-p49.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/id/visual-p49.webp', cap: '' } ]
           },
           {
             h: '边界说明', en: 'BOUNDARY',
@@ -711,7 +711,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/id/visual-p48.jpg', 'assets/img/id/visual-p49.jpg']
+        images: ['assets/img/id/visual-p48.webp', 'assets/img/id/visual-p49.webp']
       },
       {
         slug: 'exercises', title: '其他产品练习', en: 'SELECTED EXERCISES',
@@ -719,7 +719,7 @@ const DIRECTIONS = [
         tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '建模、造型与效果表达的日常练习，用于保持形态手感与渲染表达的手感。',
         facts: [['形式', '练习集合'], ['重点', '形态与效果表达'], ['说明', '非商业项目']],
-        hero: { f: 'assets/img/cover/exercises.jpg', cap: '形态与效果表达练习' },
+        hero: { f: 'assets/img/cover/exercises.webp', cap: '形态与效果表达练习' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -736,7 +736,7 @@ const DIRECTIONS = [
               '形体与比例：把造型拆成可校验的几何关系。',
               '渲染表达：用材质与光位把形体讲清楚。'
             ],
-            figures: [ { f: 'assets/img/id/exercises-p50.jpg', cap: '' } ]
+            figures: [ { f: 'assets/img/id/exercises-p50.webp', cap: '' } ]
           },
           {
             h: '怎么练', en: 'HOW',
@@ -753,7 +753,7 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/id/exercises-p50.jpg']
+        images: ['assets/img/id/exercises-p50.webp']
       }
     ]
   }
