@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915W').then(mod => {
+    import('./model3d.js?v=20260915X').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -616,8 +616,8 @@
       const k = strengthFor(cv);
       return createParticles(cv, {
         density: 1850, maxN: 78, minN: 46, band: false, freeRatio: 1,
-        link: 96, linkAlpha: .23 * k, speed: .95, dpr: 1.25,
-        dot: 'rgba(232,239,247,' + (.52 * k).toFixed(2) + ')', accent: 'rgba(255,150,92,' + (.70 * k).toFixed(2) + ')',
+        link: 98, linkAlpha: .30 * k, speed: .95, dpr: 1.25,
+        dot: 'rgba(236,243,250,' + (.60 * k).toFixed(2) + ')', accent: 'rgba(255,158,102,' + (.80 * k).toFixed(2) + ')',
         linkRGB: '214,228,242', glow: '255,158,102',
       });
     }).filter(Boolean);
