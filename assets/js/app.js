@@ -179,8 +179,13 @@
 
   /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
   function pageHero(o) {
+    /* 事实 chips：按条目取前 3 项 + "等"，不做断词截断 */
+    const shortItems = t => {
+      const arr = String(t || '').split(/\s*[·\/／,，、]\s*/).filter(Boolean);
+      return arr.length <= 3 ? arr.join(' · ') : arr.slice(0, 3).join(' · ') + ' 等';
+    };
     const meta = (o.meta || []).filter(x => x && x[1]).slice(0, 3)
-      .map(x => `<span class="phero__chip"><b>${esc(x[0])}</b><i>·</i>${esc(shortText(x[1], 30))}</span>`).join('');
+      .map(x => `<span class="phero__chip"><b>${esc(x[0])}</b><i>·</i>${esc(shortItems(x[1]))}</span>`).join('');
     return `
     <header class="phero">
       <canvas class="phero__fx" aria-hidden="true"></canvas>
@@ -334,7 +339,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914N').then(mod => {
+    import('./model3d.js?v=20260914P').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
