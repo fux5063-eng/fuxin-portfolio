@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914R').then(mod => {
+    import('./model3d.js?v=20260914S').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -467,7 +467,7 @@
 
     /* 精选项目：从两个方向里挑 4 个代表作（内容仍取自数据，不硬编码） */
     const PICKS = ['id/doggie', 'id/navlight', 'ai/robot', 'ai/toolset'];
-    const pickCard = key => {
+    const pickCard = (key, idx) => {
       const [dirId, slug] = key.split('/');
       const dir = DIRECTIONS.find(x => x.id === dirId);
       const p = dir && dir.projects.find(x => x.slug === slug);
@@ -476,7 +476,7 @@
       const fact = (p.facts || []).find(f => f && f[1]) || ['类型', dir.label];
       return `
       <a class="pick rv" href="#${dirId}/${slug}">
-        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="lazy"></div>
+        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}"></div>
         <div class="pick__body">
           <div class="pick__eyebrow">${esc(dir.label)} · ${esc(fact[0])}</div>
           <h3>${esc(p.title)}</h3>
@@ -486,7 +486,7 @@
         <div class="pick__tags">${(p.tags || []).slice(0, 3).map(t => `<span>${esc(t)}</span>`).join('')}</div>
       </a>`;
     };
-    const picks = PICKS.map(pickCard).join('');
+    const picks = PICKS.map((k, i) => pickCard(k, i)).join('');
 
     const mq = [...MARQUEE, ...MARQUEE].map(x => `<span>${esc(x)}</span>`).join('');
 
@@ -590,7 +590,7 @@
           <div class="about">
             <div class="about__pic rv"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></div>
             <div class="rv">
-              <div class="en-label">ABOUT ME</div>
+              <div class="en-label"><b>04</b>ABOUT ME</div>
               <h2 style="margin:10px 0 14px">${esc(SITE.name)} · 产品设计 2027 届</h2>
               <p style="color:var(--ink-2)">${esc(ABOUT.intro)}</p>
               <div class="hero__cta">
@@ -925,7 +925,7 @@
     const rest = [];
     for (const el of pendingReveal) {
       const r = el.getBoundingClientRect();
-      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.bottom > -60);
+      const show = (r.width === 0 && r.height === 0) || r.top < vh * 0.94;
       if (show) el.classList.add('in'); else rest.push(el);
     }
     pendingReveal = rest;
