@@ -196,7 +196,7 @@ body:not(.on-home) #app{padding-top:66px}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:660px){.cards{grid-template-columns:1fr}}
 .card{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:.22s ease}
-.card:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(17,18,20,.11)}
+.card:not(.is-tilt):hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(17,18,20,.11)}
 .card__img{aspect-ratio:16/9;overflow:hidden;background:#eceef1;border-bottom:1px solid var(--line)}
 .card__img img{width:100%;height:100%;object-fit:cover;transition:transform .48s cubic-bezier(.16,.84,.24,1)}
 .card:hover .card__img img{transform:scale(1.04)}
@@ -566,7 +566,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .filter__count{margin-left:auto;font:600 12.5px/1 ui-monospace,monospace;color:var(--accent-d)}
 .card.is-hidden{display:none}
 .card{transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s ease}
-.card:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(15,20,28,.14)}
+.card:not(.is-tilt):hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(15,20,28,.14)}
 
 /* 非首页元素的互动反馈（统一手感） */
 .timeline li{transition:transform .25s ease,background .25s ease;border-radius:10px}
@@ -825,7 +825,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:20px}
 .pick{position:relative;display:block;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;
   transition:transform .36s cubic-bezier(.2,.7,.3,1),box-shadow .36s ease,border-color .36s ease}
-.pick:hover{transform:translateY(-6px);box-shadow:0 26px 60px -30px rgba(14,18,22,.35);border-color:rgba(224,98,45,.4)}
+.pick:not(.is-tilt):hover{transform:translateY(-6px);box-shadow:0 26px 60px -30px rgba(14,18,22,.35);border-color:rgba(224,98,45,.4)}
 .pick__img{aspect-ratio:16/10;overflow:hidden;background:#eef1f5}
 .pick__img img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.01);transition:transform .68s cubic-bezier(.2,.7,.3,1)}
 .pick:hover .pick__img img{transform:scale(1.06)}

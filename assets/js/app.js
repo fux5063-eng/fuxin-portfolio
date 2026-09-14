@@ -1319,31 +1319,42 @@
     initCardFX = function (scope) {
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
-        let raf = 0, lastEv = null, rect = null;
+        let raf = 0, lastEv = null, rect = null, ramp = 0, lastT = 0;
+        const RAMP_MS = 240;               // 入场渐入时长：鼠标一放上去不再"瞬间弹到位"
         const strong = el.classList.contains('gate') || el.classList.contains('pick');
         const kx = strong ? 13 : 10;      // 旋转幅度（原来 ±3.5°/±2.2° 几乎看不出来，加大一档）
         const ky = strong ? 11 : 8;
         const lift = strong ? 12 : 9;
-        const onEnter = () => { rect = el.getBoundingClientRect(); el.classList.add('is-tilt'); };
+        const tick = () => { if (!raf) raf = requestAnimationFrame(step); };
+        const step = ts => {
+          raf = 0;
+          const dt = lastT ? Math.min(64, ts - lastT) : 16;
+          lastT = ts;
+          ramp = Math.min(1, ramp + dt / RAMP_MS);
+          const ev = lastEv;
+          if (!ev || !rect) return;
+          const e = ramp * ramp * (3 - 2 * ramp);          // ease-in-out 渐入
+          const r = rect;
+          const px = ((ev.clientX - r.left) / r.width - .5) * e;
+          const py = ((ev.clientY - r.top) / r.height - .5) * e;
+          el.style.setProperty('--mx', (px * 2).toFixed(3));
+          el.style.setProperty('--my', (py * 2).toFixed(3));
+          el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + (lift * e).toFixed(2) + 'px) scale(' + (1 + .02 * e).toFixed(4) + ')';
+          if (ramp < 1) tick();                             // 入场期间自驱动，不依赖鼠标是否移动
+        };
+        const onEnter = e => {
+          rect = el.getBoundingClientRect(); ramp = 0; lastT = 0; lastEv = e;
+          el.classList.add('is-tilt');
+          tick();
+        };
         const onMove = e => {
           lastEv = e;                     // 只记最新事件，坐标在下一帧统一计算
           if (!rect) rect = el.getBoundingClientRect();
-          if (raf) return;
-          raf = requestAnimationFrame(() => {
-            raf = 0;
-            const ev = lastEv;
-            if (!ev) return;
-            const r = rect;
-            const px = (ev.clientX - r.left) / r.width - .5;
-            const py = (ev.clientY - r.top) / r.height - .5;
-            el.style.setProperty('--mx', (px * 2).toFixed(3));
-            el.style.setProperty('--my', (py * 2).toFixed(3));
-            el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + lift + 'px) scale(1.02)';
-          });
+          tick();
         };
         const onLeave = () => {
           if (raf) { cancelAnimationFrame(raf); raf = 0; }
-          rect = null;
+          rect = null; lastEv = null; ramp = 0; lastT = 0;
           el.classList.remove('is-tilt');
           el.style.transform = '';
           el.style.setProperty('--mx', '0');
