@@ -111,7 +111,7 @@ export class ModelViewer {
 
   load(src) {
     if (this.model) this._clearModel();
-    new GLTFLoader().load(src, gltf => {
+    const ok = gltf => {
       const root = gltf.scene;
       this.model = root;
       this.scene.add(root);
@@ -143,14 +143,16 @@ export class ModelViewer {
         if (isPart) this.parts.push({ obj: o, base: o.position.clone(), world0: wc.clone(), idx: i });
         i++;
       });
-      /* 两种表现层都先建好，之后可随时切换（实体 / 线稿） */
       try {
-      this._buildLayers();
+        /* 两种表现层都先建好，之后可随时切换（实体 / 线稿） */
+        try { this._buildLayers(); }
+        catch (e) { console.warn('线稿层构建失败，只保留实体渲染', e); this.opts.mode = 'solid'; }
+        this.setMode(this.opts.line ? 'line' : (this.opts.mode || 'solid'));
       } catch (e) {
-      console.warn('线稿层构建失败，只保留实体渲染', e);
-      this.opts.mode = 'solid';
+        console.error('模型初始化失败', e);
+        if (this.opts.onError) this.opts.onError(e);
+        return;
       }
-      this.setMode(this.opts.line ? 'line' : (this.opts.mode || 'solid'));
       const fit = this._fit();
       this.center.copy(fit.center);
       this.baseCenter.copy(fit.center);
@@ -172,8 +174,23 @@ export class ModelViewer {
       this.setExplode(this.explode);
       this.renderer.setAnimationLoop(this._loop);
       if (this.opts.onLoad) this.opts.onLoad(this);
-    }, ev => { if (this.opts.onProgress && ev.total) this.opts.onProgress(ev.loaded / ev.total); },
-      err => { console.error('GLB 加载失败', src, err); if (this.opts.onError) this.opts.onError(err); });
+    };
+    /* 用 fetch + parseAsync 加载：比 GLTFLoader.load 的分步回调更可靠（后者在部分环境里回调不来） */
+    (async () => {
+      try {
+        const resp = await fetch(src, { cache: 'force-cache' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status + ' · ' + src);
+        const total = Number(resp.headers.get('content-length')) || 0;
+        if (this.opts.onProgress && total) this.opts.onProgress(0.25);
+        const buf = await resp.arrayBuffer();
+        const gltf = await new GLTFLoader().parseAsync(buf, '');
+        if (this.opts.onProgress && total) this.opts.onProgress(1);
+        ok(gltf);
+      } catch (err) {
+        console.error('GLB 加载失败', src, err);
+        if (this.opts.onError) this.opts.onError(err);
+      }
+    })();
   }
 
   _fit() {
@@ -248,30 +265,34 @@ export class ModelViewer {
     const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 42;
     const hullScale = this.opts.hullScale != null ? this.opts.hullScale : 1.014;
     const outScale = this.opts.outlineScale != null ? this.opts.outlineScale : 1.0035;
-    let n = 0;
+    /* 关键：先收集零件列表，再动场景树。
+       之前是"边 traverse 边给零件加描边子节点"，加进去的网格又被当成零件处理 → 无限递归 → 栈溢出/内存爆掉 */
+    const list = [];
     this.model.traverse(o => {
-      if (!o.isMesh || o.userData.__lined) return;
+      if (o.isMesh && !o.userData.__lined && !o.userData.helper) list.push(o);
+    });
+    let n = 0;
+    for (const o of list) {
       const g = o.geometry;
+      if (!g) continue;
       let c = null, g2 = null;
       try {
-        g2 = g.clone();
-        g2.computeBoundingBox();
-        c = g2.boundingBox.getCenter(new THREE.Vector3());
+        g2 = g.clone(); g2.computeBoundingBox(); c = g2.boundingBox.getCenter(new THREE.Vector3());
         g2.translate(-c.x, -c.y, -c.z);
       } catch (e) { g2 = null; }
       if (g2 && c) {
-        /* 线稿：粗一点的外轮廓 */
         const hull = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({
           color: ink, side: THREE.BackSide, transparent: true, opacity: 0.95,
         }));
         hull.position.copy(c); hull.scale.setScalar(hullScale);
+        hull.userData.helper = true;
         o.add(hull); o.userData.hull = hull;
-        /* 实体：极细描边，强化轮廓 */
         if (this.opts.outline) {
           const ol = new THREE.Mesh(g2, new THREE.MeshBasicMaterial({
             color: thin, side: THREE.BackSide, transparent: true, opacity: light ? 0.55 : 0.42,
           }));
           ol.position.copy(c); ol.scale.setScalar(outScale);
+          ol.userData.helper = true;
           o.add(ol); o.userData.outlineMesh = ol;
         }
       }
@@ -281,11 +302,12 @@ export class ModelViewer {
         const ls = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({
           color: soft, transparent: true, opacity: light ? 0.8 : 0.62,
         }));
+        ls.userData.helper = true;
         o.add(ls); o.userData.edges = ls;
       }
       o.userData.__lined = true;
       n++;
-    });
+    }
     this.lineCount = n;
   }
 
@@ -298,7 +320,7 @@ export class ModelViewer {
     if (mode === 'line' && !this.lineCount) { try { this._buildLayers(); } catch (e) { } }
     const lineOn = mode === 'line';
     this.model.traverse(o => {
-      if (!o.isMesh || !o.userData.__lined) return;
+      if (!o.isMesh || !o.userData.__lined || o.userData.helper) return;
       if (o.userData.solidMat) o.material = lineOn ? o.userData.fillMat : o.userData.solidMat;
       if (o.userData.hull) o.userData.hull.visible = lineOn;
       if (o.userData.edges) o.userData.edges.visible = lineOn;
