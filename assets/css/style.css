@@ -1304,3 +1304,8 @@ html.dark .hero .hero__cta>a.btn:first-of-type:hover{
 html.dark .btn--primary{background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
   box-shadow:0 10px 26px rgba(255,138,76,.30)}
 html.dark .btn--primary:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0d11}
+
+/* 深色主 CTA（优先级：.dark+.hero__cta+.btn--primary = 3 类 + html 元素，高于站内 3 类规则） */
+html.dark .hero__cta .btn--primary{background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
+  box-shadow:0 10px 26px rgba(255,138,76,.30)}
+html.dark .hero__cta .btn--primary:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0d11}
