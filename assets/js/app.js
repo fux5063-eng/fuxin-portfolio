@@ -385,10 +385,10 @@
     cvs.forEach(cv => {
       try {
         const fx = createParticles(cv, {
-          /* 与主页完全同一套观感：同样的带状流动 + 同样的连线密度/透明度 */
-          density: 3400, maxN: 130, minN: 58, bandBase: .56, bandAmp: .115, bandWidth: 74,
-          freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.95, dpr: 1.25,
-        });
+        density: 24000, maxN: 132, minN: 64, freeRatio: .5,
+        link: 138, linkAlpha: .26, speed: .34, dpr: 1, dotScale: 1.1,
+        dot: 'rgba(226,236,246,.62)', linkRGB: '214,228,244', glow: '255,158,102'
+      });
         if (fx && fx.canvas && fx.canvas.width > 1) heroFXs.push(fx);
       } catch (e) { /* 忽略：下一帧重试 */ }
     });
@@ -1540,6 +1540,18 @@
   lbHint.textContent = '← → 切换 · Esc 关闭';
   document.body.appendChild(lbHint);
   lbHint.hidden = true;
+
+  /* 导航当前页高亮：按路由给对应链接标 aria-current */
+  function markNav() {
+    const seg = (location.hash || '').replace(/^#\/?/, '').split('/')[0] || '';
+    document.querySelectorAll('.nav__links a').forEach(a => {
+      const t = (a.getAttribute('href') || '').replace(/^#\/?/, '').split('/')[0];
+      if (t && t === seg) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('hashchange', markNav);
+  markNav();
 
   window.addEventListener('hashchange', render);
   render();
