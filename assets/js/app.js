@@ -113,7 +113,18 @@
     const linkD2 = o.linkD2 || o.link * o.link;
     let W = 0, H = 0, parts = [], raf = 0, on = false, last = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, o.dpr);
-    const mouse = { x: 0, y: 0, on: false };
+    const mouse = { x: -9999, y: -9999, on: false, r: 150 };
+    /* 指针 → 画布坐标（原来只声明了 mouse 却没人写入，导致斥力永不生效） */
+    function onPointerMove(e) {
+      const r = cv.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      mouse.x = x; mouse.y = y;
+      mouse.on = x > -80 && y > -80 && x < r.width + 80 && y < r.height + 80;
+    }
+    function onPointerLeave() { mouse.on = false; mouse.x = -9999; mouse.y = -9999; }
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerdown', onPointerMove, { passive: true });
+    document.addEventListener('pointerleave', onPointerLeave);
 
     function build() {
       const n = Math.round(Math.min(o.maxN, Math.max(o.minN, (W * H) / o.density)));
@@ -206,6 +217,24 @@
           }
         }
       }
+      /* 指针交互：连线 + 柔光（让"能交互"一眼可见） */
+      if (mouse.on) {
+        const mr2 = mouse.r * mouse.r;
+        const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, mouse.r);
+        g.addColorStop(0, 'rgba(255,158,102,.20)');
+        g.addColorStop(1, 'rgba(255,158,102,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(mouse.x, mouse.y, mouse.r, 0, 6.283); ctx.fill();
+        for (const p of parts) {
+          const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+          if (d2 < mr2) {
+            ctx.strokeStyle = 'rgba(255,178,128,' + ((1 - Math.sqrt(d2) / mouse.r) * .5).toFixed(3) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+          }
+        }
+        ctx.lineWidth = 1;
+      }
       for (const p of parts) {
         ctx.beginPath();
         ctx.fillStyle = p.hot ? o.accent : 'rgba(226,236,246,.7)';
@@ -219,7 +248,14 @@
     function stop() { on = false; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
     function onResize() { if (on) size(false); }
     window.addEventListener('resize', onResize, { passive: true });
-    function dispose() { stop(); window.removeEventListener('resize', onResize); parts = []; }
+    function dispose() {
+      stop();
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerdown', onPointerMove);
+      document.removeEventListener('pointerleave', onPointerLeave);
+      parts = [];
+    }
     start();
     return { start, stop, dispose, canvas: cv, get count() { return parts.length; } };
   }
@@ -447,7 +483,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915I').then(mod => {
+    import('./model3d.js?v=20260915J').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -507,6 +543,7 @@
        避免"块作用域函数在块外不可见"导致整页渲染中断） */
   let initCardFX = () => 0;
   let gateFlowInit = () => {};
+  let mountGateFX = () => 0;
 
   /* ================= 视图 ================= */
 
@@ -516,6 +553,7 @@
         <div class="gate__bg gate__flow" data-flow="${i}">
           <i class="flow__blob b1"></i><i class="flow__blob b2"></i><i class="flow__blob b3"></i>
           <i class="flow__grid"></i><i class="flow__grain"></i><i class="flow__sheen"></i>
+          <canvas class="gate__fx" aria-hidden="true"></canvas>
         </div>
         <div class="gate__body">
           <div class="gate__en">${esc(d.en)}</div>
@@ -903,6 +941,7 @@
     safe('compare', () => initCompare(app));
     safe('tabs', () => initTabs(app));
     safe('gateFlow', () => gateFlowInit());
+    safe('gateFX', () => mountGateFX(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
 
@@ -1038,6 +1077,17 @@
   }
 
   if (fine) {
+    // 方向卡内的粒子层（与主页同一引擎 → 自动获得指针交互）
+    let gateFXs = [];
+    mountGateFX = scope => {
+      gateFXs.forEach(f => f.dispose && f.dispose());
+      gateFXs = [...scope.querySelectorAll('canvas.gate__fx')]
+        .map(cv => createParticles(cv, {
+          density: 2600, maxN: 80, minN: 42, band: true, bandBase: .5, bandAmp: .16, bandWidth: 96,
+          freeRatio: .42, link: 118, linkAlpha: .34, speed: 1.6, dpr: 1.25,
+        })).filter(Boolean);
+    };
+
     // ===== 统一卡片交互：倾斜 + 高光跟随（所有卡片共用同一套行为）=====
     initCardFX = function (scope) {
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
