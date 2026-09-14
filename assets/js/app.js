@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915Y').then(mod => {
+    import('./model3d.js?v=20260915Z').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -816,9 +816,9 @@
               </div>
             </div>
           </div>
-          <div class="qrbox">
-            <img class="qrbox__img" src="${SITE.qrSite}" alt="作品集网站二维码">
-            <div class="qrbox__txt"><b>扫码看作品集网站</b><span>${esc(SITE.siteUrl.replace('https://', ''))}</span></div>
+          <div class="qrbox qrbox--wx">
+            <div class="qrbox__slot" data-wx-slot><span>微信二维码<br><i>待放入</i></span></div>
+            <div class="qrbox__txt"><b>微信扫码加我</b><span>微信号 zmdjan · 点这里复制</span></div>
           </div>
           </div>
         </div>

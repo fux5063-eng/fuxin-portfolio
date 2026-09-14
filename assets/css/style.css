@@ -1078,3 +1078,11 @@ body.exp-open{overflow:hidden}
 
 /* 方向页筛选条在深色卡上方保持浅色即可（不动） */
 @media (prefers-reduced-motion:reduce){.card::after,.pick::after{display:none}}
+
+/* ============ 联系区：微信二维码占位（等用户提供二维码图后替换） ============ */
+.qrbox--wx .qrbox__slot{width:132px;height:132px;border-radius:12px;display:grid;place-items:center;text-align:center;
+  border:1.6px dashed rgba(224,98,45,.55);background:rgba(224,98,45,.05);color:#8a5a3c;
+  font-size:12px;line-height:1.5;letter-spacing:.02em}
+.qrbox--wx .qrbox__slot i{font-style:normal;font-size:11px;color:#a8795c;opacity:.9}
+.qrbox--wx .qrbox__slot img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+@media(max-width:560px){.qrbox--wx .qrbox__slot{width:116px;height:116px}}
