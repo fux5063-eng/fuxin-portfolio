@@ -86,24 +86,117 @@
           </details>`;
   }
 
+  /* 自动取短句（优先在标点处断，避免孤字换行；超过上限才截断） */
+  function shortText(t, cap) {
+    const str = String(t || '').trim();
+    if (str.length <= cap) return str;
+    const m = str.slice(0, cap + 6).match(/^[^，。；;]{6,}([，。；;])/);
+    if (m) return str.slice(0, m[0].length);        /* 正好在一个短句结束处 */
+    return str.slice(0, cap) + '…';
+  }
+
+  /* 内页页头粒子背景（主页同款"流动带 + 少量自由散点"，小尺寸轻量版） */
+  function heroFX(cv) {
+    if (!cv || !cv.getContext) return null;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return null;
+    let W = 0, H = 0, parts = [], raf = 0, on = false;
+    const mouse = { x: 0, y: 0, on: false };
+    let dpr = 1;
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = Math.max(1, Math.round(cv.clientWidth));
+      H = Math.max(1, Math.round(cv.clientHeight));
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.round(Math.min(120, Math.max(40, (W * H) / 9000)));
+      parts = Array.from({ length: n }, () => {
+        const free = Math.random() < 0.22;
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          vx: 0.22 + Math.random() * 0.3, vy: (Math.random() - 0.5) * 0.2,
+          r: Math.random() * 1.3 + 0.6, hot: Math.random() < 0.2, free,
+          band: (Math.random() - 0.5) * 2 * (14 + Math.random() * 44),
+          sp: 0.7 + Math.random() * 0.7,
+        };
+      });
+    }
+    const bandY = (x, ts) => H * 0.58 + Math.sin(x / W * 2.2 + ts) * H * 0.10 + Math.sin(x / W * 4.6 - ts * 0.7) * H * 0.035;
+    function frame(t) {
+      if (!on) return;
+      ctx.clearRect(0, 0, W, H);
+      const ts = t * 0.00016;
+      for (const p of parts) {
+        if (p.free) { p.vx += (Math.random() - .5) * .012; p.vy += (Math.random() - .5) * .012; }
+        else {
+          p.vx += ((.95 - Math.abs(p.vy) * .25) * p.sp - p.vx) * .018;
+          p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022;
+          p.vy += (Math.random() - .5) * .012;
+        }
+        p.vx *= .986; p.vy *= .986;
+        const sp = Math.hypot(p.vx, p.vy), mx = p.free ? .9 : 1.6;
+        if (sp > mx) { p.vx = p.vx / sp * mx; p.vy = p.vy / sp * mx; }
+        p.x += p.vx; p.y += p.vy;
+        if (p.x > W + 24) { p.x = -24; p.vx = .22 + Math.random() * .3; p.y = p.free ? Math.random() * H : bandY(p.x, ts) + p.band + (Math.random() - .5) * 34; }
+        if (p.x < -40) p.x = W + 24;
+        if (p.y < -26) p.y = H + 20; else if (p.y > H + 26) p.y = -20;
+      }
+      ctx.lineWidth = 1;
+      for (let i = 0; i < parts.length; i++) {
+        const a = parts[i];
+        for (let j = i + 1; j < parts.length; j++) {
+          const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+          if (d2 < 15000) {
+            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 128) * .4).toFixed(3) + ')';
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      for (const p of parts) {
+        ctx.beginPath();
+        ctx.fillStyle = p.hot ? 'rgba(255,158,102,.85)' : 'rgba(226,236,246,.7)';
+        ctx.arc(p.x, p.y, p.r, 0, 6.283);
+        ctx.fill();
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    function start() {
+      if (on) return;
+      on = true; size(); if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function stop() { on = false; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    function dispose() { stop(); parts = []; }
+    window.addEventListener('resize', () => { if (on) size(); onScrollFX(); }, { passive: true });
+    start();
+    return { start, stop, dispose, canvas: cv };
+  }
+
+  let heroFXs = [];
+  function mountHeroFX(scope) {
+    heroFXs.forEach(f => f.dispose());
+    heroFXs = [...scope.querySelectorAll('canvas.phero__fx')].map(heroFX).filter(Boolean);
+  }
+
   /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
   function pageHero(o) {
-    const meta = (o.meta || []).filter(m => m && m[1]).map(m => `<span class="phero__chip"><b>${esc(m[0])}</b>${esc(m[1])}</span>`).join('');
-    const tagsHtml = (o.tags && o.tags.length) ? `<div class="tags" style="margin-top:18px">${tags(o.tags)}</div>` : '';
+    const meta = (o.meta || []).filter(x => x && x[1]).slice(0, 3)
+      .map(x => `<span class="phero__chip"><b>${esc(x[0])}</b><i>·</i>${esc(shortText(x[1], 30))}</span>`).join('');
     return `
     <header class="phero">
+      <canvas class="phero__fx" aria-hidden="true"></canvas>
       <div class="wrap">
         ${o.backHref === false ? '' : `<a class="phero__back" href="${o.backHref || '#/'}">← ${esc(o.backText || '返回首页')}</a>`}
         <div class="phero__en">${esc(o.en || '')}</div>
         <h1 class="phero__title rv-em">${esc(o.title || '')}</h1>
         ${o.sub ? `<p class="phero__sub rv-em" style="transition-delay:.10s">${esc(o.sub)}</p>` : ''}
         ${meta ? `<div class="phero__meta rv-em" style="transition-delay:.18s">${meta}</div>` : ''}
-        ${tagsHtml}
         ${o.guide || ''}
       </div>
       <div class="phero__scroll"><i></i><span>SCROLL</span></div>
-    </header>`;
+    </header>
+    <div class="phero__fade" aria-hidden="true"></div>`;
   }
+
 
   /* 路由转场：深色幕布扫过（消除"换了个网站"的断裂感） */
   function playCurtain() {
@@ -241,7 +334,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914L').then(mod => {
+    import('./model3d.js?v=20260914M').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -511,14 +604,14 @@
     /* 章节：有 sections 用新叙事；老项目退回 body 字段，但用同一套版式 */
     const secs = p.sections || (p.body || []).map(b => ({ h: b.h, items: b.items }));
     const secHtml = secs.map((s, k) => `
-      <section class="cs__sec rv">
+      <section class="cs__sec rv" data-sec="${String(k + 1).padStart(2, '0')}" data-sech="${esc(s.h)}">
         <div class="cs__side">
           <span class="cs__no">${String(k + 1).padStart(2, '0')}</span>
           ${s.en ? `<span class="cs__en">${esc(s.en)}</span>` : ''}
         </div>
         <div class="cs__main">
           <h2>${esc(s.h)}</h2>
-          ${s.lead ? `<p class="cs__lead">${esc(s.lead)}</p>` : ''}
+          ${s.lead ? `<p class="cs__lead">${esc(shortText(s.lead, 46))}</p>` : ''}
           ${itemsBlock(s.items)}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
@@ -544,16 +637,14 @@
 
     const guideHtml = `
         <p class="phero__guide rv-em" style="transition-delay:.26s">
-          <span>本页结构</span>${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">→</span>')}
-          <span class="sep">·</span>
-          <span>可<em>拖动对比条</em> / <em>点标签</em> / <em>转模型</em></span>
+          ${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">·</span>')}
         </p>`;
     return `
     <section class="pd pd--v2">
       ${pageHero({
         en: esc(d.en) + ' · ' + esc(p.en),
         title: p.title,
-        sub: p.summary,
+        sub: shortText(p.summary, 30),
         meta: p.facts || [],
         tags: p.tags || [],
         backHref: '#' + d.id,
@@ -561,6 +652,10 @@
         guide: guideHtml
       })}
       <div class="wrap">
+      <div class="pd__howto rv">
+        <span>怎么看</span>
+        <em>拖动对比条看前后</em><i>·</i><em>点标签看细节</em><i>·</i><em>拖动模型转着看</em>
+      </div>
       ${hero}
       <div class="cs">${secHtml}</div>
       ${modelLoose}
@@ -698,6 +793,7 @@
     /* 入场动效：不再因为系统"减少动态效果"而被静默关闭（站主要动效），并加兜底 */
     requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
     setTimeout(() => document.querySelector('.hero')?.classList.add('in'), 800);
+    mountHeroFX(app);
     revealNow();
     updateNav();
     isHome ? FX.start() : FX.stop();
@@ -743,11 +839,31 @@
     });
   }
 
+  /* 页头随滚动淡出/上移 + 当前章节吸顶提示 */
+  function heroScrollPass() {
+    const vh = window.innerHeight;
+    const ph = document.querySelector('.phero');
+    if (ph) {
+      const t = Math.min(1, Math.max(0, window.scrollY / (ph.offsetHeight * 0.9)));
+      const inner = ph.querySelector('.wrap');
+      if (inner) { inner.style.opacity = (1 - t * 0.70).toFixed(3); inner.style.transform = 'translate3d(0,' + (-t * 26).toFixed(1) + 'px,0)'; }
+    }
+    /* 吸顶章节标签 */
+    const chip = document.getElementById('secChip');
+    if (chip) {
+      const secs = [...document.querySelectorAll('.cs__sec')];
+      let cur = null;
+      for (const s2 of secs) { const r = s2.getBoundingClientRect(); if (r.top <= 120 && r.bottom > 160) cur = s2; }
+      if (cur) { chip.textContent = cur.dataset.sec + ' · ' + cur.dataset.sech; chip.classList.add('on'); }
+      else chip.classList.remove('on');
+    }
+  }
+
   let rafFX = false;
   function onScrollFX() {
     if (rafFX) return;
     rafFX = true;
-    requestAnimationFrame(() => { rafFX = false; revealPass(); parallaxPass(); });
+    requestAnimationFrame(() => { rafFX = false; revealPass(); parallaxPass(); heroScrollPass(); });
   }
 
   /* ================= 导航状态 ================= */
