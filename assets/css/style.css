@@ -1309,3 +1309,10 @@ html.dark .btn--primary:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0
 html.dark .hero__cta .btn--primary{background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
   box-shadow:0 10px 26px rgba(255,138,76,.30)}
 html.dark .hero__cta .btn--primary:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0d11}
+
+/* 深色主 CTA（终极）：:first-child 已验证可命中本站 DOM；!important 保证压过站内规则 */
+html.dark .hero__cta .btn:first-child{
+  background:var(--accent)!important;border-color:var(--accent)!important;color:#0b0d11!important;
+  font-weight:700!important;box-shadow:0 10px 26px rgba(255,138,76,.30)!important}
+html.dark .hero__cta .btn:first-child:hover{
+  background:#ffa06a!important;border-color:#ffa06a!important;color:#0b0d11!important}
