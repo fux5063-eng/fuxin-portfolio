@@ -945,7 +945,7 @@
         meta: p.facts || [],
         tags: p.tags || [],
         backHref: '#' + d.id,
-        backText: d.label,
+        backText: (/^[A-Za-z]/.test(d.label) ? '返回 ' : '返回') + d.label,
       })}
       <div class="wrap">      ${hero}
       <div class="cs">${secHtml}</div>

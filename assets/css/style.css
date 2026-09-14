@@ -616,12 +616,12 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .phero__chip b{color:#fff;font-weight:700;margin-right:6px}
 .phero__chip:hover{border-color:rgba(255,154,99,.55);background:rgba(255,154,99,.12);transform:translateY(-2px)}
 /* ==== 返回上一级（页头胶囊）：与全站按钮语言一致，常态描边、悬停实心白 ==== */
-.phero__back{position:relative;z-index:2;display:inline-flex;align-items:center;gap:9px;margin-bottom:26px;
-  padding:10px 17px 10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.24);
-  background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
-  font:600 13.4px/1 inherit;color:#eaeff5;letter-spacing:.01em;
-  transition:background .26s,border-color .26s,color .26s,box-shadow .26s}
-.phero__back:hover{background:#fff;border-color:#fff;color:#14181d;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.phero__back{position:relative;z-index:3;display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;
+  padding:12px 21px 12px 17px;border-radius:999px;border:1px solid #fff;
+  background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.26);
+  font:700 14.6px/1 inherit;color:#14181d;letter-spacing:.01em;
+  transition:background .26s,border-color .26s,color .26s,box-shadow .26s,transform .26s}
+.phero__back:hover{background:#0f1216;border-color:#0f1216;color:#fff;transform:translateY(-2px)}
 .phero__scroll{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:2;
   color:#77828e;font:600 10.5px/1 ui-monospace,monospace;letter-spacing:.22em;
   display:flex;flex-direction:column;align-items:center;gap:7px}
