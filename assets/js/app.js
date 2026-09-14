@@ -220,7 +220,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914h').then(mod => {
+    import('./model3d.js?v=20260914i').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -685,13 +685,14 @@
   }
 
   function revealNow() {
-    const els = app.querySelectorAll('.rv');
+    const els = app.querySelectorAll('.rv, .rv-em, .stagger');
     if (reduce || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
     const io = new IntersectionObserver((ents, o) => {
       ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); o.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     els.forEach(e => io.observe(e));
-    setTimeout(() => els.forEach(e => e.classList.add('in')), 1400);
+    /* 兜底：1.2s 后仍未进入视口的元素也显示出来（避免内容"看不见"） */
+    setTimeout(() => app.querySelectorAll('.rv, .rv-em, .stagger').forEach(e => e.classList.add('in')), 1200);
   }
 
   /* ================= 导航状态 ================= */
