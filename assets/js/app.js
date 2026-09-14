@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915T').then(mod => {
+    import('./model3d.js?v=20260915U').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -616,8 +616,8 @@
       const k = strengthFor(cv);
       return createParticles(cv, {
         density: 1850, maxN: 78, minN: 46, band: false, freeRatio: 1,
-        link: 94, linkAlpha: .19 * k, speed: .95, dpr: 1.25,
-        dot: 'rgba(28,34,42,' + (.46 * k).toFixed(2) + ')', accent: 'rgba(224,98,45,' + (.55 * k).toFixed(2) + ')',
+        link: 96, linkAlpha: .23 * k, speed: .95, dpr: 1.25,
+        dot: 'rgba(28,34,42,' + (.54 * k).toFixed(2) + ')', accent: 'rgba(224,98,45,' + (.62 * k).toFixed(2) + ')',
         linkRGB: '28,34,42', glow: '224,98,45',
       });
     }).filter(Boolean);
@@ -686,7 +686,8 @@
       const fact = (p.facts || []).find(f => f && f[1]) || ['类型', dir.label];
       return `
       <a class="pick rv" href="#${dirId}/${slug}">
-        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}"><canvas class="card__fx" aria-hidden="true"></canvas></div>
+        <canvas class="card__fx" aria-hidden="true"></canvas>
+        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}"></div>
         <div class="pick__body">
           <div class="pick__eyebrow">${esc(dir.label)} · ${esc(fact[0])}</div>
           <h3>${esc(p.title)}</h3>
@@ -832,7 +833,8 @@
     const chips = ['全部', ...allTags.slice(0, 8)];
     const cards = d.projects.map(p => `
       <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
-        <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"><canvas class="card__fx" aria-hidden="true"></canvas></div>
+        <canvas class="card__fx" aria-hidden="true"></canvas>
+        <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"></div>
         <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
         <div class="card__body">
           <div class="tags">${tags(p.tags.slice(0, 3))}</div>
