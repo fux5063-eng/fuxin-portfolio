@@ -160,6 +160,9 @@
         const wander = Math.sin(t * p.w1 + p.ph) * p.wa + Math.cos(t * p.w2 + p.ph2) * (p.wa * .5);
         if (p.free) {
           p.vx += wander * .0055 * dt; p.vy += Math.cos(t * p.w1 * .85 + p.ph) * .005 * dt;
+          /* 轻微的即时扰动：让粒子有"活"的呼吸感（幅度只有最初版的 45%，不会抖） */
+          p.vx += (Math.random() - .5) * .0062 * dt;
+          p.vy += (Math.random() - .5) * .0062 * dt;
         } else {
           p.vx += ((.95 - Math.abs(p.vy) * .22) * p.sp * o.speed - p.vx) * .02 * dt;
           p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022 * dt;
@@ -429,7 +432,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915F').then(mod => {
+    import('./model3d.js?v=20260915G').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;

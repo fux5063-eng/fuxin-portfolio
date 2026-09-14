@@ -887,15 +887,15 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .gate__flow{position:absolute;inset:0;z-index:-2;overflow:hidden;isolation:isolate;
   background:radial-gradient(125% 105% at 14% 8%,#16233c 0%,#0c1017 52%,#07080a 100%)}
 .gate__flow[data-flow="1"]{background:radial-gradient(125% 105% at 86% 10%,#2b1a11 0%,#121009 52%,#0a0806 100%)}
-.flow__blob{position:absolute;border-radius:50%;filter:blur(46px);opacity:.9;mix-blend-mode:screen;display:block}
-.flow__blob.b1{width:64%;aspect-ratio:1/1;left:-10%;top:-14%;background:radial-gradient(circle,rgba(64,122,255,.78),transparent 68%);animation:flowA 14s ease-in-out infinite alternate}
-.flow__blob.b2{width:54%;aspect-ratio:1/1;right:-8%;top:4%;background:radial-gradient(circle,rgba(226,100,46,.72),transparent 66%);animation:flowB 18s ease-in-out infinite alternate}
-.flow__blob.b3{width:60%;aspect-ratio:1/1;left:14%;bottom:-26%;background:radial-gradient(circle,rgba(124,84,222,.55),transparent 68%);animation:flowC 22s ease-in-out infinite alternate}
+.flow__blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:1;mix-blend-mode:screen;display:block}
+.flow__blob.b1{width:64%;aspect-ratio:1/1;left:-10%;top:-14%;background:radial-gradient(circle,rgba(70,132,255,.88),transparent 68%);animation:flowA 11s ease-in-out infinite alternate}
+.flow__blob.b2{width:54%;aspect-ratio:1/1;right:-8%;top:4%;background:radial-gradient(circle,rgba(240,106,48,.82),transparent 66%);animation:flowB 15s ease-in-out infinite alternate}
+.flow__blob.b3{width:60%;aspect-ratio:1/1;left:14%;bottom:-26%;background:radial-gradient(circle,rgba(132,90,232,.66),transparent 68%);animation:flowC 19s ease-in-out infinite alternate}
 @keyframes flowA{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(10%,8%,0) scale(1.16)}}
 @keyframes flowB{0%{transform:translate3d(0,0,0) scale(1.06)}100%{transform:translate3d(-12%,10%,0) scale(.94)}}
 @keyframes flowC{0%{transform:translate3d(0,0,0) scale(.95)}100%{transform:translate3d(8%,-10%,0) scale(1.14)}}
 .flow__sheen{position:absolute;inset:-25%;pointer-events:none;opacity:0;transition:opacity .55s ease;mix-blend-mode:soft-light;
-  background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*36%) calc(50% + var(--my,0)*36%),rgba(255,255,255,.55),transparent 62%)}
+  background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*44%) calc(50% + var(--my,0)*44%),rgba(255,255,255,.72),transparent 64%)}
 .gate:hover .flow__sheen{opacity:1}
 .flow__grid{position:absolute;inset:0;opacity:.20;background-image:linear-gradient(rgba(255,255,255,.11) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.11) 1px,transparent 1px);background-size:46px 46px;
   -webkit-mask-image:radial-gradient(130% 95% at 18% 8%,#000 28%,transparent 76%);mask-image:radial-gradient(130% 95% at 18% 8%,#000 28%,transparent 76%)}
@@ -911,7 +911,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .card,.pick,.gate{will-change:transform;transform-style:preserve-3d}
 .card::after,.pick::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;
   transition:opacity .5s ease;border-radius:inherit;
-  background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*36%) calc(50% + var(--my,0)*36%),rgba(224,98,45,.16),transparent 64%)}
+  background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*44%) calc(50% + var(--my,0)*44%),rgba(224,98,45,.16),transparent 64%)}
 .card:hover::after,.pick:hover::after{opacity:1}
 /* 流光扫过（浅色卡片用橙色微光，深色方向卡用白光） */
 .card::before,.pick::before{content:"";position:absolute;top:-30%;bottom:-30%;width:34%;left:-52%;z-index:4;pointer-events:none;
