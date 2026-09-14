@@ -67,22 +67,44 @@
   /* 旧的清理函数（切页时调用，避免监听器堆积） */
   /* 把条目开头的关键短语加粗（按 : ： ， 切分，前缀 ≤14 字才加粗），便于扫读 */
   function keyLead(x) {
-    const m = String(x).match(/^([^：:，,。]{2,14})[：:，,]/);
-    if (!m) return esc(x);
-    return `<b>${esc(m[1])}</b>${esc(String(x).slice(m[1].length))}`;
+    const t = String(x);
+    const m = t.match(/^([^：:，,。]{2,14})[：:，,]/);
+    if (m) return `<b class="kd">${esc(m[1])}</b>${esc(t.slice(m[1].length))}`;
+    /* 无冒号的条目：取第一个分句作主题（内容里普遍用"；"分句） */
+    const j = t.match(/^([^；;]{4,18})[；;]/);
+    if (j) return `<b class="kd">${esc(j[1])}</b>${esc(t.slice(j[1].length))}`;
+    return esc(t);
   }
 
   /* 条目列表：默认最多 3 条，其余折叠在 <details> 里（信息随交互出现，减少阅读负担） */
+  /* 关键信息强调：数字+单位 / 结论信号词（每条最多 3 处，避免满屏加粗） */
+  const EMPH_RE = /\d+(?:\.\d+)?\s?(?:名|项|周|个|次|张|份|套|台|人|天|小时|分钟|%|万|千|种|类|步|层|页|版|英寸|Bit|bit|KB|MB|GB)/g;
+  const EMPH_WORDS = ['可回滚', '已匿名化', '全部跑通', '真实硬件', '语音闭环', '不静默覆盖', '可复用', '可追溯'];
+  function emphasize(html, max) {
+    const cap = max || 3;
+    let n = 0;
+    let out = String(html || '').replace(EMPH_RE, m => (n++ < cap ? '<b class="em">' + m + '</b>' : m));
+    for (const w of EMPH_WORDS) {
+      if (n >= cap) break;
+      const i = out.indexOf(w);
+      if (i >= 0 && out.slice(Math.max(0, i - 24), i).indexOf('<b class="em">') < 0) {
+        out = out.replace(w, '<b class="em">' + w + '</b>');
+        n++;
+      }
+    }
+    return out;
+  }
+
   function itemsBlock(items, limit = 2) {
     const list = items || [];
     if (!list.length) return '';
-    const head = list.slice(0, limit).map(x => `<li>${keyLead(x)}</li>`).join('');
+    const head = list.slice(0, limit).map(x => `<li>${emphasize(keyLead(x))}</li>`).join('');
     const rest = list.slice(limit);
     if (!rest.length) return `<ul class="cs__list">${head}</ul>`;
     return `<ul class="cs__list">${head}</ul>
           <details class="cs__more">
             <summary>展开其余 ${rest.length} 条 <i>＋</i></summary>
-            <ul class="cs__list">${rest.map(x => `<li>${keyLead(x)}</li>`).join('')}</ul>
+            <ul class="cs__list">${rest.map(x => `<li>${emphasize(keyLead(x))}</li>`).join('')}</ul>
           </details>`;
   }
 
@@ -372,16 +394,21 @@
     const items = [...wrap.querySelectorAll('.cs__sec')];
     if (items.length < 2) return;
     const rail = document.createElement('nav');
-    rail.className = 'rail';
-    rail.innerHTML = '<span class="rail__wrap"></span><i class="rail__bar"></i>' +
+    rail.className = 'rail rail--steps';
+    rail.setAttribute('aria-label', '本页结构');
+    rail.innerHTML = '<span class="rail__wrap"></span><i class="rail__bar"></i><span class="rail__prog"></span>' +
       items.map((s, i) => `<button type="button" data-i="${i}"><b>${String(i + 1).padStart(2, '0')}</b><span>${esc(secs[i].h)}</span></button>`).join('');
-    document.body.appendChild(rail);
+    /* 吸顶步骤条：插在深色页头之后，随内容滚动吸附在导航下方（替代原来的固定左侧竖轨道） */
+    const hero = scope.querySelector('.phero');
+    if (hero && hero.parentNode) hero.parentNode.insertBefore(rail, hero.nextSibling);
+    else document.body.appendChild(rail);
     const bar = rail.querySelector('.rail__bar');
+    const prog = rail.querySelector('.rail__prog');
     const links = [...rail.querySelectorAll('button')];
     links.forEach(a => a.addEventListener('click', e => {
       e.preventDefault();
       const t = items[+a.dataset.i];
-      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
+      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 128, behavior: 'smooth' });
     }));
     const tops = () => items.map(s => s.getBoundingClientRect().top + window.scrollY);
     const onScroll = () => {
@@ -392,7 +419,8 @@
       links.forEach((a, i) => a.classList.toggle('on', i === act));
       const first = t[0], last = t[t.length - 1] + items[items.length - 1].offsetHeight;
       const p = Math.max(0, Math.min(1, (window.scrollY + 240 - first) / Math.max(1, last - first)));
-      bar.style.transform = `scaleY(${p})`;
+      if (bar) bar.style.transform = `scaleY(${p})`;      /* 兼容：竖条（已不用） */
+      if (prog) prog.style.width = (p * 100).toFixed(1) + '%';
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -483,7 +511,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915M').then(mod => {
+    import('./model3d.js?v=20260915N').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -819,7 +847,7 @@
         </div>
         <div class="cs__main">
           <h2>${esc(s.h)}</h2>
-          ${s.lead ? `<p class="cs__lead">${esc(shortText(s.lead, 46))}</p>` : ''}
+          ${s.lead ? `<p class="cs__lead">${emphasize(esc(shortText(s.lead, 46)), 2)}</p>` : ''}
           ${syncOutcomes(s)}${itemsBlock(s.items)}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
@@ -1055,7 +1083,7 @@
       if (inner) { inner.style.opacity = (1 - t * 0.70).toFixed(3); inner.style.transform = 'translate3d(0,' + (-t * 26).toFixed(1) + 'px,0)'; }
     }
     /* 吸顶章节标签 */
-    const chip = document.getElementById('secChip');
+    const chip = null;   /* 已由吸顶步骤条替代 */
     if (chip) {
       const secs = [...document.querySelectorAll('.cs__sec')];
       let cur = null;
