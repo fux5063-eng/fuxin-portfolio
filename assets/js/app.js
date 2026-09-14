@@ -11,6 +11,14 @@
   const proj = (d, slug) => d && d.projects.find(p => p.slug === slug);
   const tags = (arr, cls) => (arr || []).map(t => `<span class="${cls || 'tag'}">${esc(t)}</span>`).join('');
 
+  /* 卡片封面：优先项目主图，其次图集首图，最后退回方向封面（避免 images 为空造成裂图） */
+  function coverOf(p, d) {
+    if (p && p.hero && p.hero.f) return p.hero.f;
+    if (p && p.images && p.images.length) return p.images[0];
+    if (d && d.cover) return d.cover;
+    return '';
+  }
+
   /* 3D 模型面板（页面里的一块展示，不是整屏背景） */
   let viewers = [];
   function modelPanel(m, opt = {}) {
@@ -68,7 +76,7 @@
         <div class="tabs__panes">
           ${list.map((x, i) => `
             <div class="tabs__pane${i === 0 ? ' on' : ''}" data-i="${i}" role="tabpanel">
-              <figure class="shot"><img src="${esc(x.f)}" alt="${esc(x.t)}" loading="lazy"></figure>
+              <figure class="shot"><img src="${esc(x.f)}" alt="${esc(x.t)}"></figure>
               <div class="tabs__txt"><b>${esc(x.t)}</b><p>${esc(x.d || '')}</p></div>
             </div>`).join('')}
         </div>
@@ -113,6 +121,26 @@
     cleanups.push(() => { window.removeEventListener('scroll', onScroll); rail.remove(); });
   }
 
+  /* 方向页：按能力筛选卡片 */
+  function initFilter(scope) {
+    scope.querySelectorAll('[data-filter]').forEach(box => {
+      const chips = [...box.querySelectorAll('.filter__chip')];
+      const cards = [...scope.querySelectorAll('[data-cards] .card')];
+      const countEl = box.querySelector('[data-count]');
+      chips.forEach(chip => chip.addEventListener('click', () => {
+        const t = chip.dataset.tag;
+        chips.forEach(c => c.classList.toggle('on', c === chip));
+        let shown = 0;
+        cards.forEach(card => {
+          const match = t === '全部' || (card.dataset.tags || '').split('|').includes(t);
+          card.classList.toggle('is-hidden', !match);
+          if (match) shown++;
+        });
+        if (countEl) countEl.textContent = shown + ' 个项目';
+      }));
+    });
+  }
+
   /* 细节切换器交互 */
   function initTabs(scope) {
     scope.querySelectorAll('[data-tabs]').forEach(box => {
@@ -155,7 +183,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914f').then(mod => {
+    import('./model3d.js?v=20260914g').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -366,9 +394,13 @@
   }
 
   function viewDirection(d) {
+    /* 能力筛选标签（取各项目标签的并集，最多 8 个） */
+    const allTags = [];
+    d.projects.forEach(p => (p.tags || []).forEach(t => { if (!allTags.includes(t)) allTags.push(t); }));
+    const chips = ['全部', ...allTags.slice(0, 8)];
     const cards = d.projects.map(p => `
-      <a class="card rv" href="#${d.id}/${p.slug}">
-        <div class="card__img"><img src="${p.images[0]}" alt="${esc(p.title)}" loading="lazy"></div>
+      <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
+        <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"></div>
         <div class="card__body">
           <div class="tags">${tags(p.tags.slice(0, 3))}</div>
           <h3>${esc(p.title)}</h3>
@@ -391,7 +423,12 @@
         </div>
         <a class="btn btn--ghost" href="${d.pdf}" download>下载完整 PDF</a>
       </div>
-      <div class="cards">${cards}</div>
+      <div class="filter" data-filter>
+        <span class="filter__label">按能力筛选</span>
+        ${chips.map((t, i) => `<button type="button" class="filter__chip${i === 0 ? ' on' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}
+        <span class="filter__count" data-count>${d.projects.length} 个项目</span>
+      </div>
+      <div class="cards" data-cards>${cards}</div>
       <p class="note">全部 ${d.projects.length} 个项目均来自完整作品集 PDF（本页图片即 PDF 对应页面）。商业项目已按公开边界匿名化处理。</p>
     </div></section>`;
   }
@@ -476,9 +513,9 @@
   }
 
   function viewAbout() {
-    const tl = ABOUT.timeline.map(t => `
-      <li><time>${esc(t.time)}</time><div><b>${esc(t.org)}</b><span>${esc(t.desc)}</span></div></li>`).join('');
-    const sk = ABOUT.skills.map(s => `<li><time>${esc(s.k)}</time><div><b>${esc(s.v)}</b></div></li>`).join('');
+    const tl = ABOUT.timeline.map((t, i) => `
+      <li class="rv stagger" style="transition-delay:${Math.min(i * 70, 420)}ms"><time>${esc(t.time)}</time><div><b>${esc(t.org)}</b><span>${esc(t.desc)}</span></div></li>`).join('');
+    const sk = ABOUT.skills.map((s, i) => `<li class="rv stagger" style="transition-delay:${Math.min(i * 45, 320)}ms"><time>${esc(s.k)}</time><div><b>${esc(s.v)}</b></div></li>`).join('');
     return `
     <section class="sec"><div class="wrap">
       <a class="backlink" href="#/">← 返回首页</a>
@@ -486,7 +523,7 @@
         <div><div class="en-label">ABOUT ME</div><h2>关于我</h2><p>${esc(SITE.name)} · ${esc(SITE.sub)} · ${esc(SITE.school)}</p></div>
       </div>
       <div class="about">
-        <div class="about__pic"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}"></div>
+        <figure class="about__pic shot rv"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></figure>
         <div>
           <p style="color:var(--ink-2)">${esc(ABOUT.intro)}</p>
           <h4 style="margin:26px 0 4px">实践经历</h4>
@@ -502,8 +539,8 @@
   }
 
   function viewDownload() {
-    const cards = DOWNLOADS.map(f => `
-      <a href="${f.f}" download><b>${esc(f.t)}</b><span>${esc(f.d)} · ${esc(f.s)}</span><span style="color:var(--accent-d);font-weight:700;font-size:13px">下载 PDF →</span></a>`).join('');
+    const cards = DOWNLOADS.map((f, i) => `
+      <a class="rv stagger" style="transition-delay:${Math.min(i * 60, 300)}ms" href="${f.f}" download><b>${esc(f.t)}</b><span>${esc(f.d)} · ${esc(f.s)}</span><span style="color:var(--accent-d);font-weight:700;font-size:13px">下载 PDF →</span></a>`).join('');
     return `
     <section class="sec"><div class="wrap">
       <a class="backlink" href="#/">← 返回首页</a>
@@ -562,6 +599,7 @@
     if (domSecs.length) initRail(app, domSecs);
     initCompare(app);
     initTabs(app);
+    initFilter(app);
 
     /* 导航高亮：标出当前所在方向/页面 */
     const cur = '#' + (a || '');

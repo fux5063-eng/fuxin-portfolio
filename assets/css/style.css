@@ -546,3 +546,24 @@ a:focus-visible,button:focus-visible,.fig:focus-visible{outline:2px solid var(--
 .nav a.on{color:var(--ink)}
 body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .nav a.on::after{content:'';display:block;height:2px;margin-top:5px;border-radius:2px;background:var(--accent)}
+
+/* 方向页：能力筛选 */
+.filter{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:22px 0 18px}
+.filter__label{font-size:12.5px;color:var(--muted);letter-spacing:.04em;margin-right:2px}
+.filter__chip{appearance:none;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--muted);
+  font:600 12.8px/1 inherit;padding:8px 13px;border-radius:999px;transition:all .18s ease}
+.filter__chip:hover{color:var(--ink);border-color:#cfd7e0;transform:translateY(-1px)}
+.filter__chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.filter__count{margin-left:auto;font:600 12.5px/1 ui-monospace,monospace;color:var(--accent-d)}
+.card.is-hidden{display:none}
+.card{transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(15,20,28,.14)}
+
+/* 非首页元素的互动反馈（统一手感） */
+.timeline li{transition:transform .25s ease,background .25s ease;border-radius:10px}
+.timeline li:hover{transform:translateX(4px);background:#f7f9fb}
+.dl a{transition:transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s ease,border-color .25s ease}
+.dl a:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(15,20,28,.12);border-color:#cfd7e0}
+.about__pic{cursor:zoom-in;transition:transform .3s ease,box-shadow .3s ease}
+.about__pic:hover{transform:translateY(-3px);box-shadow:0 24px 56px rgba(17,18,20,.18)}
+.rv.stagger{transition-property:opacity,transform;transition-duration:.6s}
