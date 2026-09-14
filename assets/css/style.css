@@ -1256,3 +1256,39 @@ html.dark .hero__cta .btn:first-child{background:rgba(255,255,255,.08);border-co
 html.dark .hero__ghost{opacity:.22}
 html.dark #bgfx{opacity:.78}
 html.dark .fig figcaption,html.dark .heroFig figcaption,html.dark .phero__sub{color:#b6c1cd}
+
+/* ================= 深色主题 · 第 5 版（容器 / 可读性 / 主次） ================= */
+html.dark .hero__panel{
+  background:linear-gradient(180deg,rgba(30,37,47,.90),rgba(18,23,30,.90));
+  border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:24px 26px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 22px 54px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+html.dark .hero__panel .hero__facts{color:#cfd8e3}
+html.dark .hero__facts div{line-height:1.68}
+html.dark .hero__facts div b,html.dark .hero__facts div strong{color:#ffbe97;font-weight:700}
+html.dark .hero__facts div em{font-style:normal;color:#eaf0f7;font-size:13.5px}
+html.dark .hero__facts div span,html.dark .hero__facts div p{color:#bcc7d3;font-size:13px;line-height:1.68}
+html.dark .hero__facts div+div{border-top:1px solid rgba(255,255,255,.10);margin-top:12px;padding-top:12px}
+/* CTA 主次 */
+html.dark .hero__cta .btn:first-child{
+  background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
+  box-shadow:0 10px 26px rgba(255,138,76,.28)}
+html.dark .hero__cta .btn:first-child:hover{background:#ffa06a;border-color:#ffa06a}
+html.dark .nav__cta{border-color:rgba(255,138,76,.5);color:#ffc4a0}
+html.dark .nav__cta:hover{background:rgba(255,138,76,.16);border-color:rgba(255,138,76,.7)}
+/* 副标题略提亮 */
+html.dark .hero__lead,html.dark .phero__sub{color:#b9c4d0}
+html.dark .hero__role{color:#9fabb9}
+
+/* ================= 深色主题 · 第 6 版（收尾修正） ================= */
+html.dark .hero__cta>.btn:first-of-type,
+html.dark .hero__cta>a.btn:first-of-type{
+  background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
+  box-shadow:0 10px 26px rgba(255,138,76,.30)}
+html.dark .hero__cta>.btn:first-of-type:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0d11}
+html.dark .hero__panel{font-size:13.6px}
+html.dark .hero__panel *{line-height:1.66}
+html.dark .hero__panel{color:#c9d3de}
+html.dark .hero__panel b,html.dark .hero__panel strong{color:#ffbe97}
+html.dark .hero__panel em,html.dark .hero__panel i{font-style:normal;color:#e8eef5}
+html.dark .hero__panel span,html.dark .hero__panel p{color:#bcc7d3}
