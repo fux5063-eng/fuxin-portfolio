@@ -1544,3 +1544,26 @@
   window.addEventListener('hashchange', render);
   render();
 })();
+
+
+/* ===== 深色微粒子主题 · 试用版（?theme=dark；不带参数则完全不影响现有浅色版） ===== */
+(function themeTry() {
+  try {
+    if (!/[?&]theme=dark/.test(String(location.search || ''))) return;
+    document.documentElement.classList.add('dark');
+    var mount = function () {
+      var cv = document.createElement('canvas');
+      cv.id = 'bgfx';
+      document.body.insertBefore(cv, document.body.firstChild);
+      if (typeof createParticles === 'function') {
+        createParticles(cv, {
+          density: 26000, maxN: 110, minN: 60, freeRatio: .5,
+          link: 132, linkAlpha: .22, speed: .38, dpr: 1, dotScale: 1.05,
+          dot: 'rgba(226,236,246,.55)', linkRGB: '210,226,242', glow: '255,158,102'
+        });
+        window.dispatchEvent(new Event('resize'));
+      }
+    };
+    if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
+  } catch (e) {}
+})();

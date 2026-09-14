@@ -1155,3 +1155,38 @@ body.exp-open{overflow:hidden}
 /* ==== 项目卡聚焦高亮（点项目名快速定位时短暂提示） ==== */
 .card--focus{box-shadow:0 0 0 2px var(--acc), 0 22px 48px rgba(224,98,45,.28) !important;
   transform:translateY(-6px) !important;transition:box-shadow .35s,transform .35s}
+
+
+/* ================= 深色微粒子主题 · 试用版（?theme=dark 开启；默认浅色完全不变） ================= */
+#bgfx{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none}
+html.dark{
+  --ink:#e9eef4;--ink-2:#c3ceda;--muted:#8e9aa6;--line:#242b34;
+  --bg:#0a0c10;--bg-2:#11151b;--accent:#ff7a33;--accent-d:#ff9a5c;--accent-soft:#1e1610;
+}
+html.dark body{background:var(--bg);color:var(--ink)}
+html.dark main,html.dark section,html.dark header,html.dark footer,html.dark .wrap{background:transparent}
+html.dark .sheet,html.dark .qrbox,html.dark .tabs,html.dark .tag,html.dark .shot,
+html.dark .fig,html.dark .timeline li:hover,html.dark .filter__chip,html.dark .exp__panel,
+html.dark .m3d--light,html.dark .cmpwrap,html.dark .cmp__cap,html.dark .cmp__line,
+html.dark .tabs__chip,html.dark .tabs__foot,html.dark .crow .cp:hover,html.dark .dl a:hover,
+html.dark .cs__more summary:hover,html.dark .heroFig figcaption,html.dark .fig figcaption,
+html.dark .m3d--light figcaption,html.dark .btn--light,html.dark .btn--ghost:hover{background:var(--bg-2)}
+html.dark .card,html.dark .pick{background:linear-gradient(rgb(31,38,48),rgb(19,24,31));border-color:rgba(255,255,255,.10)}
+html.dark .card__img,html.dark .pick__img,html.dark .exp__pic{background:#161b22}
+html.dark .qrbox img,html.dark .foot__qr img{background:#fff}
+html.dark .shot img,html.dark .fig img,html.dark .heroFig img{outline:1px solid rgba(255,255,255,.08);outline-offset:-1px}
+html.dark .note{color:var(--muted)}
+
+
+/* ================= 深色主题 · 精修第 2 版（评审修正） ================= */
+html.dark{color-scheme:dark;--ink-2:#d3dce6;--muted:#aeb8c4}
+html.dark .nav{background:rgba(10,12,16,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+html.dark .nav__mark{background:rgba(255,255,255,.14);color:#fff}
+html.dark .nav__links a{color:#c9d3de}
+html.dark .card,html.dark .pick{background:linear-gradient(rgb(38,46,58),rgb(24,30,38));border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+html.dark .card:hover,html.dark .pick:hover{box-shadow:0 22px 54px rgba(0,0,0,.55)}
+html.dark .card__img img,html.dark .pick__img img,html.dark .shot img,html.dark .fig img,html.dark .heroFig img{outline:1px solid rgba(255,255,255,.16);outline-offset:-1px}
+html.dark .tag{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.14);color:#d5dbe3}
+html.dark .filter__chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#b9c3cf}
+html.dark .filter__chip:hover{color:#fff;border-color:rgba(255,255,255,.24)}
+html.dark .filter__chip.on{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.24);color:#fff}
