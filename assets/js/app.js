@@ -460,13 +460,39 @@
     cleanups.push(() => { window.removeEventListener('scroll', onScroll); rail.remove(); });
   }
 
+  /* 项目短名：取 "·" 之前的部分，过长则截断 */
+  const shortName = p => {
+    const t = String(p.title || p.slug || '');
+    const cut = t.split(' · ')[0].trim();
+    return cut.length > 11 ? cut.slice(0, 11) : cut;
+  };
+
   /* 方向页：按能力筛选卡片 */
+  function initJump(scope) {
+    const box = scope.querySelector('[data-filter]');
+    if (!box) return;
+    box.addEventListener('click', e => {
+      const b = e.target.closest('.filter__chip');
+      if (!b || !b.dataset.jump) return;
+      [...box.querySelectorAll('.filter__chip')].forEach(x => x.classList.toggle('on', x === b));
+      const slug = b.dataset.jump;
+      if (slug === 'all') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      const card = scope.querySelector(`.card[data-slug="${slug}"]`);
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('card--focus');
+      setTimeout(() => card.classList.remove('card--focus'), 1700);
+    });
+  }
+
   function initFilter(scope) {
     scope.querySelectorAll('[data-filter]').forEach(box => {
       const chips = [...box.querySelectorAll('.filter__chip')];
       const cards = [...scope.querySelectorAll('[data-cards] .card')];
       const countEl = box.querySelector('[data-count]');
-      chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(chip => {
+        if (!chip.dataset.tag) return;   /* 项目名按钮（data-jump）走 initJump，不参与标签过滤，避免误隐藏全部卡片 */
+        chip.addEventListener('click', () => {
         const t = chip.dataset.tag;
         chips.forEach(c => c.classList.toggle('on', c === chip));
         let shown = 0;
@@ -476,7 +502,8 @@
           if (match) shown++;
         });
         if (countEl) countEl.textContent = shown + ' 个项目';
-      }));
+        });
+      });
     });
   }
 
@@ -843,7 +870,7 @@
     const pick = FILTER_ORDER.filter(t => allTags.includes(t));
     const chips = ['全部', ...(pick.length >= 4 ? pick : allTags.slice(0, 8))];
     const cards = d.projects.map(p => `
-      <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
+      <a class="card rv" data-slug="${p.slug}" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
         <canvas class="card__fx" aria-hidden="true"></canvas>
         <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
         <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
@@ -868,12 +895,13 @@
       })}
       <div class="wrap">
       <div class="dir__bar">
-        <span class="dir__hint">点标签按能力筛选 · 把鼠标放到卡片上可看关键信息</span>
+        <span class="dir__hint">点项目名可快速定位 · 把鼠标放到卡片上可看关键信息</span>
         <a class="btn btn--ghost" href="${d.pdf}" download>下载完整 PDF</a>
       </div>
       <div class="filter" data-filter>
-        <span class="filter__label">按能力筛选</span>
-        ${chips.map((t, i) => `<button type="button" class="filter__chip${i === 0 ? ' on' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}
+        <span class="filter__label">快速定位项目</span>
+        <button type="button" class="filter__chip on" data-jump="all">全部</button>
+        ${d.projects.map(p => `<button type="button" class="filter__chip" data-jump="${esc(p.slug)}">${esc(shortName(p))}</button>`).join('')}
         <span class="filter__count" data-count>${d.projects.length} 个项目</span>
       </div>
       <div class="cards" data-cards>${cards}</div>
@@ -1082,7 +1110,7 @@
     safe('gateFX', () => mountGateFX(app));
     safe('cardParticles', () => mountCardFX(app));
     safe('cardFX', () => initCardFX(app));
-    safe('filter', () => initFilter(app));
+    safe('jump', () => initJump(app)); safe('filter', () => initFilter(app));
 
 
     /* 导航高亮：标出当前所在方向/页面 */

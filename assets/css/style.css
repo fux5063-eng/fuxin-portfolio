@@ -1145,3 +1145,7 @@ body.exp-open{overflow:hidden}
    避免"每帧写入 + 0.3~0.4s 长过渡"互相打架造成的拖尾与卡顿；并提前提升为合成层 ==== */
 .fxcard{will-change:transform}
 .fxcard:hover{transition:transform .12s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
+
+/* ==== 项目卡聚焦高亮（点项目名快速定位时短暂提示） ==== */
+.card--focus{box-shadow:0 0 0 2px var(--acc), 0 22px 48px rgba(224,98,45,.28) !important;
+  transform:translateY(-6px) !important;transition:box-shadow .35s,transform .35s}
