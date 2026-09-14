@@ -131,6 +131,7 @@
       link: 128, linkAlpha: .40, linkD2: null,
       band: true, bandAmp: .11, bandBase: .55, bandWidth: 70, freeRatio: .28,
       speed: 1, accent: 'rgba(255,158,102,.85)',
+      dot: 'rgba(226,236,246,.7)', linkRGB: '255,255,255', glow: '255,158,102',
     }, opts || {});
     const linkD2 = o.linkD2 || o.link * o.link;
     let W = 0, H = 0, parts = [], raf = 0, on = false, last = 0;
@@ -232,7 +233,7 @@
             for (let j = same ? i + 1 : 0; j < nb.length; j++) {
               const b = nb[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
               if (d2 < linkD2) {
-                ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / o.link) * o.linkAlpha).toFixed(3) + ')';
+                ctx.strokeStyle = 'rgba(' + o.linkRGB + ',' + ((1 - Math.sqrt(d2) / o.link) * o.linkAlpha).toFixed(3) + ')';
                 ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
               }
             }
@@ -243,14 +244,14 @@
       if (mouse.on) {
         const mr2 = mouse.r * mouse.r;
         const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, mouse.r);
-        g.addColorStop(0, 'rgba(255,158,102,.20)');
-        g.addColorStop(1, 'rgba(255,158,102,0)');
+        g.addColorStop(0, 'rgba(' + o.glow + ',.20)');
+        g.addColorStop(1, 'rgba(' + o.glow + ',0)');
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(mouse.x, mouse.y, mouse.r, 0, 6.283); ctx.fill();
         for (const p of parts) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
           if (d2 < mr2) {
-            ctx.strokeStyle = 'rgba(255,178,128,' + ((1 - Math.sqrt(d2) / mouse.r) * .5).toFixed(3) + ')';
+            ctx.strokeStyle = 'rgba(' + o.glow + ',' + ((1 - Math.sqrt(d2) / mouse.r) * .5).toFixed(3) + ')';
             ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(p.x, p.y); ctx.stroke();
           }
@@ -259,7 +260,7 @@
       }
       for (const p of parts) {
         ctx.beginPath();
-        ctx.fillStyle = p.hot ? o.accent : 'rgba(226,236,246,.7)';
+        ctx.fillStyle = p.hot ? o.accent : o.dot;
         ctx.arc(p.x, p.y, p.r, 0, 6.283);
         ctx.fill();
       }
@@ -511,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915P').then(mod => {
+    import('./model3d.js?v=20260915Q').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -572,6 +573,23 @@
   let initCardFX = () => 0;
   let gateFlowInit = () => {};
   let mountGateFX = () => 0;
+
+  /* 项目卡粒子（档位 A：悬停淡入 + 中心遮罩；浅色底用深灰粒子） */
+  const CARD_FX_SAMPLE_ONLY = true;   /* ← 样板模式：只给第一张卡挂粒子；改为 false 即铺满全部项目卡 */
+  let cardFXs = [];
+  function mountCardFX(scope) {
+    cardFXs.forEach(f => f.dispose && f.dispose());
+    cardFXs = [];
+    let cvs = [...scope.querySelectorAll('canvas.card__fx')];
+    if (CARD_FX_SAMPLE_ONLY) cvs = cvs.slice(0, 1);
+    cardFXs = cvs.map(cv => createParticles(cv, {
+      density: 2400, maxN: 60, minN: 34, band: false, freeRatio: 1,
+      link: 92, linkAlpha: .13, speed: .95, dpr: 1.25,
+      dot: 'rgba(28,34,42,.30)', accent: 'rgba(224,98,45,.42)',
+      linkRGB: '28,34,42', glow: '224,98,45',
+    })).filter(Boolean);
+    return cardFXs.length;
+  }
 
   /* ================= 视图 ================= */
 
@@ -752,7 +770,7 @@
     const chips = ['全部', ...allTags.slice(0, 8)];
     const cards = d.projects.map(p => `
       <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
-        <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"></div>
+        <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"><canvas class="card__fx" aria-hidden="true"></canvas></div>
         <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
         <div class="card__body">
           <div class="tags">${tags(p.tags.slice(0, 3))}</div>
@@ -973,6 +991,7 @@
     safe('tabs', () => initTabs(app));
     safe('gateFlow', () => gateFlowInit());
     safe('gateFX', () => mountGateFX(app));
+    safe('cardParticles', () => mountCardFX(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
 
