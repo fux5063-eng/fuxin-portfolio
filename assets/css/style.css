@@ -921,7 +921,12 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 
 /* ============ 统一卡片交互：高光跟随 + 流光扫过 + 抬升 ============ */
 .card{position:relative}
-.card,.pick,.gate{will-change:transform;transform-style:preserve-3d}
+/* 性能要点：这里原来给所有卡片 will-change:transform + preserve-3d，
+   一页十几张卡同时申请合成层，浏览器配额很快耗尽 → 只有第一张真的被提升，
+   其余退回主线程合成，表现就是"每组只有第一个顺滑，其余卡"。
+   transform-style 也从 preserve-3d 改回 flat：倾斜用的 perspective() 写在 transform 里，
+   不需要给卡片本身开 3D 上下文。 */
+.card,.pick,.gate{transform-style:flat}
 .card::after,.pick::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;
   transition:opacity .5s ease;border-radius:inherit;
   background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*44%) calc(50% + var(--my,0)*44%),rgba(224,98,45,.16),transparent 64%)}
@@ -1143,9 +1148,9 @@ body.exp-open{overflow:hidden}
 
 /* ==== 交互跟手（性能）：hover 期间把 transform 过渡压到 0.12s，
    避免"每帧写入 + 0.3~0.4s 长过渡"互相打架造成的拖尾与卡顿；并提前提升为合成层 ==== */
-.fxcard{will-change:transform;transition:transform .34s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
-/* 跟手期间只过渡阴影：transform 每帧直接写入 → 1:1 跟随鼠标，不再慢一拍 */
-.fxcard.is-tilt{transition:box-shadow .3s ease}
+.fxcard{transition:transform .34s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
+/* 只有"正在跟手"的这一张才提升为合成层（原来十几张一起提升 = 配额耗尽 → 卡） */
+.fxcard.is-tilt{will-change:transform;transition:box-shadow .3s ease}
 
 /* ==== 项目卡聚焦高亮（点项目名快速定位时短暂提示） ==== */
 .card--focus{box-shadow:0 0 0 2px var(--acc), 0 22px 48px rgba(224,98,45,.28) !important;
