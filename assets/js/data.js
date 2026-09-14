@@ -309,7 +309,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', 'CMF'],
         summary: '两个实体产品：DOGGIE 多功能宠物牵引绳与 Lumora 光健康伴护仪，从使用任务到产品架构、曲面建模与 CMF。',
         facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品 + 居家康养照明'], ['证据', '连续 Rhino / KeyShot 工程']],
-        hero: { f: 'assets/img/cover/entity.webp', cap: 'DOGGIE 与 Lumora 两个实体产品' },
+        hero: { f: 'assets/img/cover/entity-2up.webp', cap: 'DOGGIE 与 Lumora 两个实体产品' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
