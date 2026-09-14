@@ -223,7 +223,7 @@
 
   /* 主页背景粒子 */
   const FX = createParticles(document.getElementById('fx'), {
-    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44,
+    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.55,
   }) || { start() {}, stop() {} };
 
   /* 内页页头粒子（尺寸小、密度低） */
@@ -233,7 +233,7 @@
     heroFXs = [...scope.querySelectorAll('canvas.phero__fx')]
       .map(cv => createParticles(cv, {
         density: 9200, maxN: 130, minN: 40, bandBase: .58, bandAmp: .10, bandWidth: 42,
-        freeRatio: .16, link: 126, linkAlpha: .38,
+        freeRatio: .16, link: 126, linkAlpha: .38, speed: 1.5,
       })).filter(Boolean);
   }
 
@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914Q').then(mod => {
+    import('./model3d.js?v=20260914R').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -465,6 +465,29 @@
         </div>
       </a>`).join('');
 
+    /* 精选项目：从两个方向里挑 4 个代表作（内容仍取自数据，不硬编码） */
+    const PICKS = ['id/doggie', 'id/navlight', 'ai/robot', 'ai/toolset'];
+    const pickCard = key => {
+      const [dirId, slug] = key.split('/');
+      const dir = DIRECTIONS.find(x => x.id === dirId);
+      const p = dir && dir.projects.find(x => x.slug === slug);
+      if (!p) return '';
+      const cover = (p.hero && p.hero.f) || (p.images && p.images[0]) || dir.cover;
+      const fact = (p.facts || []).find(f => f && f[1]) || ['类型', dir.label];
+      return `
+      <a class="pick rv" href="#${dirId}/${slug}">
+        <div class="pick__img"><img src="${esc(cover)}" alt="${esc(p.title)}" loading="lazy"></div>
+        <div class="pick__body">
+          <div class="pick__eyebrow">${esc(dir.label)} · ${esc(fact[0])}</div>
+          <h3>${esc(p.title)}</h3>
+          <p>${esc(shortText(p.summary, 42))}</p>
+          <span class="pick__go">看完整案例 <i></i></span>
+        </div>
+        <div class="pick__tags">${(p.tags || []).slice(0, 3).map(t => `<span>${esc(t)}</span>`).join('')}</div>
+      </a>`;
+    };
+    const picks = PICKS.map(pickCard).join('');
+
     const mq = [...MARQUEE, ...MARQUEE].map(x => `<span>${esc(x)}</span>`).join('');
 
     return `
@@ -497,7 +520,7 @@
           </div>
         </div>
       </div>
-      <p class="hero__cue rv">往下是两条线的代表作：<b>工业方向</b>可以转 DOGGIE 牵引绳、看航标灯改款；<b>AI 方向</b>是机器人毕设与自研工具。每个项目页都能<b>拖模型、拖对比条、点标签看细节</b>。</p>
+      <p class="hero__cue rv">两条线各挑两个代表作，项目页里可以<b>拖模型、拖对比条、点标签看细节</b>。</p>
       <div class="hero__scroll"><i></i><span>SCROLL ↓</span></div>
     </section>
 
@@ -506,12 +529,27 @@
         <div class="wrap">
           <div class="sec__head">
             <div>
-              <div class="en-label">TWO DIRECTIONS</div>
+              <div class="en-label"><b>01</b>TWO DIRECTIONS</div>
               <h2>选一个方向开始看</h2>
               <p>两个方向共用同一套工作方法：先判断边界，再推进造型与验证，最后把过程留成可复用的记录。</p>
             </div>
           </div>
           <div class="gates">${gates}</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="sheet">
+      <section class="sec" id="picks">
+        <div class="wrap">
+          <div class="sec__head">
+            <div>
+              <div class="en-label"><b>02</b>SELECTED WORK</div>
+              <h2>四个代表作</h2>
+              <p>两条线各挑两个：能转的 3D、能拖的对比、能点开的细节，都在各自的项目页里。</p>
+            </div>
+          </div>
+          <div class="picks">${picks}</div>
         </div>
       </section>
     </div>
@@ -523,7 +561,7 @@
         <div class="wrap">
           <div class="sec__head">
             <div>
-              <div class="en-label">REAL MODEL · 3D</div>
+              <div class="en-label"><b>03</b>REAL MODEL · 3D</div>
               <h2>不是渲染图，是可以自己转的模型</h2>
               <p>下面这块放的是建模文件本身。按住拖动就能从任意角度看体量、分件和曲面关系——比一张静态渲染图更能说明设计。</p>
             </div>
@@ -876,7 +914,7 @@
       const p = el.parentElement || app;
       const i = cnt.get(p) || 0;
       cnt.set(p, i + 1);
-      if (!el.style.transitionDelay) el.style.transitionDelay = Math.min(i * 85, 340) + 'ms';
+      if (!el.style.transitionDelay) el.style.transitionDelay = Math.min(i * 70, 300) + 'ms';
     });
     revealPass();
   }
