@@ -193,6 +193,23 @@
       window.addEventListener('resize', dirty, { passive: true });
     }
 
+    /* 共享动画循环：原来每个画布各跑一个 requestAnimationFrame（一页十几个循环），
+       现在合并为单一循环统一驱动，减少调度开销与帧间抖动。 */
+    const FS = (window.__fxLoop = window.__fxLoop || { list: [], raf: 0 });
+    function scheduleShared() { if (!FS.raf) FS.raf = requestAnimationFrame(runShared); }
+    function runShared(ts) {
+      FS.raf = 0;
+      const L = FS.list;
+      let live = false;
+      for (let i = 0; i < L.length; i++) {
+        const t = L[i];
+        if (!t.on || !t.cv.isConnected) continue;
+        live = true;
+        t.tick(ts);
+      }
+      if (live) scheduleShared();
+    }
+
     function build() {
       const n = Math.round(Math.min(o.maxN, Math.max(o.minN, (W * H) / o.density)));
       parts = Array.from({ length: n }, () => {
@@ -304,15 +321,24 @@
         g.addColorStop(1, 'rgba(' + o.glow + ',0)');
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(mouse.x, mouse.y, mouse.r, 0, 6.283); ctx.fill();
+        /* 批量：按透明度分 4 档，最多 4 次 stroke（原来每条线一次，最多上百次/帧） */
+        const PB = 4, pbk = [[], [], [], []];
         for (const p of parts) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
           if (d2 < mr2) {
-            ctx.strokeStyle = 'rgba(' + o.glow + ',' + ((1 - Math.sqrt(d2) / mouse.r) * .5).toFixed(3) + ')';
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+            const t = 1 - Math.sqrt(d2) / mouse.r;
+            pbk[Math.min(PB - 1, Math.max(0, (t * PB) | 0))].push(mouse.x, mouse.y, p.x, p.y);
           }
         }
         ctx.lineWidth = 1;
+        for (let bi = 0; bi < PB; bi++) {
+          const seg = pbk[bi];
+          if (!seg.length) continue;
+          ctx.strokeStyle = 'rgba(' + o.glow + ',' + (((bi + 0.5) / PB) * .5).toFixed(3) + ')';
+          ctx.beginPath();
+          for (let si = 0; si < seg.length; si += 4) { ctx.moveTo(seg[si], seg[si + 1]); ctx.lineTo(seg[si + 2], seg[si + 3]); }
+          ctx.stroke();
+        }
       }
       for (const p of parts) {
         ctx.beginPath();
@@ -320,11 +346,13 @@
         ctx.arc(p.x, p.y, p.r * o.dotScale, 0, 6.283);
         ctx.fill();
       }
-      raf = requestAnimationFrame(frame);
+      scheduleShared();
     }
 
-    function start() { if (on) return; on = true; last = 0; size(!parts.length); if (!raf) raf = requestAnimationFrame(frame); }
-    function stop() { on = false; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    const task = { tick: frame, cv: cv, on: false };
+    FS.list.push(task);
+    function start() { if (on) return; on = true; last = 0; size(!parts.length); task.on = true; scheduleShared(); }
+    function stop() { on = false; task.on = false; }
     function onResize() { if (on) size(false); }
     window.addEventListener('resize', onResize, { passive: true });
     function dispose() {
@@ -706,7 +734,7 @@
       const k = strengthFor(cv);
       return createParticles(cv, {
         density: 1350, maxN: 130, minN: 82, band: false, freeRatio: 1,
-        link: 104, linkAlpha: .38 * k, speed: 2.2, dpr: 1.25, dotScale: 1.65,
+        link: 104, linkAlpha: .38 * k, speed: 2.2, dpr: 1, dotScale: 1.65,
         dot: 'rgba(236,243,250,' + (.70 * k).toFixed(2) + ')', accent: 'rgba(255,158,102,' + (.85 * k).toFixed(2) + ')',
         linkRGB: '214,228,242', glow: '255,158,102',
       });
