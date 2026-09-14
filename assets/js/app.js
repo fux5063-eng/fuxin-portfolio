@@ -23,6 +23,26 @@
   let viewers = [];
   function modelPanel(m, opt = {}) {
     if (!m || !m.src) return '';
+    if (m.static) return staticPanel(m, opt);   /* 静态替代方案 */
+  /* 静态渲染替代：模型块的另一种呈现（图 + 图注），加载更快、零交互依赖 */
+  function staticPanel(m, opt = {}) {
+    const st = m.static;
+    const imgs = (st.images || []).map(it => `
+          <figure class="m3di__item">
+            <img src="${esc(it.f)}" alt="${esc(it.alt || '')}" loading="lazy" decoding="async">
+            <figcaption>${esc(it.cap || '')}</figcaption>
+          </figure>`).join('');
+    return `
+      <figure class="m3d m3di ${opt.cls || ''}">
+        <span class="m3di__chip">${esc(st.chip || '成品渲染')}</span>
+        <div class="m3di__grid${(st.images || []).length < 2 ? ' m3di__grid--one' : ''}">${imgs}</div>
+        <figcaption>
+          <b>${esc(st.title || '成品渲染')}</b>
+          <span>${esc(st.note || '')}</span>
+        </figcaption>
+      </figure>`;
+  }
+
     const light = !!opt.light;
     const cycle = opt.cycle || null;
     const plain = !!opt.plain;          /* 纯展示：不带任何工具按钮（首页用） */

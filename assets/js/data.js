@@ -414,7 +414,19 @@ const DIRECTIONS = [
         summary: '把牵引、互动玩具携带与简单清洁集成到一个随身产品，减少外出携带负担。',
         facts: [['角色', '调研整理 · 产品定义 · 造型 · 建模 · 渲染 · 品牌包装'], ['功能', '牵引 / 握持 / 可拆卸清洁刷 / 玩具球仓 / 垃圾袋收纳'], ['过程', '连续 Rhino 阶段文件可追溯']],
         hero: { f: 'assets/img/case/id/doggie-hero-16x10.webp', cap: '成品配色阵列：主色 + 多套 CMF 方案' },
-        model: { src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型', note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计' },
+        model: {
+          src: 'assets/models/doggie.glb', after: 2, title: 'DOGGIE · 可以直接转的模型',
+          note: '由本人建模文件导出，按住拖动可从任意角度查看外形体量与分件关系；不等同于工程结构设计',
+          /* 静态替代（样板）：用三视图 + 爆炸示意表达"外形体量与分件关系" */
+          static: {
+            chip: '成品渲染', title: 'DOGGIE · 外形体量与分件关系',
+            note: '由本人建模文件导出的三视图与爆炸示意，用于说明外形体量、部件关系与装配逻辑；不等同于工程结构设计',
+            images: [
+              { f: 'assets/img/case/id/doggie-threeview.webp', cap: '三视图与尺寸关系', alt: 'DOGGIE 三视图与尺寸关系' },
+              { f: 'assets/img/case/id/doggie-explode.webp', cap: '爆炸示意：部件关系', alt: 'DOGGIE 爆炸示意' },
+            ],
+          },
+        },
         sections: [
           {
             h: '为什么做', en: 'WHY',
