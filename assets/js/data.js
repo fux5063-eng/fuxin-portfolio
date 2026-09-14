@@ -495,8 +495,20 @@ const DIRECTIONS = [
         summary: '一盏可收纳的居家照明设备：通过折叠灯臂、物理控制与柜体收纳适配居家多场景。',
         facts: [['角色', '产品定义 · 功能整合 · 造型 · Rhino 建模 · 视觉表达'], ['周期', '灯具设计课程约 4 周'], ['重点', '展开 / 收纳状态的空间占用']],
         hero: { f: 'assets/img/cover/lumora.webp', cap: '居家阅读场景：灯臂展开状态与暖光表达' },
-        model: { src: 'assets/models/lamp-a.glb', after: 2, title: '方案 A · 可以直接转的模型', note: '展开态建模文件的线框视图（保留原始比例），可旋转查看灯臂、关节与灯头的比例关系' },
-        model2: { src: 'assets/models/lamp-b.glb', after: 2, title: '方案 B · 可以直接转的模型', note: '同课程另一造型方案，用于对比体量与轮廓差异（线框视图，保留原始比例）' },
+        model: {
+          src: 'assets/models/lamp-a.glb', after: 2, title: '方案 A · 可以直接转的模型',
+          note: '展开态建模文件的线框视图（保留原始比例），可旋转查看灯臂、关节与灯头的比例关系',
+          /* 静态替代：用形态推演 + 功能与结构说明比例与部件关系 */
+          static: {
+            chip: '成品渲染', title: 'Lumora · 形态推演与结构关系',
+            note: '灯臂、关节与灯头的形态推演及功能结构说明，用于表达比例关系、收纳逻辑与操作件位置',
+            images: [
+              { f: 'assets/img/case/id/lumora-p3.webp', cap: '形态推演：灯臂、关节与灯头', alt: 'Lumora 灯臂关节形态推演' },
+              { f: 'assets/img/case/id/lumora-p4.webp', cap: '功能与结构：运动与收纳关系', alt: 'Lumora 功能与结构关系' },
+            ],
+          },
+        },
+        /* model2 已撤：静态方案下用「形态推演」图表达 A/B 方案对比，不再单独放第二个模型块 */
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -547,7 +559,20 @@ const DIRECTIONS = [
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
         hero: { f: 'assets/img/cover/wateralarm.webp', cap: '穿戴与落水识别场景表达（已匿名化）' },
-        model: { src: 'assets/models/wenning.glb', after: 2, title: '最终选定方案 · 可以直接转的模型', note: '由本人建模文件导出的线框视图，用于查看外形体量与分件关系；客户信息与未公开内容已按匿名化规则处理' },
+        model: {
+          src: 'assets/models/wenning.glb', after: 2,
+          title: '最终选定方案 · 可以直接转的模型',
+          note: '由本人建模文件导出的线框视图，用于查看外形体量与分件关系；客户信息与未公开内容已按匿名化规则处理',
+          /* 静态替代：用形态方向对比 + CMF 与使用场景表达 */
+          static: {
+            chip: '成品渲染', title: '落水报警终端 · 形态对比与 CMF',
+            note: '三组形态方向的并列对比与 CMF、使用场景表达，用于说明外形取向与表面处理选择；客户信息已匿名化处理',
+            images: [
+              { f: 'assets/img/case/id/wateralarm-p38.webp', cap: '三组形态方向并列对比', alt: '落水报警终端 形态方向对比' },
+              { f: 'assets/img/case/id/wateralarm-p40.webp', cap: 'CMF 与使用场景表达', alt: '落水报警终端 CMF 与使用场景' },
+            ],
+          },
+        },
         sections: [
           {
             h: '为什么做', en: 'WHY',
