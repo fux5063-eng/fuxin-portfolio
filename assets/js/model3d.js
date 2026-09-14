@@ -262,9 +262,9 @@ export class ModelViewer {
     const ink = this.opts.lineColor || (light ? 0x232a31 : 0xe6eef6);
     const soft = light ? 0x7c8894 : 0x8ea0b2;
     const thin = light ? 0x6d7a87 : 0x2b3742;
-    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 42;
-    const hullScale = this.opts.hullScale != null ? this.opts.hullScale : 1.014;
-    const outScale = this.opts.outlineScale != null ? this.opts.outlineScale : 1.0035;
+    const thr = this.opts.lineAngle != null ? this.opts.lineAngle : 38;
+    const hullScale = this.opts.hullScale != null ? this.opts.hullScale : 1.022;
+    const outScale = this.opts.outlineScale != null ? this.opts.outlineScale : 1.005;
     /* 关键：先收集零件列表，再动场景树。
        之前是"边 traverse 边给零件加描边子节点"，加进去的网格又被当成零件处理 → 无限递归 → 栈溢出/内存爆掉 */
     const list = [];

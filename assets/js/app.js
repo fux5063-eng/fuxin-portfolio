@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914X').then(mod => {
+    import('./model3d.js?v=20260914Y').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -548,33 +548,6 @@
 
     <div class="marquee" aria-hidden="true"><div class="marquee__row">${mq}</div></div>
 
-    <div class="sheet">
-      <section class="sec" id="modelBand">
-        <div class="wrap">
-          <div class="sec__head">
-            <div>
-              <div class="en-label"><b>03</b>REAL MODEL · 3D</div>
-              <h2>不是渲染图，是可以自己转的模型</h2>
-              <p>下面这块放的是建模文件本身。按住拖动就能从任意角度看体量、分件和曲面关系——比一张静态渲染图更能说明设计。</p>
-            </div>
-          </div>
-          <div class="modelband">
-            <div class="rv">
-              <ul class="m3d-list">
-                <li><b>直接看模型</b><span>不用点开下载文件，页面上就能转</span></li>
-                <li><b>体量与比例</b><span>真实建模尺寸关系，不是摆拍角度</span></li>
-                <li><b>多个项目都有</b><span>牵引绳 / 航标灯 / 落水报警终端 / 灯具，各自的页面里都能转</span></li>
-              </ul>
-              <div class="hero__cta" style="margin-top:18px">
-                <a class="btn btn--ghost mag" href="#id/doggie">看 DOGGIE 项目<span class="btn__ar">→</span></a>
-                <a class="btn btn--ghost mag" href="#id">工业设计方向<span class="btn__ar">→</span></a>
-              </div>
-            </div>
-            <div class="rv">${modelPanel(HOME_MODEL, { light: true, plain: true })}</div>
-          </div>
-        </div>
-      </section>
-    </div>
 
     <div class="sheet">
       <section class="sec" id="aboutTeaser">
@@ -582,7 +555,7 @@
           <div class="about">
             <div class="about__pic rv"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></div>
             <div class="rv">
-              <div class="en-label"><b>04</b>ABOUT ME</div>
+              <div class="en-label"><b>03</b>ABOUT ME</div>
               <h2 style="margin:10px 0 14px">${esc(SITE.name)} · 产品设计 2027 届</h2>
               <p style="color:var(--ink-2)">${esc(ABOUT.intro)}</p>
               <div class="hero__cta">
