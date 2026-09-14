@@ -905,3 +905,21 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.17),transparent);transition:left 1s cubic-bezier(.2,.7,.3,1)}
 .gate:hover .gate__flow::after{left:124%}
 @media (prefers-reduced-motion:reduce){.flow__blob{animation:none}.gate__flow::after{display:none}}
+
+/* ============ 统一卡片交互：高光跟随 + 流光扫过 + 抬升 ============ */
+.card{position:relative}
+.card,.pick,.gate{will-change:transform;transform-style:preserve-3d}
+.card::after,.pick::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;
+  transition:opacity .5s ease;border-radius:inherit;
+  background:radial-gradient(36% 40% at calc(50% + var(--mx,0)*36%) calc(50% + var(--my,0)*36%),rgba(224,98,45,.16),transparent 64%)}
+.card:hover::after,.pick:hover::after{opacity:1}
+/* 流光扫过（浅色卡片用橙色微光，深色方向卡用白光） */
+.card::before,.pick::before{content:"";position:absolute;top:-30%;bottom:-30%;width:34%;left:-52%;z-index:4;pointer-events:none;
+  transform:rotate(12deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);
+  transition:left 1.05s cubic-bezier(.2,.7,.3,1);opacity:0}
+.card:hover::before,.pick:hover::before{left:126%;opacity:1}
+/* 抬升与投影（与 JS 的 inline transform 叠加在 hover 态由 JS 控制） */
+.card:hover,.pick:hover{box-shadow:0 30px 66px -34px rgba(14,18,22,.42),0 2px 0 0 rgba(224,98,45,.16)}
+.card .card__img img,.pick .pick__img img{transition:transform 1s cubic-bezier(.2,.7,.3,1)}
+.card:hover .card__img img,.pick:hover .pick__img img{transform:scale(1.06)}
+@media (prefers-reduced-motion:reduce){.card::before,.pick::before{display:none}}

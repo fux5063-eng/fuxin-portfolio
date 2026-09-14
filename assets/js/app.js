@@ -429,7 +429,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915E').then(mod => {
+    import('./model3d.js?v=20260915F').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -868,6 +868,7 @@
     initCompare(app);
     initTabs(app);
     gateFlowInit();
+    initCardFX(app);
     initFilter(app);
 
     /* 导航高亮：标出当前所在方向/页面 */
@@ -1001,6 +1002,46 @@
   }
 
   if (fine) {
+    // ===== 统一卡片交互：倾斜 + 高光跟随（所有卡片共用同一套行为）=====
+    const CARD_SEL = '.gate,.card,.pick';
+    function initCardFX(scope) {
+      const els = [...scope.querySelectorAll(CARD_SEL)];
+      els.forEach(el => {
+        let raf = 0;
+        const strong = el.classList.contains('gate') || el.classList.contains('pick');
+        const kx = strong ? 7 : 4.5;      // 旋转幅度
+        const ky = strong ? 6 : 4;
+        const lift = strong ? 8 : 5;
+        const onMove = e => {
+          const r = el.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width - .5;
+          const py = (e.clientY - r.top) / r.height - .5;
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            el.style.setProperty('--mx', (px * 2).toFixed(3));
+            el.style.setProperty('--my', (py * 2).toFixed(3));
+            el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + lift + 'px) scale(1.012)';
+            raf = 0;
+          });
+        };
+        const onLeave = () => {
+          if (raf) { cancelAnimationFrame(raf); raf = 0; }
+          el.style.transform = '';
+          el.style.setProperty('--mx', '0');
+          el.style.setProperty('--my', '0');
+        };
+        el.addEventListener('pointermove', onMove);
+        el.addEventListener('pointerleave', onLeave);
+        el.classList.add('fxcard');
+        cleanups.push(() => {
+          el.removeEventListener('pointermove', onMove);
+          el.removeEventListener('pointerleave', onLeave);
+          onLeave();
+        });
+      });
+      return els.length;
+    }
+
     // 方向卡的流光背景：指针位置 → CSS 变量（高光跟随）
     const gateFlowInit = () => {
       document.querySelectorAll('.gate[data-flow]').forEach(g => {
@@ -1023,14 +1064,6 @@
       });
     };
 
-    // 卡片倾斜（首页 gate）
-    app.addEventListener('mousemove', e => {
-      const g = e.target.closest('.gate');
-      if (!g) return;
-      const r = g.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
-      g.style.transform = `perspective(900px) rotateX(${(-py * 5).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg) translateY(-6px)`;
-    });
     app.addEventListener('mouseout', e => {
       const g = e.target.closest('.gate');
       if (g && !g.contains(e.relatedTarget)) g.style.transform = '';
