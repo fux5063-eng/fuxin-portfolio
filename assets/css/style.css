@@ -442,13 +442,13 @@ body:not(.on-home) #app{padding-top:66px}
 .rail{position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:14px;
   padding:14px 12px;border-radius:14px;background:rgba(255,255,255,.86);border:1px solid var(--line);
   backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(15,20,28,.08);max-width:132px}
-.rail a{display:flex;gap:8px;align-items:baseline;text-decoration:none;color:var(--muted);font-size:11.8px;line-height:1.3;
+.rail a,.rail button{display:flex;gap:8px;align-items:baseline;text-decoration:none;color:var(--muted);font-size:11.8px;line-height:1.3;
   position:relative;padding-left:14px;transition:color .18s ease}
-.rail a b{font:700 10.5px/1 ui-monospace,monospace;color:#aab4c0}
+.rail a b,.rail button b{font:700 10.5px/1 ui-monospace,monospace;color:#aab4c0}
 .rail a::before{content:'';position:absolute;left:0;top:5px;width:6px;height:6px;border-radius:50%;background:#d5dbe2;transition:background .18s ease,transform .18s ease}
 .rail a:hover{color:var(--ink)}
-.rail a.on{color:var(--ink);font-weight:700}
-.rail a.on b{color:var(--accent-d)}
+.rail a.on,.rail button.on{color:var(--ink);font-weight:700}
+.rail a.on b,.rail button.on b{color:var(--accent-d)}
 .rail a.on::before{background:var(--accent-d);transform:scale(1.25)}
 .rail__bar{position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent-d),rgba(232,89,12,.2));border-radius:2px;transform-origin:top;transform:scaleY(0);transition:transform .12s linear}
 .rail__wrap{position:absolute;left:-12px;top:14px;bottom:14px;width:2px;background:rgba(20,30,42,.08);border-radius:2px}
@@ -743,12 +743,12 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .phero__guide .sep{white-space:nowrap}
 /* ③ 章节轨道在深色页头上不突兀（默认浅色卡片 → 改成半透明深色玻璃） */
 .rail{background:rgba(12,16,21,.72);border-color:rgba(255,255,255,.10);backdrop-filter:blur(10px)}
-.rail a{color:#8d99a6}
-.rail a b{color:#5f6b78}
-.rail a span{color:#aab5c0}
-.rail a.on{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
-.rail a.on b{color:#ff9a63}
-.rail a.on span{color:#fff}
+.rail a,.rail button{color:#8d99a6}
+.rail a b,.rail button b{color:#5f6b78}
+.rail a span,.rail button span{color:#aab5c0}
+.rail a.on,.rail button.on{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+.rail a.on b,.rail button.on b{color:#ff9a63}
+.rail a.on span,.rail button.on span{color:#fff}
 .rail__bar{background:linear-gradient(#ff7a3c,#ff9a63)}
 
 /* ============================================================

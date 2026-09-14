@@ -312,10 +312,10 @@
     const rail = document.createElement('nav');
     rail.className = 'rail';
     rail.innerHTML = '<span class="rail__wrap"></span><i class="rail__bar"></i>' +
-      items.map((s, i) => `<a href="#" data-i="${i}"><b>${String(i + 1).padStart(2, '0')}</b><span>${esc(secs[i].h)}</span></a>`).join('');
+      items.map((s, i) => `<button type="button" data-i="${i}"><b>${String(i + 1).padStart(2, '0')}</b><span>${esc(secs[i].h)}</span></button>`).join('');
     document.body.appendChild(rail);
     const bar = rail.querySelector('.rail__bar');
-    const links = [...rail.querySelectorAll('a')];
+    const links = [...rail.querySelectorAll('button')];
     links.forEach(a => a.addEventListener('click', e => {
       e.preventDefault();
       const t = items[+a.dataset.i];
@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914W').then(mod => {
+    import('./model3d.js?v=20260914X').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
