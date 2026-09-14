@@ -111,12 +111,12 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const n = Math.round(Math.min(120, Math.max(40, (W * H) / 9000)));
       parts = Array.from({ length: n }, () => {
-        const free = Math.random() < 0.22;
+        const free = Math.random() < 0.16;
         return {
           x: Math.random() * W, y: Math.random() * H,
           vx: 0.22 + Math.random() * 0.3, vy: (Math.random() - 0.5) * 0.2,
           r: Math.random() * 1.3 + 0.6, hot: Math.random() < 0.2, free,
-          band: (Math.random() - 0.5) * 2 * (14 + Math.random() * 44),
+          band: (Math.random() - 0.5) * 2 * (12 + Math.random() * 32),
           sp: 0.7 + Math.random() * 0.7,
         };
       });
@@ -334,7 +334,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914M').then(mod => {
+    import('./model3d.js?v=20260914N').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
