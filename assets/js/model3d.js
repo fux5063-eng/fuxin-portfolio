@@ -83,7 +83,7 @@ export class ModelViewer {
     key.position.set(3.4, 5.2, 4.2); this.scene.add(key);
     const fill = new THREE.DirectionalLight(0xa8c8ff, 0.85);
     fill.position.set(-4.2, 1.4, 2.4); this.scene.add(fill);
-    const rim = new THREE.DirectionalLight(this.dark ? 0xffb178 : 0xffd0ab, this.dark ? 1.5 : 1.0);
+    const rim = new THREE.DirectionalLight(this.dark ? 0xffb178 : 0xffd0ab, this.dark ? 1.7 : 1.55);
     rim.position.set(-1.8, 2.6, -5.0); this.scene.add(rim);
     /* 影棚三点光：每帧跟随相机方位重排，转动时轮廓光不会丢 */
     this.rig = { key, fill, rim };
