@@ -1299,3 +1299,8 @@ html.dark .hero .hero__cta>a.btn:first-of-type{
   font-weight:700!important;box-shadow:0 10px 26px rgba(255,138,76,.30)!important}
 html.dark .hero .hero__cta>a.btn:first-of-type:hover{
   background:#ffa06a!important;border-color:#ffa06a!important;color:#0b0d11!important}
+
+/* 深色主题 · 主 CTA（用专用类，避免选择器脆弱） */
+html.dark .btn--primary{background:var(--accent);border-color:var(--accent);color:#0b0d11;font-weight:700;
+  box-shadow:0 10px 26px rgba(255,138,76,.30)}
+html.dark .btn--primary:hover{background:#ffa06a;border-color:#ffa06a;color:#0b0d11}

@@ -807,7 +807,7 @@
           </h1>
           <p class="hero__lead">${esc(SITE.heroLead)}</p>
           <div class="hero__cta">
-            <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
+            <a class="btn mag btn--primary" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#about">看我的详细经历<span class="btn__ar">→</span></a>
             </div>
