@@ -385,10 +385,10 @@
     cvs.forEach(cv => {
       try {
         const fx = createParticles(cv, {
-        density: 24000, maxN: 132, minN: 64, freeRatio: .5,
-        link: 138, linkAlpha: .26, speed: .34, dpr: 1, dotScale: 1.1,
-        dot: 'rgba(226,236,246,.62)', linkRGB: '214,228,244', glow: '255,158,102'
-      });
+          /* 与主页完全同一套观感：同样的带状流动 + 同样的连线密度/透明度 */
+          density: 3400, maxN: 130, minN: 58, bandBase: .56, bandAmp: .115, bandWidth: 74,
+          freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.95, dpr: 1.25,
+        });
         if (fx && fx.canvas && fx.canvas.width > 1) heroFXs.push(fx);
       } catch (e) { /* 忽略：下一帧重试 */ }
     });
@@ -807,7 +807,7 @@
           </h1>
           <p class="hero__lead">${esc(SITE.heroLead)}</p>
           <div class="hero__cta">
-            <a class="btn mag btn--primary" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
+            <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#about">看我的详细经历<span class="btn__ar">→</span></a>
             </div>
@@ -1541,41 +1541,6 @@
   document.body.appendChild(lbHint);
   lbHint.hidden = true;
 
-  /* 导航当前页高亮：按路由给对应链接标 aria-current */
-  function markNav() {
-    const seg = (location.hash || '').replace(/^#\/?/, '').split('/')[0] || '';
-    document.querySelectorAll('.nav__links a').forEach(a => {
-      const t = (a.getAttribute('href') || '').replace(/^#\/?/, '').split('/')[0];
-      if (t && t === seg) a.setAttribute('aria-current', 'page');
-      else a.removeAttribute('aria-current');
-    });
-  }
-  window.addEventListener('hashchange', markNav);
-  markNav();
-
   window.addEventListener('hashchange', render);
   render();
-})();
-
-
-/* ===== 深色微粒子主题 · 试用版（?theme=dark；不带参数则完全不影响现有浅色版） ===== */
-(function themeTry() {
-  try {
-    if (!/[?&]theme=dark/.test(String(location.search || ''))) return;
-    document.documentElement.classList.add('dark');
-    var mount = function () {
-      var cv = document.createElement('canvas');
-      cv.id = 'bgfx';
-      document.body.insertBefore(cv, document.body.firstChild);
-      if (typeof createParticles === 'function') {
-        createParticles(cv, {
-          density: 26000, maxN: 110, minN: 60, freeRatio: .5,
-          link: 132, linkAlpha: .22, speed: .38, dpr: 1, dotScale: 1.05,
-          dot: 'rgba(226,236,246,.55)', linkRGB: '210,226,242', glow: '255,158,102'
-        });
-        window.dispatchEvent(new Event('resize'));
-      }
-    };
-    if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
-  } catch (e) {}
 })();
