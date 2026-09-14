@@ -429,7 +429,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915C').then(mod => {
+    import('./model3d.js?v=20260915D').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
