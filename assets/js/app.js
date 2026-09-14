@@ -131,7 +131,7 @@
       link: 128, linkAlpha: .40, linkD2: null,
       band: true, bandAmp: .11, bandBase: .55, bandWidth: 70, freeRatio: .28,
       speed: 1, accent: 'rgba(255,158,102,.85)',
-      dot: 'rgba(226,236,246,.7)', linkRGB: '255,255,255', glow: '255,158,102',
+      dot: 'rgba(226,236,246,.7)', linkRGB: '255,255,255', glow: '255,158,102', dotScale: 1,
     }, opts || {});
     const linkD2 = o.linkD2 || o.link * o.link;
     let W = 0, H = 0, parts = [], raf = 0, on = false, last = 0;
@@ -261,7 +261,7 @@
       for (const p of parts) {
         ctx.beginPath();
         ctx.fillStyle = p.hot ? o.accent : o.dot;
-        ctx.arc(p.x, p.y, p.r, 0, 6.283);
+        ctx.arc(p.x, p.y, p.r * o.dotScale, 0, 6.283);
         ctx.fill();
       }
       raf = requestAnimationFrame(frame);
@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915X').then(mod => {
+    import('./model3d.js?v=20260915Y').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -590,7 +590,7 @@
           const f = fxs.find(x => x.canvas === e.target);
           if (!f) return;
           if (e.isIntersecting) { if (!f.__on) { f.start(); f.__on = true; } }
-          else if (f.__on) { f.stop(); f.__on = false; }
+          else if (f.__on) { f.stop(); f.__on = false; }   /* 视口外暂停（省性能） */
         });
       }, { rootMargin: '140px' });
     }
@@ -615,9 +615,9 @@
     const fxs = cvs.map(cv => {
       const k = strengthFor(cv);
       return createParticles(cv, {
-        density: 1850, maxN: 78, minN: 46, band: false, freeRatio: 1,
-        link: 98, linkAlpha: .30 * k, speed: .95, dpr: 1.25,
-        dot: 'rgba(236,243,250,' + (.60 * k).toFixed(2) + ')', accent: 'rgba(255,158,102,' + (.80 * k).toFixed(2) + ')',
+        density: 1350, maxN: 130, minN: 82, band: false, freeRatio: 1,
+        link: 104, linkAlpha: .38 * k, speed: 2.2, dpr: 1.25, dotScale: 1.65,
+        dot: 'rgba(236,243,250,' + (.70 * k).toFixed(2) + ')', accent: 'rgba(255,158,102,' + (.85 * k).toFixed(2) + ')',
         linkRGB: '214,228,242', glow: '255,158,102',
       });
     }).filter(Boolean);
