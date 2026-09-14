@@ -1041,3 +1041,38 @@ body.exp-open{overflow:hidden}
   .figstrip__nav{display:none}
   .figstrip__count{font-size:11px}
 }
+
+
+/* ============ 卡片深色化（方向页项目卡 + 首页精选卡） ============ */
+.card,.pick{
+  background:linear-gradient(180deg,#151b23 0%,#0d1218 100%);
+  border-color:rgba(255,255,255,.085);
+  box-shadow:0 10px 30px -18px rgba(10,14,20,.55)}
+.card::after,.pick::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(120% 80% at 50% 0%,rgba(255,255,255,.05),transparent 62%)}
+.card:hover,.pick:hover{border-color:rgba(255,150,92,.45);
+  box-shadow:0 22px 54px -22px rgba(224,98,45,.35),0 12px 30px -18px rgba(0,0,0,.6)}
+
+/* 封面图版：浅色图片嵌在深色卡上 */
+.card__img,.pick__img{background:#0a0e13;border-bottom:1px solid rgba(255,255,255,.075);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+.card__img img,.pick__img img{opacity:1}
+
+/* 文字配色 */
+.card__body h3,.pick h3,.card__body h3 a{color:#e9eef4}
+.card__body p,.pick__body p{color:#9aa5b2}
+.card__body p b,.pick__body p b{color:#d7dee6}
+
+/* 事实胶囊 / 标签 */
+.card__meta i,.card__tags span,.pick__tags span{
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);color:#b9c3ce}
+.card__meta i b,.card__tags span b{color:#e6ebf1}
+
+/* 小标签（方向 · 角色）与"查看"链接 */
+.card__kind,.pick__eyebrow{color:#e08b5a}
+.pick__go,.card__go{color:#dfe6ee}
+.pick__go i,.card__go i{background:currentColor}
+.card__body,.pick__body{position:relative;z-index:3}
+
+/* 方向页筛选条在深色卡上方保持浅色即可（不动） */
+@media (prefers-reduced-motion:reduce){.card::after,.pick::after{display:none}}
