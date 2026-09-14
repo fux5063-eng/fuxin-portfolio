@@ -95,86 +95,146 @@
     return str.slice(0, cap) + '…';
   }
 
-  /* 内页页头粒子背景（主页同款"流动带 + 少量自由散点"，小尺寸轻量版） */
-  function heroFX(cv) {
+
+  /* ============================================================
+     统一粒子引擎（主页背景 + 内页页头共用）
+     稳定性：dt 归一化 · 双频正弦漫游（不用逐帧随机）· 网格近邻连线 · resize 缩放不重建
+     ============================================================ */
+  function createParticles(cv, opts) {
     if (!cv || !cv.getContext) return null;
     const ctx = cv.getContext('2d');
     if (!ctx) return null;
-    let W = 0, H = 0, parts = [], raf = 0, on = false;
+    const o = Object.assign({
+      density: 11000, maxN: 240, minN: 40, dpr: 1.25,
+      link: 128, linkAlpha: .40, linkD2: null,
+      band: true, bandAmp: .11, bandBase: .55, bandWidth: 70, freeRatio: .28,
+      speed: 1, accent: 'rgba(255,158,102,.85)',
+    }, opts || {});
+    const linkD2 = o.linkD2 || o.link * o.link;
+    let W = 0, H = 0, parts = [], raf = 0, on = false, last = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, o.dpr);
     const mouse = { x: 0, y: 0, on: false };
-    let dpr = 1;
-    function size() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      W = Math.max(1, Math.round(cv.clientWidth));
-      H = Math.max(1, Math.round(cv.clientHeight));
-      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(120, Math.max(40, (W * H) / 9000)));
+
+    function build() {
+      const n = Math.round(Math.min(o.maxN, Math.max(o.minN, (W * H) / o.density)));
       parts = Array.from({ length: n }, () => {
-        const free = Math.random() < 0.16;
+        const free = Math.random() < o.freeRatio;
         return {
           x: Math.random() * W, y: Math.random() * H,
-          vx: 0.22 + Math.random() * 0.3, vy: (Math.random() - 0.5) * 0.2,
-          r: Math.random() * 1.3 + 0.6, hot: Math.random() < 0.2, free,
-          band: (Math.random() - 0.5) * 2 * (12 + Math.random() * 32),
-          sp: 0.7 + Math.random() * 0.7,
+          vx: (.22 + Math.random() * .32) * o.speed, vy: (Math.random() - .5) * .2 * o.speed,
+          r: Math.random() * 1.35 + .6,
+          hot: Math.random() < .18,
+          free,
+          band: (Math.random() - .5) * 2 * (o.bandWidth * (0.32 + Math.random() * 0.68)),
+          sp: .7 + Math.random() * .8,
+          /* 平滑漫游用的相位与频率（每粒子不同 → 画面不呆板，但绝不抖动） */
+          ph: Math.random() * 6.283,
+          ph2: Math.random() * 6.283,
+          w1: .00045 + Math.random() * .00055,
+          w2: .00028 + Math.random() * .00042,
+          wa: .55 + Math.random() * .75,
         };
       });
     }
-    const bandY = (x, ts) => H * 0.58 + Math.sin(x / W * 2.2 + ts) * H * 0.10 + Math.sin(x / W * 4.6 - ts * 0.7) * H * 0.035;
+
+    function size(rebuild) {
+      const pw = Math.max(1, cv.clientWidth), phh = Math.max(1, cv.clientHeight);
+      const ow = W, oh = H;
+      W = pw; H = phh;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (rebuild || !parts.length) build();
+      else if (ow > 0 && oh > 0) { const sx = W / ow, sy = H / oh; for (const p of parts) { p.x *= sx; p.y *= sy; } }
+    }
+
+    const bandY = (x, ts) => H * o.bandBase + Math.sin(x / W * 2.15 + ts) * H * o.bandAmp + Math.sin(x / W * 4.6 - ts * .7) * H * (o.bandAmp * .32);
+
     function frame(t) {
       if (!on) return;
+      const dt = last ? Math.min(2.4, Math.max(.35, (t - last) / 16.667)) : 1;
+      last = t;
+      const ts = t * .00016;
       ctx.clearRect(0, 0, W, H);
-      const ts = t * 0.00016;
       for (const p of parts) {
-        if (p.free) { p.vx += (Math.random() - .5) * .012; p.vy += (Math.random() - .5) * .012; }
-        else {
-          p.vx += ((.95 - Math.abs(p.vy) * .25) * p.sp - p.vx) * .018;
-          p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022;
-          p.vy += (Math.random() - .5) * .012;
+        /* 平滑漫游（替代逐帧随机数：速度连续变化 → 不会抖） */
+        const wander = Math.sin(t * p.w1 + p.ph) * p.wa + Math.cos(t * p.w2 + p.ph2) * (p.wa * .5);
+        if (p.free) {
+          p.vx += wander * .0055 * dt; p.vy += Math.cos(t * p.w1 * .85 + p.ph) * .005 * dt;
+        } else {
+          p.vx += ((.95 - Math.abs(p.vy) * .22) * p.sp * o.speed - p.vx) * .02 * dt;
+          p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022 * dt;
+          p.vy += wander * .009 * dt;
         }
-        p.vx *= .986; p.vy *= .986;
-        const sp = Math.hypot(p.vx, p.vy), mx = p.free ? .9 : 1.6;
+        if (mouse.on) {
+          const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+          if (d2 < 31000 && d2 > 1) { const d = Math.sqrt(d2), f = (1 - d / 176) * .5; p.vx += dx / d * f * dt; p.vy += dy / d * f * dt; }
+        }
+        p.vx *= 1 - .014 * dt; p.vy *= 1 - .014 * dt;
+        const sp = Math.hypot(p.vx, p.vy), mx = (p.free ? .9 : 1.6) * o.speed;
         if (sp > mx) { p.vx = p.vx / sp * mx; p.vy = p.vy / sp * mx; }
-        p.x += p.vx; p.y += p.vy;
-        if (p.x > W + 24) { p.x = -24; p.vx = .22 + Math.random() * .3; p.y = p.free ? Math.random() * H : bandY(p.x, ts) + p.band + (Math.random() - .5) * 34; }
-        if (p.x < -40) p.x = W + 24;
-        if (p.y < -26) p.y = H + 20; else if (p.y > H + 26) p.y = -20;
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.x > W + 26) { p.x = -26; p.vx = (.22 + Math.random() * .3) * o.speed; p.y = o.band && !p.free ? bandY(p.x, ts) + p.band + (Math.random() - .5) * 30 : Math.random() * H; }
+        if (p.x < -46) p.x = W + 26;
+        if (p.y < -28) p.y = H + 22; else if (p.y > H + 28) p.y = -22;
+      }
+      /* 近邻连线：网格分桶，只比较同格与 4 个邻格（消除 O(n²) 掉帧） */
+      const cell = o.link;
+      const grid = new Map();
+      for (const p of parts) {
+        const k = ((p.x / cell) | 0) + '|' + ((p.y / cell) | 0);
+        let a = grid.get(k); if (!a) { a = []; grid.set(k, a); } a.push(p);
       }
       ctx.lineWidth = 1;
-      for (let i = 0; i < parts.length; i++) {
-        const a = parts[i];
-        for (let j = i + 1; j < parts.length; j++) {
-          const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-          if (d2 < 15000) {
-            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 128) * .4).toFixed(3) + ')';
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      for (const [k, arr] of grid) {
+        const [gx, gy] = k.split('|').map(Number);
+        for (let ox = 0; ox <= 1; ox++) for (let oy = (ox === 0 ? 0 : -1); oy <= 1; oy++) {
+          const nb = grid.get((gx + ox) + '|' + (gy + oy));
+          if (!nb) continue;
+          const same = ox === 0 && oy === 0;
+          for (let i = 0; i < arr.length; i++) {
+            const a = arr[i];
+            for (let j = same ? i + 1 : 0; j < nb.length; j++) {
+              const b = nb[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+              if (d2 < linkD2) {
+                ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / o.link) * o.linkAlpha).toFixed(3) + ')';
+                ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+              }
+            }
           }
         }
       }
       for (const p of parts) {
         ctx.beginPath();
-        ctx.fillStyle = p.hot ? 'rgba(255,158,102,.85)' : 'rgba(226,236,246,.7)';
+        ctx.fillStyle = p.hot ? o.accent : 'rgba(226,236,246,.7)';
         ctx.arc(p.x, p.y, p.r, 0, 6.283);
         ctx.fill();
       }
       raf = requestAnimationFrame(frame);
     }
-    function start() {
-      if (on) return;
-      on = true; size(); if (!raf) raf = requestAnimationFrame(frame);
-    }
+
+    function start() { if (on) return; on = true; last = 0; size(!parts.length); if (!raf) raf = requestAnimationFrame(frame); }
     function stop() { on = false; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-    function dispose() { stop(); parts = []; }
-    window.addEventListener('resize', () => { if (on) size(); onScrollFX(); }, { passive: true });
+    function onResize() { if (on) size(false); }
+    window.addEventListener('resize', onResize, { passive: true });
+    function dispose() { stop(); window.removeEventListener('resize', onResize); parts = []; }
     start();
-    return { start, stop, dispose, canvas: cv };
+    return { start, stop, dispose, canvas: cv, get count() { return parts.length; } };
   }
 
+  /* 主页背景粒子 */
+  const FX = createParticles(document.getElementById('fx'), {
+    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44,
+  }) || { start() {}, stop() {} };
+
+  /* 内页页头粒子（尺寸小、密度低） */
   let heroFXs = [];
   function mountHeroFX(scope) {
-    heroFXs.forEach(f => f.dispose());
-    heroFXs = [...scope.querySelectorAll('canvas.phero__fx')].map(heroFX).filter(Boolean);
+    heroFXs.forEach(f => f.dispose && f.dispose());
+    heroFXs = [...scope.querySelectorAll('canvas.phero__fx')]
+      .map(cv => createParticles(cv, {
+        density: 9200, maxN: 130, minN: 40, bandBase: .58, bandAmp: .10, bandWidth: 42,
+        freeRatio: .16, link: 126, linkAlpha: .38,
+      })).filter(Boolean);
   }
 
   /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
@@ -339,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914P').then(mod => {
+    import('./model3d.js?v=20260914Q').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -883,116 +943,6 @@
   window.addEventListener('scroll', updateNav, { passive: true });
 
   /* ================= 动态背景（首页） ================= */
-  const FX = (() => {
-    const cv = document.getElementById('fx');
-    if (!cv) return { start() {}, stop() {} };
-    const ctx = cv.getContext('2d');
-    let W = 0, H = 0, parts = [], raf = 0, on = false;
-    const mouse = { x: -9999, y: -9999, on: false };
-
-    function size() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      W = cv.clientWidth || window.innerWidth;
-      H = cv.clientHeight || window.innerHeight;
-      cv.width = Math.round(W * dpr);
-      cv.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(240, Math.max(70, (W * H) / 10500)));
-      parts = Array.from({ length: n }, () => {
-        const free = Math.random() < .3;        /* 约三成自由飘散，其余汇入流动带 */
-        return {
-          x: Math.random() * W, y: Math.random() * H,
-          vx: .25 + Math.random() * .35, vy: (Math.random() - .5) * .2,
-          r: Math.random() * 1.5 + .7, hot: Math.random() < .18,
-          free,
-          /* 带宽偏移：让"那条线"有厚度，不是细细一根 */
-          band: (Math.random() - .5) * 2 * (24 + Math.random() * 76),
-          ph: Math.random() * 6.283,
-          sp: .7 + Math.random() * .8,
-        };
-      });
-    }
-
-    /* 流动带：横贯画面的缓慢起伏曲线，粒子汇聚在它附近但各自带不同厚度 */
-    function bandY(x, ts) {
-      return H * .54 + Math.sin(x / W * 2.1 + ts) * H * .115 + Math.sin(x / W * 4.7 - ts * .7) * H * .045;
-    }
-
-    function frame(t) {
-      ctx.clearRect(0, 0, W, H);
-      const ts = t * .00016;
-      for (const p of parts) {
-        if (p.free) {
-          /* 少量自由粒子：慢速漂移 + 极轻噪声 —— 保留"一点点分散"的呼吸感 */
-          p.vx += (Math.random() - .5) * .012;
-          p.vy += (Math.random() - .5) * .012;
-        } else {
-          /* 主体：沿一个方向缓慢流动，同时向"带状轨道"收敛（有厚度，不是一根细线） */
-          p.vx += ((.95 - Math.abs(p.vy) * .25) * p.sp - p.vx) * .018;
-          p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022;
-          p.vy += (Math.random() - .5) * .012;
-        }
-        if (mouse.on) {
-          const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
-          if (d2 < 31000 && d2 > 1) {
-            const d = Math.sqrt(d2), f = (1 - d / 176) * .5;
-            p.vx += dx / d * f; p.vy += dy / d * f;
-          }
-        }
-        p.vx *= .986; p.vy *= .986;
-        const sp = Math.hypot(p.vx, p.vy);
-        const maxSp = p.free ? .9 : 1.6;
-        if (sp > maxSp) { p.vx = p.vx / sp * maxSp; p.vy = p.vy / sp * maxSp; }
-        p.x += p.vx; p.y += p.vy;
-        /* 从右边出去就从左边回来，保持这条带子是连续的 */
-        if (p.x > W + 26) {
-          p.x = -26;
-          p.vx = .25 + Math.random() * .35;
-          if (p.free) p.y = Math.random() * H;
-          else p.y = bandY(p.x, ts) + p.band + (Math.random() - .5) * 40;
-        }
-        if (p.x < -48) p.x = W + 26;
-        if (p.y < -30) p.y = H + 24; else if (p.y > H + 30) p.y = -24;
-      }
-      ctx.lineWidth = 1;
-      for (let i = 0; i < parts.length; i++) {
-        const a = parts[i];
-        for (let j = i + 1; j < parts.length; j++) {
-          const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-          if (d2 < 17500) {
-            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 137) * .46).toFixed(3) + ')';
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-      }
-      for (const p of parts) {
-        ctx.fillStyle = p.hot ? 'rgba(255,116,40,1)' : 'rgba(255,255,255,.85)';
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill();
-      }
-      if (mouse.on) {
-        const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 190);
-        g.addColorStop(0, 'rgba(232,89,12,.16)'); g.addColorStop(1, 'rgba(232,89,12,0)');
-        ctx.fillStyle = g; ctx.fillRect(mouse.x - 190, mouse.y - 190, 380, 380);
-      }
-      raf = requestAnimationFrame(frame);
-    }
-
-    window.addEventListener('resize', () => { if (on) size(); });
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; }, { passive: true });
-    document.addEventListener('mouseleave', () => { mouse.on = false; });
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) { if (raf) cancelAnimationFrame(raf), raf = 0; }
-      else if (on && !raf) raf = requestAnimationFrame(frame);
-    });
-
-    return {
-      start() {
-        if (on) return;                 /* 动效是首页的识别特征，不随 prefers-reduced-motion 关闭 */
-        on = true; size(); raf = requestAnimationFrame(frame);
-      },
-      stop() { on = false; if (raf) cancelAnimationFrame(raf); raf = 0; ctx.clearRect(0, 0, W, H); }
-    };
-  })();
 
   /* ================= 光标 / 倾斜 / 磁吸 ================= */
   if (fine) {
