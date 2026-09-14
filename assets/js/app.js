@@ -65,6 +65,43 @@
   }
 
   /* 旧的清理函数（切页时调用，避免监听器堆积） */
+  /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
+  function pageHero(o) {
+    const meta = (o.meta || []).filter(m => m && m[1]).map(m => `<span class="phero__chip"><b>${esc(m[0])}</b>${esc(m[1])}</span>`).join('');
+    const tagsHtml = (o.tags && o.tags.length) ? `<div class="tags" style="margin-top:18px">${tags(o.tags)}</div>` : '';
+    return `
+    <header class="phero">
+      <div class="wrap">
+        ${o.backHref === false ? '' : `<a class="phero__back" href="${o.backHref || '#/'}">← ${esc(o.backText || '返回首页')}</a>`}
+        <div class="phero__en">${esc(o.en || '')}</div>
+        <h1 class="phero__title rv-em">${esc(o.title || '')}</h1>
+        ${o.sub ? `<p class="phero__sub rv-em" style="transition-delay:.10s">${esc(o.sub)}</p>` : ''}
+        ${meta ? `<div class="phero__meta rv-em" style="transition-delay:.18s">${meta}</div>` : ''}
+        ${tagsHtml}
+        ${o.guide || ''}
+      </div>
+      <div class="phero__scroll"><i></i><span>SCROLL</span></div>
+    </header>`;
+  }
+
+  /* 路由转场：深色幕布扫过（消除"换了个网站"的断裂感） */
+  function playCurtain() {
+    const c = document.getElementById('curtain');
+    if (!c) return;
+    c.classList.remove('off');
+    c.classList.add('on');
+    setTimeout(() => c.classList.add('off'), 240);
+    setTimeout(() => { c.classList.remove('on'); c.classList.remove('off'); }, 760);
+  }
+
+  /* 分级揭示：同一容器内的 .rv 依次延迟出现，形成"信息随交互分级浮现" */
+  function staggerReveal(scope) {
+    scope.querySelectorAll('.wrap, .cards, .cs__main, .dl, .figs, .phero .wrap').forEach(box => {
+      const kids = [...box.children].filter(k => k.classList && (k.classList.contains('rv') || k.classList.contains('rv-em') || k.classList.contains('cs__sec')));
+      kids.forEach((k, i) => { if (!k.style.transitionDelay) k.style.transitionDelay = Math.min(i * 90, 500) + 'ms'; });
+    });
+  }
+
   /* 细节切换器：点标签换大图 + 说明（纯 DOM 切换，最稳） */
   function tabsBlock(list) {
     if (!list || !list.length) return '';
@@ -183,7 +220,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914g').then(mod => {
+    import('./model3d.js?v=20260914h').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -401,6 +438,7 @@
     const cards = d.projects.map(p => `
       <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
         <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy"></div>
+        <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
         <div class="card__body">
           <div class="tags">${tags(p.tags.slice(0, 3))}</div>
           <h3>${esc(p.title)}</h3>
@@ -413,14 +451,16 @@
       </a>`).join('');
 
     return `
-    <section class="sec"><div class="wrap">
-      <a class="backlink" href="#/">← 返回首页</a>
-      <div class="sec__head" style="margin-top:20px">
-        <div>
-          <div class="en-label">${esc(d.en)}</div>
-          <h2>${esc(d.label)}</h2>
-          <p>${esc(d.title)} — ${esc(d.lead)}</p>
-        </div>
+    <section class="sec sec--v2">
+      ${pageHero({
+        en: d.en,
+        title: d.label,
+        sub: d.title + ' — ' + d.lead,
+        meta: [['方向项目', d.projects.length + ' 个'], ['完整 PDF', '可下载']]
+      })}
+      <div class="wrap">
+      <div class="dir__bar">
+        <span class="dir__hint">点标签按能力筛选 · 把鼠标放到卡片上可看关键信息</span>
         <a class="btn btn--ghost" href="${d.pdf}" download>下载完整 PDF</a>
       </div>
       <div class="filter" data-filter>
@@ -481,21 +521,25 @@
     const modelLoose = p.model && p.model.after === undefined ? modelPanel(p.model, { light: true }) : '';
     const model2Loose = p.model2 && p.model2.after === undefined ? modelPanel(p.model2, { light: true }) : '';
 
-    return `
-    <section class="pd"><div class="wrap">
-      <a class="backlink" href="#${d.id}">← ${esc(d.label)}</a>
-      <div class="pd__head pd__hero" style="margin-top:18px">
-        <div class="en-label">${esc(p.en)}</div>
-        <h1>${esc(p.title)}</h1>
-        <p class="pd__lead">${esc(p.summary)}</p>
-        <div class="tags" style="margin-top:16px">${tags(p.tags)}</div>
-        <div class="pd__facts">${facts}</div>
-        <p class="pd__guide">
+    const guideHtml = `
+        <p class="phero__guide rv-em" style="transition-delay:.26s">
           <span>本页结构</span>${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">→</span>')}
           <span class="sep">·</span>
           <span>可以这样看：<em>拖动对比条</em>看前后、<em>点标签</em>看细节、<em>拖动模型</em>转着看</span>
-        </p>
-      </div>
+        </p>`;
+    return `
+    <section class="pd pd--v2">
+      ${pageHero({
+        en: esc(d.en) + ' · ' + esc(p.en),
+        title: p.title,
+        sub: p.summary,
+        meta: p.facts || [],
+        tags: p.tags || [],
+        backHref: '#' + d.id,
+        backText: d.label,
+        guide: guideHtml
+      })}
+      <div class="wrap">
       ${hero}
       <div class="cs">${secHtml}</div>
       ${modelLoose}
@@ -509,7 +553,8 @@
         ${prev ? `<a href="#${d.id}/${prev.slug}">← 上一个：${esc(prev.title)}</a>` : '<span></span>'}
         ${next ? `<a href="#${d.id}/${next.slug}">下一个：${esc(next.title)} →</a>` : `<a href="#${d.id}">回到${esc(d.label)} →</a>`}
       </div>
-    </div></section>`;
+      </div>
+    </section>`;
   }
 
   function viewAbout() {
@@ -517,11 +562,14 @@
       <li class="rv stagger" style="transition-delay:${Math.min(i * 70, 420)}ms"><time>${esc(t.time)}</time><div><b>${esc(t.org)}</b><span>${esc(t.desc)}</span></div></li>`).join('');
     const sk = ABOUT.skills.map((s, i) => `<li class="rv stagger" style="transition-delay:${Math.min(i * 45, 320)}ms"><time>${esc(s.k)}</time><div><b>${esc(s.v)}</b></div></li>`).join('');
     return `
-    <section class="sec"><div class="wrap">
-      <a class="backlink" href="#/">← 返回首页</a>
-      <div class="sec__head" style="margin-top:20px">
-        <div><div class="en-label">ABOUT ME</div><h2>关于我</h2><p>${esc(SITE.name)} · ${esc(SITE.sub)} · ${esc(SITE.school)}</p></div>
-      </div>
+    <section class="sec sec--v2">
+      ${pageHero({
+        en: 'ABOUT ME',
+        title: '关于我',
+        sub: SITE.name + ' · ' + SITE.sub + ' · ' + SITE.school,
+        meta: [['邮箱', SITE.email], ['微信', SITE.wechat], ['意向城市', SITE.city]]
+      })}
+      <div class="wrap">
       <div class="about">
         <figure class="about__pic shot rv"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></figure>
         <div>
@@ -542,12 +590,14 @@
     const cards = DOWNLOADS.map((f, i) => `
       <a class="rv stagger" style="transition-delay:${Math.min(i * 60, 300)}ms" href="${f.f}" download><b>${esc(f.t)}</b><span>${esc(f.d)} · ${esc(f.s)}</span><span style="color:var(--accent-d);font-weight:700;font-size:13px">下载 PDF →</span></a>`).join('');
     return `
-    <section class="sec"><div class="wrap">
-      <a class="backlink" href="#/">← 返回首页</a>
-      <div class="sec__head" style="margin-top:20px">
-        <div><div class="en-label">DOWNLOAD</div><h2>作品集与简历</h2>
-        <p>完整 PDF 版本（页数较多，适合面试前了解全貌）。如需更小体积或指定方向的版本，邮件或微信联系即可。</p></div>
-      </div>
+    <section class="sec sec--v2">
+      ${pageHero({
+        en: 'DOWNLOAD',
+        title: '作品集与简历',
+        sub: '完整 PDF 版本（页数较多，适合面试前了解全貌）。如需更小体积或指定方向的版本，邮件或微信联系即可。',
+        meta: [['文件', DOWNLOADS.length + ' 份'], ['格式', 'PDF'], ['联系方式', SITE.email]]
+      })}
+      <div class="wrap">
       <div class="dl">${cards}</div>
       <div class="dl" style="margin-top:18px;grid-template-columns:1fr">
         <a href="${SITE.siteUrl}" target="_blank" rel="noopener">
@@ -561,7 +611,9 @@
   }
 
   function notFound() {
-    return `<section class="sec"><div class="wrap"><div class="sec__head"><div><div class="en-label">404</div>
+    return `<section class="sec sec--v2">
+      ${pageHero({ en: '404', title: '这个页面不存在', sub: '可能链接已经调整；回到首页或从方向入口重新进入。' })}
+      <div class="wrap"><div class="sec__head"><div><div class="en-label">404</div>
       <h2>页面不存在</h2><p>可能是链接写错了。回到首页重新选择方向。</p></div></div>
       <a class="btn" href="#/">回首页</a></div></section>`;
   }
@@ -600,6 +652,7 @@
     initCompare(app);
     initTabs(app);
     initFilter(app);
+    staggerReveal(app);
 
     /* 导航高亮：标出当前所在方向/页面 */
     const cur = '#' + (a || '');

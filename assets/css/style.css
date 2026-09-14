@@ -567,3 +567,110 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .about__pic{cursor:zoom-in;transition:transform .3s ease,box-shadow .3s ease}
 .about__pic:hover{transform:translateY(-3px);box-shadow:0 24px 56px rgba(17,18,20,.18)}
 .rv.stagger{transition-property:opacity,transform;transition-duration:.6s}
+
+/* ============================================================
+   统一视觉系统：内页深色页头（与主页同一套语言）+ 转场 + 分级揭示
+   ============================================================ */
+/* 路由转场幕布 */
+.curtain{position:fixed;inset:0;z-index:120;background:#0a0d11;pointer-events:none;
+  transform:translateY(100%);transition:transform .42s cubic-bezier(.65,0,.35,1)}
+.curtain.on{transform:translateY(0)}
+.curtain__logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;
+  font:700 13px/1 ui-monospace,monospace;letter-spacing:.28em;opacity:0;transition:opacity .28s ease .1s}
+.curtain.on .curtain__logo{opacity:.5}
+
+/* 内页深色页头（首页同款语言：深底 + 缓慢流动的光晕 + 细网格） */
+.phero{position:relative;overflow:hidden;background:#0a0d11;color:#fff;
+  padding:104px 0 54px;border-bottom:1px solid rgba(255,255,255,.06)}
+.phero::before{content:'';position:absolute;inset:-30% -10%;pointer-events:none;
+  background:
+    radial-gradient(46% 46% at 22% 18%,rgba(255,122,60,.30),transparent 62%),
+    radial-gradient(38% 38% at 78% 30%,rgba(80,140,255,.20),transparent 64%),
+    radial-gradient(52% 42% at 50% 108%,rgba(255,255,255,.09),transparent 66%);
+  animation:auraMove 26s ease-in-out infinite alternate}
+@keyframes auraMove{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.07)}}
+.phero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(70% 80% at 60% 30%,#000,transparent 78%);
+          mask-image:radial-gradient(70% 80% at 60% 30%,#000,transparent 78%)}
+.phero .wrap{position:relative;z-index:2}
+.phero__en{font:700 11.5px/1 ui-monospace,monospace;letter-spacing:.3em;color:#ff9a63;
+  display:inline-flex;align-items:center;gap:10px}
+.phero__en::before{content:'';width:26px;height:1px;background:currentColor;opacity:.7}
+.phero__title{margin:16px 0 0;font-size:clamp(30px,4.4vw,58px);line-height:1.06;letter-spacing:-.03em;font-weight:800}
+.phero__sub{margin:16px 0 0;max-width:62ch;color:#a9b4c0;font-size:15.6px;line-height:1.78}
+.phero__meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.phero__chip{border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);
+  border-radius:999px;padding:8px 13px;font-size:12.6px;color:#c8d2dc;transition:all .22s ease}
+.phero__chip b{color:#fff;font-weight:700;margin-right:6px}
+.phero__chip:hover{border-color:rgba(255,154,99,.55);background:rgba(255,154,99,.12);transform:translateY(-2px)}
+.phero__back{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;
+  font:600 12.8px/1 inherit;color:#8d99a6;transition:color .2s ease,gap .2s ease}
+.phero__back:hover{color:#fff;gap:12px}
+.phero__scroll{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:2;
+  color:#77828e;font:600 10.5px/1 ui-monospace,monospace;letter-spacing:.22em;
+  display:flex;flex-direction:column;align-items:center;gap:7px}
+.phero__scroll i{width:1px;height:26px;background:linear-gradient(#77828e,transparent);animation:scrollHint 1.9s ease-in-out infinite}
+@keyframes scrollHint{0%,100%{opacity:.35;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* 分级揭示（信息随滚动/交互出现，起强调作用） */
+.rv{opacity:0;transform:translateY(18px)}
+.rv.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.rv-em{opacity:0;transform:translateY(26px)}
+.rv-em.in{opacity:1;transform:none;transition:opacity .85s cubic-bezier(.2,.7,.3,1),transform .85s cubic-bezier(.2,.7,.3,1)}
+/* 强调：小标题的下划线在进入视口时拉开 */
+.cs__main h2{position:relative;padding-bottom:12px}
+.cs__main h2::after{content:'';position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--accent);
+  transition:width .8s cubic-bezier(.2,.7,.3,1) .12s}
+.cs__sec.in h2::after{width:56px}
+/* 强调：条目依次出现并轻微左移，形成"逐条强调" */
+.cs__main .items li{opacity:0;transform:translateX(-10px)}
+.cs__sec.in .items li{opacity:1;transform:none;
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.3,1)}
+.cs__sec.in .items li:nth-child(1){transition-delay:.10s}
+.cs__sec.in .items li:nth-child(2){transition-delay:.20s}
+.cs__sec.in .items li:nth-child(3){transition-delay:.30s}
+.cs__sec.in .items li:nth-child(4){transition-delay:.40s}
+.cs__sec.in .items li:nth-child(5){transition-delay:.50s}
+.cs__sec.in .items li:nth-child(6){transition-delay:.60s}
+/* 图片随滚动上浮淡入 */
+.cs__main figure{opacity:0;transform:translateY(20px)}
+.cs__sec.in .cs__main figure{opacity:1;transform:none;transition:opacity .8s ease .18s,transform .8s cubic-bezier(.2,.7,.3,1) .18s}
+
+/* 方向页卡片：悬停时浮现关键信息（信息随交互出现） */
+.cards .card{position:relative;overflow:hidden}
+.card__meta{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;
+  background:linear-gradient(transparent,rgba(8,11,15,.86) 46%);color:#fff;
+  display:flex;flex-wrap:wrap;gap:7px;opacity:0;transform:translateY(10px);
+  transition:opacity .3s ease,transform .34s cubic-bezier(.2,.7,.3,1)}
+.card:hover .card__meta,.card:focus-visible .card__meta{opacity:1;transform:none}
+.card__meta i{font-style:normal;font-size:11.8px;border:1px solid rgba(255,255,255,.26);
+  background:rgba(255,255,255,.09);border-radius:999px;padding:5px 9px;backdrop-filter:blur(6px)}
+.card__meta b{color:#ffb08a;font-weight:700;margin-right:5px}
+@media(max-width:760px){
+  .phero{padding:84px 0 40px}
+  .phero__meta{display:none}
+}
+
+/* 深色页头里的补充元素 */
+.phero__guide{margin:22px 0 0;font-size:13.2px;line-height:2;color:#93a0ad}
+.phero__guide span:first-child{color:#e6edf4;font-weight:700;margin-right:8px}
+.phero__guide b{color:#fff;font-weight:700;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);
+  padding:4px 9px;border-radius:7px;margin:0 2px;font-size:12.4px}
+.phero__guide em{font-style:normal;color:#ffb08a;border-bottom:1px dashed rgba(255,176,138,.55)}
+.phero__guide .sep{color:#5c6773;margin:0 7px}
+.phero .tags span{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#c8d2dc}
+.phero .tags span:hover{background:rgba(255,154,99,.16);border-color:rgba(255,154,99,.5);color:#fff}
+/* 深色页头之后的正文留白（页头已全宽，正文回到栅格） */
+.sec--v2 .wrap,.pd--v2 .wrap{padding-top:44px}
+/* 方向页：提示条 + 下载按钮 */
+.dir__bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:0 0 4px}
+.dir__hint{font-size:13px;color:var(--muted)}
+.dir__bar .btn{margin-left:auto}
+/* 深色页头在窄屏的收尾 */
+@media(max-width:760px){
+  .phero__guide{font-size:12.4px;line-height:1.9}
+  .sec--v2 .wrap,.pd--v2 .wrap{padding-top:28px}
+}
