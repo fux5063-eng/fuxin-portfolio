@@ -429,7 +429,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915D').then(mod => {
+    import('./model3d.js?v=20260915E').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -482,7 +482,10 @@
   function viewHome() {
     const gates = DIRECTIONS.map((d, i) => `
       <a class="gate rv" href="#${d.id}" data-tilt>
-        <div class="gate__bg"><img src="${d.cover}" alt="${esc(d.label)}" loading="${i ? 'lazy' : 'eager'}"></div>
+        <div class="gate__bg gate__flow" data-flow="${i}">
+          <i class="flow__blob b1"></i><i class="flow__blob b2"></i><i class="flow__blob b3"></i>
+          <i class="flow__grid"></i><i class="flow__grain"></i><i class="flow__sheen"></i>
+        </div>
         <div class="gate__body">
           <div class="gate__en">${esc(d.en)}</div>
           <h3>${esc(d.label)}</h3>
@@ -864,6 +867,7 @@
     if (domSecs.length) initRail(app, domSecs);
     initCompare(app);
     initTabs(app);
+    gateFlowInit();
     initFilter(app);
 
     /* 导航高亮：标出当前所在方向/页面 */
@@ -997,6 +1001,28 @@
   }
 
   if (fine) {
+    // 方向卡的流光背景：指针位置 → CSS 变量（高光跟随）
+    const gateFlowInit = () => {
+      document.querySelectorAll('.gate[data-flow]').forEach(g => {
+        let raf = 0;
+        const move = e => {
+          const r = g.getBoundingClientRect();
+          const mx = ((e.clientX - r.left) / r.width - .5) * 2;
+          const my = ((e.clientY - r.top) / r.height - .5) * 2;
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            g.style.setProperty('--mx', mx.toFixed(3));
+            g.style.setProperty('--my', my.toFixed(3));
+            raf = 0;
+          });
+        };
+        const leave = () => { g.style.setProperty('--mx', '0'); g.style.setProperty('--my', '0'); };
+        g.addEventListener('pointermove', move);
+        g.addEventListener('pointerleave', leave);
+        cleanups.push(() => { g.removeEventListener('pointermove', move); g.removeEventListener('pointerleave', leave); });
+      });
+    };
+
     // 卡片倾斜（首页 gate）
     app.addEventListener('mousemove', e => {
       const g = e.target.closest('.gate');
