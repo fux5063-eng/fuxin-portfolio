@@ -28,7 +28,7 @@
     const plain = !!opt.plain;          /* 纯展示：不带任何工具按钮（首页用） */
     return `
       <figure class="m3d ${light ? 'm3d--light' : 'm3d--dark'} ${opt.cls || ''}">
-        <div class="m3d__cv-wrap">
+        <div class="m3d__cv-wrap"><span class="m3d__vig" aria-hidden="true"></span>
           <canvas class="m3d__cv" data-model="${esc(m.src)}" data-theme="${light ? 'light' : 'dark'}" data-line="${m.line ? '1' : '0'}"${cycle ? ` data-cycle="${esc(cycle.join(','))}"` : ''}></canvas>
           <span class="m3d__chip">3D 模型</span>
           ${(!plain && cycle) ? '<button type="button" class="m3d__next">换一个 →</button>' : ''}

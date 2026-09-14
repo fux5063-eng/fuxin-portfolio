@@ -66,11 +66,11 @@ export class ModelViewer {
     r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = (this.dark ? 1.05 : 1.0) * (this.opts.backdrop ? 0.9 : 1);
+    r.toneMappingExposure = (this.dark ? 1.08 : 1.06) * (this.opts.backdrop ? 0.9 : 1);
     if (this.opts.bg) r.setClearColor(this.opts.bg, 1);
 
     this.scene = new THREE.Scene();
-    if (!this.dark) this.scene.background = new THREE.Color(0xf3f5f7);
+    if (!this.dark) this.scene.background = new THREE.Color(0xe8ecf1);
 
     // 环境贴图（室内影棚光）——金属材质靠它才有反射
     const pmrem = new THREE.PMREMGenerator(r);
@@ -124,11 +124,15 @@ export class ModelViewer {
         const isPart = MOVABLE.some(k => nm.includes(k)) || root.children.length > 1;
         const spec = pal[i % pal.length];
         /* 实体材质：产品渲染质感（浅色主体 + 深色结构件 + 少量金属） */
-        const solid = new THREE.MeshStandardMaterial({
+        const solid = new THREE.MeshPhysicalMaterial({
           color: spec.c,
           metalness: this.opts.backdrop ? Math.min(spec.m, 0.2) : spec.m,
-          roughness: spec.r,
-          envMapIntensity: this.opts.env != null ? this.opts.env : 1.15, side: THREE.DoubleSide,
+          roughness: Math.max(0.28, spec.r * 0.84),
+          /* 清漆层：产品外壳那种"抛光塑料/喷漆"的高光，是白模感消失的关键 */
+          clearcoat: 0.42,
+          clearcoatRoughness: 0.26,
+          reflectivity: 0.55,
+          envMapIntensity: this.opts.env != null ? this.opts.env : 1.55, side: THREE.DoubleSide,
           wireframe: this.opts.wire, flatShading: false,
         });
         o.material = solid;
@@ -204,7 +208,7 @@ export class ModelViewer {
     const cw = this.canvas.clientWidth || 760, ch = this.canvas.clientHeight || 430;
     const vFov = this.camera.fov * Math.PI / 180;
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * (cw / Math.max(1, ch)));
-    const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * (this.opts.fill != null ? this.opts.fill : 0.94);
+    const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * (this.opts.fill != null ? this.opts.fill : 0.84);
     this.camera.position.set(center.x + dist * 0.58, center.y + dist * 0.40, center.z + dist * 0.78);
     this.camera.near = Math.max(dist / 240, 0.05);
     this.camera.far = dist * 45;
@@ -222,7 +226,7 @@ export class ModelViewer {
     const spanX = Math.max(size.x, size.z) * 1.12;
     const sh = new THREE.Mesh(
       new THREE.PlaneGeometry(spanX, spanX),
-      new THREE.MeshBasicMaterial({ map: this._shadowTexture(), transparent: true, opacity: this.dark ? 0.9 : 0.34, depthWrite: false }));
+      new THREE.MeshBasicMaterial({ map: this._shadowTexture(), transparent: true, opacity: this.dark ? 0.9 : 0.46, depthWrite: false }));
     sh.rotation.x = -Math.PI / 2;
     sh.position.set(cx.x, box.min.y - Math.max(size.y * 0.012, 0.2), cx.z);
     g.add(sh);

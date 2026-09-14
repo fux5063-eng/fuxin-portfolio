@@ -1086,3 +1086,8 @@ body.exp-open{overflow:hidden}
 .figs .fig:hover img{transform:translateY(-3px);box-shadow:0 16px 34px rgba(14,18,22,.13)}
 .figs .fig figcaption{font-size:12.6px;color:var(--muted);margin:0}
 .figs .fig--wide{grid-column:1/-1}
+
+/* ============ 3D 模型视口：柔和暗角（让浅色模型轮廓更清楚） ============ */
+.m3d{position:relative}
+.m3d__vig{position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(120% 86% at 50% 42%,transparent 52%,rgba(24,32,42,.10) 100%)}
