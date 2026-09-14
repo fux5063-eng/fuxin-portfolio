@@ -242,6 +242,9 @@
         let a = grid.get(k); if (!a) { a = []; grid.set(k, a); } a.push(p);
       }
       ctx.lineWidth = 1;
+      /* 按透明度分 5 档批量描线：原来每条线一次 stroke（每帧数百次绘制调用）→ 现在最多 5 次 */
+      const LB = 5;
+      const buckets = [[], [], [], [], []];
       for (const [k, arr] of grid) {
         const [gx, gy] = k.split('|').map(Number);
         for (let ox = 0; ox <= 1; ox++) for (let oy = (ox === 0 ? 0 : -1); oy <= 1; oy++) {
@@ -253,12 +256,21 @@
             for (let j = same ? i + 1 : 0; j < nb.length; j++) {
               const b = nb[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
               if (d2 < linkD2) {
-                ctx.strokeStyle = 'rgba(' + o.linkRGB + ',' + ((1 - Math.sqrt(d2) / o.link) * o.linkAlpha).toFixed(3) + ')';
-                ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+                const tt = 1 - Math.sqrt(d2) / o.link;
+                const bi = tt <= 0 ? 0 : (tt >= 1 ? LB - 1 : (tt * LB) | 0);
+                buckets[bi].push(a.x, a.y, b.x, b.y);
               }
             }
           }
         }
+      }
+      for (let bi = 0; bi < LB; bi++) {
+        const seg = buckets[bi];
+        if (!seg.length) continue;
+        ctx.strokeStyle = 'rgba(' + o.linkRGB + ',' + (((bi + 0.5) / LB) * o.linkAlpha).toFixed(3) + ')';
+        ctx.beginPath();
+        for (let s = 0; s < seg.length; s += 4) { ctx.moveTo(seg[s], seg[s + 1]); ctx.lineTo(seg[s + 2], seg[s + 3]); }
+        ctx.stroke();
       }
       /* 指针交互：连线 + 柔光（让"能交互"一眼可见） */
       if (mouse.on) {
@@ -1220,21 +1232,24 @@
     initCardFX = function (scope) {
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
-        let raf = 0;
+        let raf = 0, lastEv = null;
         const strong = el.classList.contains('gate') || el.classList.contains('pick');
         const kx = strong ? 13 : 10;      // 旋转幅度（原来 ±3.5°/±2.2° 几乎看不出来，加大一档）
         const ky = strong ? 11 : 8;
         const lift = strong ? 12 : 9;
         const onMove = e => {
-          const r = el.getBoundingClientRect();
-          const px = (e.clientX - r.left) / r.width - .5;
-          const py = (e.clientY - r.top) / r.height - .5;
+          lastEv = e;                     // 只记最新事件，坐标在下一帧统一计算（避免丢帧导致跳动）
           if (raf) return;
           raf = requestAnimationFrame(() => {
+            raf = 0;
+            const ev = lastEv;
+            if (!ev) return;
+            const r = el.getBoundingClientRect();
+            const px = (ev.clientX - r.left) / r.width - .5;
+            const py = (ev.clientY - r.top) / r.height - .5;
             el.style.setProperty('--mx', (px * 2).toFixed(3));
             el.style.setProperty('--my', (py * 2).toFixed(3));
             el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + lift + 'px) scale(1.02)';
-            raf = 0;
           });
         };
         const onLeave = () => {
