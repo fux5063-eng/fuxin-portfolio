@@ -674,3 +674,66 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
   .phero__guide{font-size:12.4px;line-height:1.9}
   .sec--v2 .wrap,.pd--v2 .wrap{padding-top:28px}
 }
+
+/* ============================================================
+   阅读体验：页头居中收紧 / 正文居中阅读列 / 折叠条目
+   ============================================================ */
+.phero{padding:72px 0 40px;text-align:center}
+.phero .wrap{text-align:center}
+.phero__back{margin-bottom:20px}
+.phero__en{justify-content:center}
+.phero__en::before{width:22px}
+.phero__sub{margin-left:auto;margin-right:auto;max-width:56ch}
+.phero__meta,.phero .tags{justify-content:center}
+.phero__guide{text-align:center;max-width:74ch;margin-left:auto;margin-right:auto}
+.phero__title{margin-top:14px}
+
+/* 正文：单列居中阅读列（不再被左侧章节列挤偏） */
+.cs__sec{display:block;padding:44px 0}
+.cs__side{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 12px}
+.cs__no{font:700 12px/1 ui-monospace,monospace;letter-spacing:.18em;color:var(--accent-d)}
+.cs__en{font:700 11px/1 ui-monospace,monospace;letter-spacing:.26em;color:var(--muted)}
+.cs__main{max-width:min(780px,100%);margin:0 auto;text-align:left}
+.cs__main h2{text-align:center}
+.cs__main h2::after{left:50%;transform:translateX(-50%)}
+.cs__lead{max-width:none;color:var(--ink-2)}
+.cs__list{max-width:none}
+.cs__list li{line-height:1.92;margin-bottom:10px;color:var(--ink-2)}
+.cs__list li b{color:var(--ink);font-weight:700}
+.cs__main figure{margin-left:0;margin-right:0}
+/* 折叠：其余条目 */
+.cs__more{margin:2px 0 0}
+.cs__more summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:8px;
+  font:600 13px/1 inherit;color:var(--accent-d);padding:9px 14px;border:1px dashed #d8e0e8;border-radius:999px;
+  transition:all .2s ease}
+.cs__more summary::-webkit-details-marker{display:none}
+.cs__more summary i{font-style:normal;transition:transform .25s ease}
+.cs__more summary:hover{border-color:var(--accent);background:#fff6f1}
+.cs__more[open] summary{border-style:solid;border-color:var(--accent)}
+.cs__more[open] summary i{transform:rotate(45deg)}
+.cs__more .cs__list{margin:14px 0 0}
+/* 让章节内的图片与正文同宽居中 */
+.cs__main .figs{max-width:none}
+@media(max-width:820px){
+  .phero{padding:56px 0 32px}
+  .cs__main{max-width:100%}
+}
+
+/* 深色页头版本：去掉旧布局的顶部内边距（否则页头会被顶下去，形成无意义空白） */
+.pd--v2{padding-top:0}
+.sec--v2{padding-top:0}
+.pd--v2 > .wrap:first-of-type,
+.sec--v2 > .wrap:first-of-type{padding-top:0}
+
+/* 页头再收紧（去掉无意义留白） */
+.phero{padding:56px 0 34px}
+.phero__title{margin-top:12px}
+.phero__sub{margin-top:12px}
+.phero__meta{margin-top:20px}
+.phero__guide{margin-top:16px}
+/* 正文层级：引导句更轻、条目更密、段间距更清楚 */
+.cs__lead{font-size:15.2px;line-height:1.86;color:#5b6672}
+.cs__sec{padding:38px 0}
+.cs__list li{margin-bottom:9px}
+.cs__more summary{margin-top:4px}
+@media(max-width:820px){.phero{padding:44px 0 26px}}

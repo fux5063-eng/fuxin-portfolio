@@ -65,6 +65,27 @@
   }
 
   /* 旧的清理函数（切页时调用，避免监听器堆积） */
+  /* 把条目开头的关键短语加粗（按 : ： ， 切分，前缀 ≤14 字才加粗），便于扫读 */
+  function keyLead(x) {
+    const m = String(x).match(/^([^：:，,。]{2,14})[：:，,]/);
+    if (!m) return esc(x);
+    return `<b>${esc(m[1])}</b>${esc(String(x).slice(m[1].length))}`;
+  }
+
+  /* 条目列表：默认最多 3 条，其余折叠在 <details> 里（信息随交互出现，减少阅读负担） */
+  function itemsBlock(items, limit = 2) {
+    const list = items || [];
+    if (!list.length) return '';
+    const head = list.slice(0, limit).map(x => `<li>${keyLead(x)}</li>`).join('');
+    const rest = list.slice(limit);
+    if (!rest.length) return `<ul class="cs__list">${head}</ul>`;
+    return `<ul class="cs__list">${head}</ul>
+          <details class="cs__more">
+            <summary>展开其余 ${rest.length} 条 <i>＋</i></summary>
+            <ul class="cs__list">${rest.map(x => `<li>${keyLead(x)}</li>`).join('')}</ul>
+          </details>`;
+  }
+
   /* 内页统一深色页头（与首页同一套视觉语言：深底/流动光晕/细网格/大标题） */
   function pageHero(o) {
     const meta = (o.meta || []).filter(m => m && m[1]).map(m => `<span class="phero__chip"><b>${esc(m[0])}</b>${esc(m[1])}</span>`).join('');
@@ -220,7 +241,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914i').then(mod => {
+    import('./model3d.js?v=20260914j').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -498,7 +519,7 @@
         <div class="cs__main">
           <h2>${esc(s.h)}</h2>
           ${s.lead ? `<p class="cs__lead">${esc(s.lead)}</p>` : ''}
-          ${(s.items || []).length ? `<ul class="cs__list">${s.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+          ${itemsBlock(s.items)}
           ${s.quote ? `<div class="cs__quote"><b>${esc(s.quote[0])}</b><span>${esc(s.quote[1])}</span></div>` : ''}
           ${figs(s.figures)}
           ${tabsBlock(s.tabs)}
@@ -525,7 +546,7 @@
         <p class="phero__guide rv-em" style="transition-delay:.26s">
           <span>本页结构</span>${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">→</span>')}
           <span class="sep">·</span>
-          <span>可以这样看：<em>拖动对比条</em>看前后、<em>点标签</em>看细节、<em>拖动模型</em>转着看</span>
+          <span>可<em>拖动对比条</em> / <em>点标签</em> / <em>转模型</em></span>
         </p>`;
     return `
     <section class="pd pd--v2">
