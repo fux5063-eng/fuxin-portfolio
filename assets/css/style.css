@@ -1086,3 +1086,8 @@ body.exp-open{overflow:hidden}
 .qrbox--wx .qrbox__slot i{font-style:normal;font-size:11px;color:#a8795c;opacity:.9}
 .qrbox--wx .qrbox__slot img{width:100%;height:100%;object-fit:cover;border-radius:12px}
 @media(max-width:560px){.qrbox--wx .qrbox__slot{width:116px;height:116px}}
+
+/* 联系区：微信二维码（真图，替换原占位框） */
+.qrbox__slot--filled{border-style:solid;border-color:rgba(224,98,45,.30);background:#fff;padding:8px}
+.qrbox__slot--filled img{display:block;width:100%;height:auto;border-radius:8px}
+.qrbox__slot--filled::before,.qrbox__slot--filled::after{display:none}

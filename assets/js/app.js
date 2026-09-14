@@ -817,7 +817,7 @@
             </div>
           </div>
           <div class="qrbox qrbox--wx">
-            <div class="qrbox__slot" data-wx-slot><span>微信二维码<br><i>待放入</i></span></div>
+            <div class="qrbox__slot qrbox__slot--filled" data-wx-slot><img src="assets/img/qr/wechat.jpg" alt="微信二维码：扫码添加付昕为好友" loading="lazy" width="162" height="162"></div>
             <div class="qrbox__txt"><b>微信扫码加我</b><span>微信号 zmdjan · 点这里复制</span></div>
           </div>
           </div>
