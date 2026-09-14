@@ -164,12 +164,14 @@
           ents.forEach(e => {
             if (!e.isIntersecting) return;
             io.unobserve(cv);
-            if (load) load.hidden = true;
+            /* 载入提示：加载中显示，成功后隐藏，失败给出可读文案（任何卡片都适用） */
+            if (load) { load.hidden = false; load.textContent = '模型载入中…'; }
             const v = new mod.ModelViewer(cv, {
               src: cv.dataset.model, theme: cv.dataset.theme || 'dark',
               autoRotate: true, speed: 0.32, explodeScale: 1.0, explodeZoom: 0, ring: false,
               mode: cv.dataset.line === '1' ? 'line' : 'solid',
-              onError() { if (load) { load.hidden = false; load.textContent = '模型加载失败'; } },
+              onLoad() { if (load) load.hidden = true; },
+              onError() { if (load) { load.hidden = false; load.textContent = '模型加载失败（可刷新重试）'; } },
             });
             viewers.push(v);
             /* 实体 / 线稿 切换 */
@@ -191,7 +193,6 @@
                 if (load) { load.hidden = false; load.textContent = '模型载入中…'; }
                 v.setSrc(cycle[k]);
               });
-              v.opts.onLoad = () => { if (panel) { const load = panel.querySelector('.m3d__load'); if (load) load.hidden = true; } };
             }
             window.__m3dState.mounted = viewers.length;
           });
@@ -252,6 +253,7 @@
           </div>
         </div>
       </div>
+      <p class="hero__cue rv">往下是两条线的代表作：<b>工业方向</b>可以转 DOGGIE 牵引绳、看航标灯改款；<b>AI 方向</b>是机器人毕设与自研工具。每个项目页都能<b>拖模型、拖对比条、点标签看细节</b>。</p>
       <div class="hero__scroll"><i></i><span>SCROLL ↓</span></div>
     </section>
 
@@ -451,6 +453,11 @@
         <p class="pd__lead">${esc(p.summary)}</p>
         <div class="tags" style="margin-top:16px">${tags(p.tags)}</div>
         <div class="pd__facts">${facts}</div>
+        <p class="pd__guide">
+          <span>本页结构</span>${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">→</span>')}
+          <span class="sep">·</span>
+          <span>可以这样看：<em>拖动对比条</em>看前后、<em>点标签</em>看细节、<em>拖动模型</em>转着看</span>
+        </p>
       </div>
       ${hero}
       <div class="cs">${secHtml}</div>
@@ -556,6 +563,14 @@
     initCompare(app);
     initTabs(app);
 
+    /* 导航高亮：标出当前所在方向/页面 */
+    const cur = '#' + (a || '');
+    app.querySelectorAll('.nav a').forEach(link => {
+      const href = link.getAttribute('href') || '';
+      const on = href === cur || (a && href === '#' + a);
+      link.classList.toggle('on', !!on);
+    });
+
     app.classList.remove('view-enter');
     void app.offsetWidth;
     if (!reduce) app.classList.add('view-enter');
@@ -575,6 +590,7 @@
     revealNow();
     updateNav();
     isHome ? FX.start() : FX.stop();
+    updateProgress();
   }
 
   function revealNow() {
@@ -772,10 +788,12 @@
   let shots = [], idx = 0;
   const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lb-img');
   function openLb(list, k) {
+    if (typeof lbHint !== 'undefined' && lbHint) lbHint.hidden = false;
     shots = list; idx = k; lbImg.src = shots[idx];
     lb.hidden = false; document.body.style.overflow = 'hidden';
   }
-  function closeLb() { lb.hidden = true; document.body.style.overflow = ''; }
+  function closeLb() { lb.hidden = true; document.body.style.overflow = '';
+    if (typeof lbHint !== 'undefined' && lbHint) lbHint.hidden = true; }
   function stepLb(n) { idx = (idx + n + shots.length) % shots.length; lbImg.src = shots[idx]; }
 
   app.addEventListener('click', e => {
@@ -804,6 +822,26 @@
     e.preventDefault();
     if (location.hash === href) render(); else location.hash = href;
   });
+
+  /* ================= 阅读进度条 / 回到顶部 ================= */
+  const pgbar = document.getElementById('pgbar');
+  const totop = document.getElementById('totop');
+  function updateProgress() {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 40 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    if (pgbar) pgbar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    if (totop) totop.classList.toggle('on', window.scrollY > 620);
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  if (totop) totop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* 灯箱操作提示（只在灯箱打开时显示） */
+  const lbHint = document.createElement('div');
+  lbHint.className = 'lb__hint';
+  lbHint.textContent = '← → 切换 · Esc 关闭';
+  document.body.appendChild(lbHint);
+  lbHint.hidden = true;
 
   window.addEventListener('hashchange', render);
   render();

@@ -504,3 +504,45 @@ body:not(.on-home) #app{padding-top:66px}
   linear-gradient(rgba(24,34,46,.05) 1px,transparent 1px),
   linear-gradient(90deg,rgba(24,34,46,.05) 1px,transparent 1px);
   background-size:auto,32px 32px,32px 32px}
+
+/* ============================================================
+   全站统一交互系统（进度条 / 回到顶部 / 引导文案 / 焦点态）
+   ============================================================ */
+/* 顶部阅读进度条 */
+.progress{position:fixed;left:0;right:0;top:0;height:2px;z-index:60;background:transparent;pointer-events:none}
+.progress i{display:block;height:100%;width:100%;transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--accent),#ffb066);transition:transform .08s linear}
+
+/* 回到顶部 */
+.totop{position:fixed;right:22px;bottom:26px;z-index:55;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;font-size:16px;line-height:1;box-shadow:0 10px 26px rgba(15,20,28,.14);
+  backdrop-filter:blur(8px);opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease,background .2s ease}
+.totop.on{opacity:1;transform:translateY(0)}
+.totop:hover{background:var(--accent);color:#fff;border-color:transparent}
+
+/* 项目页"本页结构/怎么用"引导条 */
+.pd__guide{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:16px 0 4px;padding:12px 15px;
+  border:1px solid var(--line);border-radius:12px;background:#f7f9fb;font-size:13.4px;color:var(--muted)}
+.pd__guide b{color:var(--ink);font-weight:700}
+.pd__guide em{color:var(--accent-d);font-style:normal;font-weight:700}
+.pd__guide .sep{color:#c6cfd9}
+
+/* 键盘可达性：统一焦点态 */
+a:focus-visible,button:focus-visible,.fig:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* 图片加载占位（避免大片空白/跳动） */
+.fig img,.heroFig img,.tabs__pane img,.cmp img{background:#e9edf2}
+.m3d--dark .m3d__cv-wrap{background-color:#0f1318}
+
+/* 灯箱操作提示 */
+.lb__hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:80;color:rgba(255,255,255,.82);
+  font:12.5px/1 ui-monospace,monospace;letter-spacing:.06em;background:rgba(15,20,28,.6);padding:8px 13px;border-radius:999px}
+
+/* 首页引导行 */
+.hero__cue{margin:22px 0 0;max-width:64ch;font-size:13.6px;line-height:1.95;color:rgba(255,255,255,.62)}
+.hero__cue b{color:#fff;font-weight:700}
+/* 导航当前项 */
+.nav a.on{color:var(--ink)}
+body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
+.nav a.on::after{content:'';display:block;height:2px;margin-top:5px;border-radius:2px;background:var(--accent)}
