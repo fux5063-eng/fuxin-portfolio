@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915Z').then(mod => {
+    import('./model3d.js?v=20260916A').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -830,7 +830,11 @@
     /* 能力筛选标签（取各项目标签的并集，最多 8 个） */
     const allTags = [];
     d.projects.forEach(p => (p.tags || []).forEach(t => { if (!allTags.includes(t)) allTags.push(t); }));
-    const chips = ['全部', ...allTags.slice(0, 8)];
+    /* 筛选器用显式精选词表（按能力维度），不再按出现顺序随机取 8 个 */
+    const FILTER_ORDER = ['Rhino 建模', '产品定义', '造型与形态', '结构设计', 'CMF',
+      'KeyShot 交付', '硬件与嵌入式', '语音与交互', 'AI 工具设计', '交互原型', '视觉与版式', '品牌与包装'];
+    const pick = FILTER_ORDER.filter(t => allTags.includes(t));
+    const chips = ['全部', ...(pick.length >= 4 ? pick : allTags.slice(0, 8))];
     const cards = d.projects.map(p => `
       <a class="card rv" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
         <canvas class="card__fx" aria-hidden="true"></canvas>

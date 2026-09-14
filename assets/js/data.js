@@ -73,7 +73,7 @@ const DIRECTIONS = [
       {
         slug: 'robot', title: '桌面陪伴型机器人', en: 'DESKTOP COMPANION ROBOT',
         badge: '毕业设计 · 进行中',
-        tags: ['真实硬件', '语音闭环', '双眼状态', '系统架构'],
+        tags: ['硬件与嵌入式', '语音与交互', '系统架构'],
         summary: '先用真实硬件跑通「唤醒—理解—回复—复位」的语音闭环与八类双眼状态，再进入外壳、结构与整机体验设计。',
         facts: [['角色', '产品定义 · 交互拆解 · 原型验证'], ['状态', '毕业设计进行中'], ['证据', 'ESP32-S3-CAM · 语音闭环 · 私人后台']],
         hero: { f: 'assets/img/cover/robot.jpg', cap: '桌面陪伴型机器人' },
@@ -118,7 +118,7 @@ const DIRECTIONS = [
       {
         slug: 'designdna', title: 'DesignDNA · AI 设计工作台', en: 'DESIGNDNA · AI DESIGN WORKBENCH',
         badge: '真实改款任务验证',
-        tags: ['AI 设计工具', '约束地图', '可追溯评审'],
+        tags: ['AI 工具设计', '约束与评审', '造型与形态'],
         summary: '面向工业设计改款任务的 AI 协同工作台：先用产品 DNA 与约束地图控制探索范围，再通过逐条评审支持人工决策。',
         facts: [['角色', '产品定义 · 流程与交互设计'], ['验证案例', 'Fusion Audio 高端户外便携音响改款'], ['机制', '四步流程 · 全程可回溯']],
         hero: { f: 'assets/img/cover/designdna.jpg', cap: 'DesignDNA 工作台界面' },
@@ -164,7 +164,7 @@ const DIRECTIONS = [
       {
         slug: 'toolset', title: '个人 AI 工具组', en: 'PERSONAL AI TOOLSET',
         badge: '4 个工具 · 自用中',
-        tags: ['工作流', '工具设计', '可回滚切换', '隐私边界'],
+        tags: ['AI 工具设计', '可回滚设计', '隐私边界'],
         summary: '围绕素材采集、技能管理、资源观察与运行环境切换，为自己的设计工作流搭的四件工具。',
         facts: [['角色', '需求定义 · 交互设计 · 实现与迭代'], ['形态', '桌面常驻工具 + 浏览器扩展'], ['原则', '高风险动作可回滚、凭据不外传']],
         hero: { f: 'assets/img/cover/toolset.jpg', cap: '个人 AI 工具组界面' },
@@ -259,7 +259,7 @@ const DIRECTIONS = [
       {
         slug: 'internship', title: '硬件联网适配（实习）', en: 'INTERNSHIP · HARDWARE',
         badge: '2026 实习',
-        tags: ['硬件', '联网适配', '异常定位'],
+        tags: ['硬件与嵌入式', '异常定位'],
         summary: '实习中完成的连接确认、参数适配、异常定位与复现记录。真实硬件经历让我在定义 AI 功能时，同时考虑设备、网络与异常恢复。',
         facts: [['角色', '产品组实习生'], ['内容', '连接确认 · 参数适配 · 异常定位 · 复现记录'], ['意义', '硬件 + 网络的真实约束']],
         hero: { f: 'assets/img/cover/internship.jpg', cap: '硬件联网适配实习记录' },
@@ -359,7 +359,7 @@ const DIRECTIONS = [
       {
         slug: 'navlight', title: '航标灯 Navigation Lights', en: 'NAVIGATION LIGHTS',
         badge: '既有平台改款',
-        tags: ['造型推进', 'Rhino 建模', 'KeyShot 交付'],
+        tags: ['造型与形态', 'Rhino 建模', 'KeyShot 交付'],
         summary: '在既有海上导航设备平台上完成外观协作改款，强化海事设备识别，并建立可延展的系列设计语言。',
         facts: [['角色', '造型推进 · Rhino 建模 · KeyShot 视觉表达'], ['约束', '沿用既有结构、光学组件与安装维护边界'], ['目标', '外观升级 + 系列设计语言']],
         hero: { f: 'assets/img/cover/navlight.jpg', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
@@ -479,7 +479,7 @@ const DIRECTIONS = [
       {
         slug: 'lumora', title: 'Lumora 光健康伴护仪', en: 'LUMORA · LIGHT HEALTH COMPANION',
         badge: '课程项目 · 4 周',
-        tags: ['灯具设计', '功能整合', '结构校验'],
+        tags: ['灯具设计', '功能整合', '结构设计'],
         summary: '一盏可收纳的居家照明设备：通过折叠灯臂、物理控制与柜体收纳适配居家多场景。',
         facts: [['角色', '产品定义 · 功能整合 · 造型 · Rhino 建模 · 视觉表达'], ['周期', '灯具设计课程约 4 周'], ['重点', '展开 / 收纳状态的空间占用']],
         hero: { f: 'assets/img/cover/lumora.jpg', cap: '居家阅读场景：灯臂展开状态与暖光表达' },
@@ -531,7 +531,7 @@ const DIRECTIONS = [
       {
         slug: 'wateralarm', title: '落水报警终端', en: 'WATER ALARM TERMINAL',
         badge: '商业协作 · 已匿名化',
-        tags: ['形态探索', '模型迭代', '视觉提案'],
+        tags: ['造型与形态', '模型迭代', '视觉与版式'],
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
         hero: { f: 'assets/img/cover/wateralarm.jpg', cap: '穿戴与落水识别场景表达（已匿名化）' },
@@ -581,7 +581,7 @@ const DIRECTIONS = [
       {
         slug: 'smartlock', title: '智能锁系列 · 商业持续设计支持', en: 'SMART LOCK SERIES',
         badge: '商业协作 · 已匿名化',
-        tags: ['Rhino 建模', 'KeyShot 渲染', '效果图交付'],
+        tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '根据前期需求与草图制作 Rhino 模型，承担模型修改、KeyShot 渲染与效果图制作，持续支持商业改款节奏。',
         facts: [['角色', '建模 · 模型修改 · 渲染 · 效果图'], ['内容', '3D 效果 / 海报 / 包装 / 专利多视图 / 修图改字'], ['边界', '持续执行型协作，不作为独立原创项目']],
         hero: { f: 'assets/img/cover/smartlock.jpg', cap: '商业改款的效果图交付（客户信息已匿名化）' },
@@ -627,7 +627,7 @@ const DIRECTIONS = [
       {
         slug: 'aid', title: 'AI 能力在产品设计中的两种应用', en: 'AI & PRODUCT DESIGN',
         badge: '毕业设计 + 工具',
-        tags: ['智能产品原型', 'AI 工作流'],
+        tags: ['交互原型', 'AI 工具设计', '产品定义'],
         summary: '毕业设计呈现智能产品原型，DesignDNA 把 AI 能力沉淀为可重复的设计工作流。',
         facts: [['形式', '毕业设计呈现 + 自研工作流'], ['关联', '与 AI 产品方向同一套项目'], ['价值', '设计判断可回溯、可复用']],
         hero: { f: 'assets/img/cover/aid.jpg', cap: '毕业设计与 AI 工作流的关系' },
@@ -673,7 +673,7 @@ const DIRECTIONS = [
       {
         slug: 'visual', title: '视觉设计：平面与品牌标识', en: 'VISUAL DESIGN',
         badge: '平面 / 标识',
-        tags: ['版式', '图像节奏', '标识推演'],
+        tags: ['视觉与版式', '品牌与包装', '产品定义'],
         summary: '平面与海报设计（版式、图像节奏与氛围表达）以及品牌标识设计（标识构思、形态推演与应用呈现）。',
         facts: [['内容', '海报 / 版式 / 品牌标识'], ['能力', '视觉节奏与识别一致性'], ['用途', '商业交付与产品包装']],
         hero: { f: 'assets/img/cover/visual.jpg', cap: '平面与品牌标识产出' },
@@ -716,7 +716,7 @@ const DIRECTIONS = [
       {
         slug: 'exercises', title: '其他产品练习', en: 'SELECTED EXERCISES',
         badge: '日常练习',
-        tags: ['建模', '造型', '效果表达'],
+        tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '建模、造型与效果表达的日常练习，用于保持形态手感与渲染表达的手感。',
         facts: [['形式', '练习集合'], ['重点', '形态与效果表达'], ['说明', '非商业项目']],
         hero: { f: 'assets/img/cover/exercises.jpg', cap: '形态与效果表达练习' },
