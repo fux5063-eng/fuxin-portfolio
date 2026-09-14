@@ -4,3 +4,6 @@ Thumbs.db
 __pycache__/
 _lab/
 assets/img/folio/
+_selftest.html
+_check3d.html
+_*.html
