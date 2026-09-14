@@ -1320,7 +1320,7 @@
       const els = [...scope.querySelectorAll('.gate,.card,.pick')];
       els.forEach(el => {
         let raf = 0, lastEv = null, rect = null, ramp = 0, lastT = 0;
-        const RAMP_MS = 240;               // 入场渐入时长：鼠标一放上去不再"瞬间弹到位"
+        const RAMP_MS = 420;               // 入场渐入时长（用户要求再缓和一档：240 → 420ms）
         const strong = el.classList.contains('gate') || el.classList.contains('pick');
         const kx = strong ? 13 : 10;      // 旋转幅度（原来 ±3.5°/±2.2° 几乎看不出来，加大一档）
         const ky = strong ? 11 : 8;
@@ -1339,7 +1339,7 @@
           const py = ((ev.clientY - r.top) / r.height - .5) * e;
           el.style.setProperty('--mx', (px * 2).toFixed(3));
           el.style.setProperty('--my', (py * 2).toFixed(3));
-          el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + (lift * e).toFixed(2) + 'px) scale(' + (1 + .02 * e).toFixed(4) + ')';
+          el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + (lift * e).toFixed(2) + 'px) scale(' + (1 + .012 * e).toFixed(4) + ')';
           if (ramp < 1) tick();                             // 入场期间自驱动，不依赖鼠标是否移动
         };
         const onEnter = e => {

@@ -136,7 +136,7 @@ body:not(.on-home) #app{padding-top:66px}
 .gate__bg img{width:100%;height:100%;object-fit:cover;object-position:center 45%;transform:scale(1.04);transition:transform .66s cubic-bezier(.16,.84,.24,1),filter .44s}
 .gate::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,11,13,.15) 0%,rgba(10,11,13,.55) 52%,rgba(10,11,13,.92) 100%);transition:opacity .45s}
 .gate:hover{box-shadow:0 30px 70px rgba(17,18,20,.3)}
-.gate:hover .gate__bg img{transform:scale(1.1)}
+.gate:hover .gate__bg img{transform:scale(1.06);transition:transform .8s cubic-bezier(.22,.7,.3,1)}
 .gate__body{position:absolute;left:0;right:0;bottom:0;padding:26px 26px 24px;z-index:2}
 .gate__en{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.66);font-weight:600}
 .gate__body h3{font-size:26px;margin:8px 0 8px}
@@ -198,8 +198,8 @@ body:not(.on-home) #app{padding-top:66px}
 .card{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:.22s ease}
 .card:not(.is-tilt):hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(17,18,20,.11)}
 .card__img{aspect-ratio:16/9;overflow:hidden;background:#eceef1;border-bottom:1px solid var(--line)}
-.card__img img{width:100%;height:100%;object-fit:cover;transition:transform .48s cubic-bezier(.16,.84,.24,1)}
-.card:hover .card__img img{transform:scale(1.04)}
+.card__img img{width:100%;height:100%;object-fit:cover;transition:transform .68s cubic-bezier(.22,.7,.3,1)}
+.card:hover .card__img img{transform:scale(1.035)}
 .card__body{padding:16px 17px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
 .card__body h3{font-size:17px;line-height:1.35}
 /* 描述固定两行高度：不同项目描述长短不一，否则卡内节奏会错开 */
@@ -828,7 +828,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .pick:not(.is-tilt):hover{transform:translateY(-6px);box-shadow:0 26px 60px -30px rgba(14,18,22,.35);border-color:rgba(224,98,45,.4)}
 .pick__img{aspect-ratio:16/10;overflow:hidden;background:#eef1f5}
 .pick__img img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.01);transition:transform .68s cubic-bezier(.2,.7,.3,1)}
-.pick:hover .pick__img img{transform:scale(1.06)}
+.pick:hover .pick__img img{transform:scale(1.035)}
 .pick__body{padding:16px 18px 18px}
 .pick__eyebrow{font:700 11px/1 ui-monospace,monospace;letter-spacing:.16em;color:var(--accent-d);text-transform:uppercase}
 .pick h3{margin:9px 0 7px;font-size:19px;letter-spacing:-.02em}
@@ -939,7 +939,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 /* 抬升与投影（与 JS 的 inline transform 叠加在 hover 态由 JS 控制） */
 .card:hover,.pick:hover{box-shadow:0 30px 66px -34px rgba(14,18,22,.42),0 2px 0 0 rgba(224,98,45,.16)}
 .card .card__img img,.pick .pick__img img{transition:transform 1s cubic-bezier(.2,.7,.3,1)}
-.card:hover .card__img img,.pick:hover .pick__img img{transform:scale(1.06)}
+.card:hover .card__img img,.pick:hover .pick__img img{transform:scale(1.035)}
 @media (prefers-reduced-motion:reduce){.card::before,.pick::before{display:none}}
 
 /* 方向卡内的可交互粒子层 */
@@ -1148,7 +1148,7 @@ body.exp-open{overflow:hidden}
 
 /* ==== 交互跟手（性能）：hover 期间把 transform 过渡压到 0.12s，
    避免"每帧写入 + 0.3~0.4s 长过渡"互相打架造成的拖尾与卡顿；并提前提升为合成层 ==== */
-.fxcard{transition:transform .34s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
+.fxcard{transition:transform .46s cubic-bezier(.22,.7,.3,1),box-shadow .3s ease}
 /* 只有"正在跟手"的这一张才提升为合成层（原来十几张一起提升 = 配额耗尽 → 卡） */
 .fxcard.is-tilt{will-change:transform;transition:box-shadow .3s ease}
 
