@@ -200,10 +200,11 @@ body:not(.on-home) #app{padding-top:66px}
 .card__img{aspect-ratio:16/9;overflow:hidden;background:#eceef1;border-bottom:1px solid var(--line)}
 .card__img img{width:100%;height:100%;object-fit:cover;transition:transform .48s cubic-bezier(.16,.84,.24,1)}
 .card:hover .card__img img{transform:scale(1.04)}
-.card__body{padding:16px 17px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
-.card__body h3{font-size:17px}
-.card__body p{font-size:13.5px;color:var(--ink-2);margin:0}
-.card__foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card__body{padding:16px 17px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
+.card__body h3{font-size:17px;line-height:1.35}
+/* 描述固定两行高度：不同项目描述长短不一，否则卡内节奏会错开 */
+.card__body p{font-size:13.5px;color:var(--ink-2);margin:0;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(2 * 1.6em)}
+.card__foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .tag{display:inline-block;font-size:11.5px;color:var(--ink-2);background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .badge{font-size:11.5px;font-weight:600;color:var(--accent-d);background:var(--accent-soft);border-radius:999px;padding:3px 10px;white-space:nowrap}

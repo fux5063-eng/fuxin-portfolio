@@ -1222,9 +1222,9 @@
       els.forEach(el => {
         let raf = 0;
         const strong = el.classList.contains('gate') || el.classList.contains('pick');
-        const kx = strong ? 7 : 4.5;      // 旋转幅度
-        const ky = strong ? 6 : 4;
-        const lift = strong ? 8 : 5;
+        const kx = strong ? 13 : 10;      // 旋转幅度（原来 ±3.5°/±2.2° 几乎看不出来，加大一档）
+        const ky = strong ? 11 : 8;
+        const lift = strong ? 12 : 9;
         const onMove = e => {
           const r = el.getBoundingClientRect();
           const px = (e.clientX - r.left) / r.width - .5;
@@ -1233,7 +1233,7 @@
           raf = requestAnimationFrame(() => {
             el.style.setProperty('--mx', (px * 2).toFixed(3));
             el.style.setProperty('--my', (py * 2).toFixed(3));
-            el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + lift + 'px) scale(1.012)';
+            el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + lift + 'px) scale(1.02)';
             raf = 0;
           });
         };
