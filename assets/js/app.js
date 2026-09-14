@@ -155,7 +155,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914e').then(mod => {
+    import('./model3d.js?v=20260914f').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -629,22 +629,41 @@
       cv.width = Math.round(W * dpr);
       cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(230, Math.max(60, (W * H) / 11000)));
-      parts = Array.from({ length: n }, () => ({
-        x: Math.random() * W, y: Math.random() * H,
-        vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3,
-        r: Math.random() * 1.6 + .7, hot: Math.random() < .19,
-        /* 每个粒子自己的相位 + 生命周期：避免所有粒子锁到同一条流线上"糊成一条线" */
-        ph: Math.random() * 6.283, age: Math.random() * 500, life: 320 + Math.random() * 700
-      }));
+      const n = Math.round(Math.min(240, Math.max(70, (W * H) / 10500)));
+      parts = Array.from({ length: n }, () => {
+        const free = Math.random() < .3;        /* 约三成自由飘散，其余汇入流动带 */
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          vx: .25 + Math.random() * .35, vy: (Math.random() - .5) * .2,
+          r: Math.random() * 1.5 + .7, hot: Math.random() < .18,
+          free,
+          /* 带宽偏移：让"那条线"有厚度，不是细细一根 */
+          band: (Math.random() - .5) * 2 * (24 + Math.random() * 76),
+          ph: Math.random() * 6.283,
+          sp: .7 + Math.random() * .8,
+        };
+      });
+    }
+
+    /* 流动带：横贯画面的缓慢起伏曲线，粒子汇聚在它附近但各自带不同厚度 */
+    function bandY(x, ts) {
+      return H * .54 + Math.sin(x / W * 2.1 + ts) * H * .115 + Math.sin(x / W * 4.7 - ts * .7) * H * .045;
     }
 
     function frame(t) {
       ctx.clearRect(0, 0, W, H);
+      const ts = t * .00016;
       for (const p of parts) {
-        const a = (Math.sin((p.x + t * .00012) * .0026 + p.ph) + Math.cos((p.y + t * .00009) * .0031 + p.ph * 1.7)) * Math.PI;
-        p.vx += Math.cos(a) * .013 + (Math.random() - .5) * .028;   // 随机扰动：不让粒子对齐成线
-        p.vy += Math.sin(a) * .013 + (Math.random() - .5) * .028;
+        if (p.free) {
+          /* 少量自由粒子：慢速漂移 + 极轻噪声 —— 保留"一点点分散"的呼吸感 */
+          p.vx += (Math.random() - .5) * .012;
+          p.vy += (Math.random() - .5) * .012;
+        } else {
+          /* 主体：沿一个方向缓慢流动，同时向"带状轨道"收敛（有厚度，不是一根细线） */
+          p.vx += ((.95 - Math.abs(p.vy) * .25) * p.sp - p.vx) * .018;
+          p.vy += (bandY(p.x, ts) + p.band - p.y) * .0022;
+          p.vy += (Math.random() - .5) * .012;
+        }
         if (mouse.on) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
           if (d2 < 31000 && d2 > 1) {
@@ -654,25 +673,26 @@
         }
         p.vx *= .986; p.vy *= .986;
         const sp = Math.hypot(p.vx, p.vy);
-        if (sp > 1.6) { p.vx = p.vx / sp * 1.6; p.vy = p.vy / sp * 1.6; }
+        const maxSp = p.free ? .9 : 1.6;
+        if (sp > maxSp) { p.vx = p.vx / sp * maxSp; p.vy = p.vy / sp * maxSp; }
         p.x += p.vx; p.y += p.vy;
-        if (p.x < -24) p.x = W + 24; else if (p.x > W + 24) p.x = -24;
-        if (p.y < -24) p.y = H + 24; else if (p.y > H + 24) p.y = -24;
-        /* 到寿命就换个位置重生 */
-        p.age++;
-        if (p.age > p.life) {
-          p.x = Math.random() * W; p.y = Math.random() * H;
-          p.vx = (Math.random() - .5) * .3; p.vy = (Math.random() - .5) * .3;
-          p.age = 0; p.life = 320 + Math.random() * 700; p.ph = Math.random() * 6.283;
+        /* 从右边出去就从左边回来，保持这条带子是连续的 */
+        if (p.x > W + 26) {
+          p.x = -26;
+          p.vx = .25 + Math.random() * .35;
+          if (p.free) p.y = Math.random() * H;
+          else p.y = bandY(p.x, ts) + p.band + (Math.random() - .5) * 40;
         }
+        if (p.x < -48) p.x = W + 26;
+        if (p.y < -30) p.y = H + 24; else if (p.y > H + 30) p.y = -24;
       }
       ctx.lineWidth = 1;
       for (let i = 0; i < parts.length; i++) {
         const a = parts[i];
         for (let j = i + 1; j < parts.length; j++) {
           const b = parts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-          if (d2 < 20500) {
-            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 148) * .5).toFixed(3) + ')';
+          if (d2 < 17500) {
+            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - Math.sqrt(d2) / 137) * .46).toFixed(3) + ')';
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
