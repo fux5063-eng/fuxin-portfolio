@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914U').then(mod => {
+    import('./model3d.js?v=20260914V').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -506,11 +506,6 @@
             <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
           </div>
-          <div class="hero__meta">
-            <span><b>${esc(SITE.name)}</b> ${esc(SITE.sub)}</span>
-            <span>${esc(SITE.school)}</span>
-            <span>意向城市 <b>${esc(SITE.city)}</b></span>
-          </div>
         </div>
         <div class="hero__panel fade-in">
           <div class="hero__facts">
@@ -520,7 +515,6 @@
           </div>
         </div>
       </div>
-      <p class="hero__cue rv">两条线各挑两个代表作，项目页里可以<b>拖模型、拖对比条、点标签看细节</b>。</p>
       <div class="hero__scroll"><i></i><span>SCROLL ↓</span></div>
     </section>
 
@@ -531,7 +525,6 @@
             <div>
               <div class="en-label"><b>01</b>TWO DIRECTIONS</div>
               <h2>选一个方向开始看</h2>
-              <p>两个方向共用同一套工作方法：先判断边界，再推进造型与验证，最后把过程留成可复用的记录。</p>
             </div>
           </div>
           <div class="gates">${gates}</div>
@@ -546,7 +539,6 @@
             <div>
               <div class="en-label"><b>02</b>SELECTED WORK</div>
               <h2>四个代表作</h2>
-              <p>两条线各挑两个：能转的 3D、能拖的对比、能点开的细节，都在各自的项目页里。</p>
             </div>
           </div>
           <div class="picks">${picks}</div>
@@ -737,11 +729,6 @@
       ? `<div class="plates" style="margin-top:26px">${p.images.map(f => fig({ f }, 'fig--plate')).join('')}</div>` : '';
     const modelLoose = p.model && p.model.after === undefined ? modelPanel(p.model, { light: true }) : '';
     const model2Loose = p.model2 && p.model2.after === undefined ? modelPanel(p.model2, { light: true }) : '';
-
-    const guideHtml = `
-        <p class="phero__guide rv-em" style="transition-delay:.26s">
-          ${secs.map((x, i) => `<b>${String(i + 1).padStart(2, '0')} ${esc(x.h)}</b>`).join('<span class="sep">·</span>')}
-        </p>`;
     return `
     <section class="pd pd--v2">
       ${pageHero({
@@ -754,12 +741,7 @@
         backText: d.label,
         guide: guideHtml
       })}
-      <div class="wrap">
-      <div class="pd__howto rv">
-        <span>怎么看</span>
-        <em>拖动对比条看前后</em><i>·</i><em>点标签看细节</em><i>·</i><em>拖动模型转着看</em>
-      </div>
-      ${hero}
+      <div class="wrap">      ${hero}
       <div class="cs">${secHtml}</div>
       ${modelLoose}
       ${model2Loose}

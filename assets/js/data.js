@@ -15,7 +15,7 @@ const SITE = {
   heroRole: '工业设计 × AI 产品 · 从概念到原型落地',
   heroTitle1: '把设计判断，',
   heroTitle2: '变成<span class="mk">可重复的流程</span>',
-  heroLead: '产品设计背景，两个方向并行：一边做真实的工业设计与商业改款（建模、渲染、整套视觉交付），一边把机器人、语音交互和 AI 工具做成能跑起来的原型。'
+  heroLead: '工业设计与 AI 产品并行，从概念一路做到能跑的原型。'
 };
 
 const MARQUEE = ['AI 产品', '工业设计', '机器人产品', 'DesignDNA', 'Rhino 建模', 'KeyShot 渲染',
@@ -76,7 +76,7 @@ const DIRECTIONS = [
         tags: ['真实硬件', '语音闭环', '双眼状态', '系统架构'],
         summary: '先用真实硬件跑通「唤醒—理解—回复—复位」的语音闭环与八类双眼状态，再进入外壳、结构与整机体验设计。',
         facts: [['角色', '产品定义 · 交互拆解 · 原型验证'], ['状态', '毕业设计进行中'], ['证据', 'ESP32-S3-CAM · 语音闭环 · 私人后台']],
-        hero: { f: 'assets/img/ai/robot-p06.jpg', cap: '桌面陪伴型机器人（作品集原页 p06）' },
+        hero: { f: 'assets/img/ai/robot-p06.jpg', cap: '桌面陪伴型机器人' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -121,7 +121,7 @@ const DIRECTIONS = [
         tags: ['AI 设计工具', '约束地图', '可追溯评审'],
         summary: '面向工业设计改款任务的 AI 协同工作台：先用产品 DNA 与约束地图控制探索范围，再通过逐条评审支持人工决策。',
         facts: [['角色', '产品定义 · 流程与交互设计'], ['验证案例', 'Fusion Audio 高端户外便携音响改款'], ['机制', '四步流程 · 全程可回溯']],
-        hero: { f: 'assets/img/ai/designdna-p18.jpg', cap: 'DesignDNA 工作台界面（作品集原页 p18）' },
+        hero: { f: 'assets/img/ai/designdna-p18.jpg', cap: 'DesignDNA 工作台界面' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -167,7 +167,7 @@ const DIRECTIONS = [
         tags: ['工作流', '工具设计', '可回滚切换', '隐私边界'],
         summary: '围绕素材采集、技能管理、资源观察与运行环境切换，为自己的设计工作流搭的四件工具。',
         facts: [['角色', '需求定义 · 交互设计 · 实现与迭代'], ['形态', '桌面常驻工具 + 浏览器扩展'], ['原则', '高风险动作可回滚、凭据不外传']],
-        hero: { f: 'assets/img/ai/toolset-p33.jpg', cap: '个人 AI 工具组界面（作品集原页 p33）' },
+        hero: { f: 'assets/img/ai/toolset-p33.jpg', cap: '个人 AI 工具组界面' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -262,7 +262,7 @@ const DIRECTIONS = [
         tags: ['硬件', '联网适配', '异常定位'],
         summary: '实习中完成的连接确认、参数适配、异常定位与复现记录。真实硬件经历让我在定义 AI 功能时，同时考虑设备、网络与异常恢复。',
         facts: [['角色', '产品组实习生'], ['内容', '连接确认 · 参数适配 · 异常定位 · 复现记录'], ['意义', '硬件 + 网络的真实约束']],
-        hero: { f: 'assets/img/ai/internship-p39.jpg', cap: '硬件联网适配实习记录（作品集原页 p39）' },
+        hero: { f: 'assets/img/ai/internship-p39.jpg', cap: '硬件联网适配实习记录' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -306,7 +306,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', 'CMF'],
         summary: '两个实体产品：DOGGIE 多功能宠物牵引绳与 Lumora 光健康伴护仪，从使用任务到产品架构、曲面建模与 CMF。',
         facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品 + 居家康养照明'], ['证据', '连续 Rhino / KeyShot 工程']],
-        hero: { f: 'assets/img/ai/entity-p41.jpg', cap: 'DOGGIE 与 Lumora 两个实体产品（作品集原页 p41）' },
+        hero: { f: 'assets/img/ai/entity-p41.jpg', cap: 'DOGGIE 与 Lumora 两个实体产品' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -440,9 +440,9 @@ const DIRECTIONS = [
             ],
             figures: [
               { f: 'assets/img/case/id/doggie-sketch.jpg', cap: '草图发散与形态推演（作品集 p15）', wide: true },
-              { f: 'assets/img/case/id/doggie-story.jpg', cap: '故事板：把使用流程拆成连续动作（p16）' },
-              { f: 'assets/img/case/id/doggie-threeview.jpg', cap: '三视图与尺寸关系（p23）' },
-              { f: 'assets/img/case/id/doggie-explode.jpg', cap: '爆炸示意：表达部件关系，不等同于工程结构设计（p24）' }
+              { f: 'assets/img/case/id/doggie-story.jpg', cap: '故事板：把使用流程拆成连续动作' },
+              { f: 'assets/img/case/id/doggie-threeview.jpg', cap: '三视图与尺寸关系' },
+              { f: 'assets/img/case/id/doggie-explode.jpg', cap: '爆炸示意：表达部件关系，不等同于工程结构设计' }
             ]
           },
           {
@@ -455,8 +455,8 @@ const DIRECTIONS = [
               '包装与场景：盒体与手持包装展示，配合真实使用场景图。'
             ],
             figures: [
-              { f: 'assets/img/case/id/doggie-pack.jpg', cap: '包装设计：盒体与手持展示（p25）', wide: true },
-              { f: 'assets/img/case/id/doggie-scene.jpg', cap: '使用场景（p26）' }
+              { f: 'assets/img/case/id/doggie-pack.jpg', cap: '包装设计：盒体与手持展示', wide: true },
+              { f: 'assets/img/case/id/doggie-scene.jpg', cap: '使用场景' }
             ],
             tabs: [
               { t: '防滑握持', f: 'assets/img/case/id/doggie-d1.jpg', d: '主握持区保持简洁，握感与防滑靠表面处理解决，不额外增加零件。' },
@@ -494,7 +494,7 @@ const DIRECTIONS = [
               '体量：灯臂收入柜体侧面，降低非使用状态的空间占用。'
             ],
             figures: [
-              { f: 'assets/img/case/id/lumora-p2.jpg', cap: '用户分析与使用场景梳理（作品集原页 p29）', wide: true }
+              { f: 'assets/img/case/id/lumora-p2.jpg', cap: '用户分析与使用场景梳理', wide: true }
             ]
           },
           {
@@ -505,8 +505,8 @@ const DIRECTIONS = [
               'Rhino 尺寸视图统一展开态、收纳态与移动状态的尺寸基准；细节围绕操作可达性与收纳状态展开。'
             ],
             figures: [
-              { f: 'assets/img/case/id/lumora-p3.jpg', cap: '草图发散：灯臂、关节与灯头的形态推演（p31）', wide: true },
-              { f: 'assets/img/case/id/lumora-p4.jpg', cap: '功能与结构：灯臂运动、收纳关系与操作件（p33）', wide: true }
+              { f: 'assets/img/case/id/lumora-p3.jpg', cap: '草图发散：灯臂、关节与灯头的形态推演', wide: true },
+              { f: 'assets/img/case/id/lumora-p4.jpg', cap: '功能与结构：灯臂运动、收纳关系与操作件', wide: true }
             ]
           },
           {
@@ -630,7 +630,7 @@ const DIRECTIONS = [
         tags: ['智能产品原型', 'AI 工作流'],
         summary: '毕业设计呈现智能产品原型，DesignDNA 把 AI 能力沉淀为可重复的设计工作流。',
         facts: [['形式', '毕业设计呈现 + 自研工作流'], ['关联', '与 AI 产品方向同一套项目'], ['价值', '设计判断可回溯、可复用']],
-        hero: { f: 'assets/img/id/aid-p45.jpg', cap: '毕业设计与 AI 工作流的关系（作品集原页 p45）' },
+        hero: { f: 'assets/img/id/aid-p45.jpg', cap: '毕业设计与 AI 工作流的关系' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -676,7 +676,7 @@ const DIRECTIONS = [
         tags: ['版式', '图像节奏', '标识推演'],
         summary: '平面与海报设计（版式、图像节奏与氛围表达）以及品牌标识设计（标识构思、形态推演与应用呈现）。',
         facts: [['内容', '海报 / 版式 / 品牌标识'], ['能力', '视觉节奏与识别一致性'], ['用途', '商业交付与产品包装']],
-        hero: { f: 'assets/img/id/visual-p48.jpg', cap: '平面与品牌标识产出（作品集原页 p48）' },
+        hero: { f: 'assets/img/id/visual-p48.jpg', cap: '平面与品牌标识产出' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -719,7 +719,7 @@ const DIRECTIONS = [
         tags: ['建模', '造型', '效果表达'],
         summary: '建模、造型与效果表达的日常练习，用于保持形态手感与渲染表达的手感。',
         facts: [['形式', '练习集合'], ['重点', '形态与效果表达'], ['说明', '非商业项目']],
-        hero: { f: 'assets/img/id/exercises-p50.jpg', cap: '形态与效果表达练习（作品集原页 p50）' },
+        hero: { f: 'assets/img/id/exercises-p50.jpg', cap: '形态与效果表达练习' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
