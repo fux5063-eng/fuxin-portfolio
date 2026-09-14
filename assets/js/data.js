@@ -133,7 +133,7 @@ const DIRECTIONS = [
               '约束地图把改款边界分成三层：保留（双扬声器开孔、顶部控制、承重提手）、可控（箱体比例、侧向护梁、表面层级）、自由（色彩、材料、表面处理）。',
               '把跨品类参考转成可执行的设计语言：从运动鞋提取防护分层，从智能手表提取精密边界。'
             ],
-            figures: [ { f: 'assets/img/ai/designdna-p18.webp', cap: '' }, { f: 'assets/img/ai/designdna-p19.webp', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/designdna-p18.webp', cap: '', wide: true }, { f: 'assets/img/ai/designdna-p19.webp', cap: '', wide: true } ]
           },
           {
             h: '怎么做', en: 'HOW',
@@ -142,7 +142,7 @@ const DIRECTIONS = [
               '九个造型方向共享同一组硬约束，先拉开轮廓差异再判断。',
               '评审记录逐条落盘，支持人工决策，而不是让模型直接给结论。'
             ],
-            figures: [ { f: 'assets/img/ai/designdna-p20.webp', cap: '' }, { f: 'assets/img/ai/designdna-p22.webp', cap: '' } ]
+            figures: [ { f: 'assets/img/ai/designdna-p20.webp', cap: '', wide: true }, { f: 'assets/img/ai/designdna-p22.webp', cap: '', wide: true } ]
           },
           {
             h: '做出什么', en: 'WHAT',
