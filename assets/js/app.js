@@ -223,7 +223,7 @@
 
   /* 主页背景粒子 */
   const FX = createParticles(document.getElementById('fx'), {
-    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.55,
+    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.95,
   }) || { start() {}, stop() {} };
 
   /* 内页页头粒子（尺寸小、密度低） */
@@ -233,7 +233,7 @@
     heroFXs = [...scope.querySelectorAll('canvas.phero__fx')]
       .map(cv => createParticles(cv, {
         density: 9200, maxN: 130, minN: 40, bandBase: .58, bandAmp: .10, bandWidth: 42,
-        freeRatio: .16, link: 126, linkAlpha: .38, speed: 1.5,
+        freeRatio: .16, link: 126, linkAlpha: .38, speed: 1.9,
       })).filter(Boolean);
   }
 
@@ -399,7 +399,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914S').then(mod => {
+    import('./model3d.js?v=20260914T').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -914,7 +914,7 @@
       const p = el.parentElement || app;
       const i = cnt.get(p) || 0;
       cnt.set(p, i + 1);
-      if (!el.style.transitionDelay) el.style.transitionDelay = Math.min(i * 70, 300) + 'ms';
+      if (!el.style.transitionDelay) el.style.transitionDelay = Math.min(i * 55, 240) + 'ms';
     });
     revealPass();
   }

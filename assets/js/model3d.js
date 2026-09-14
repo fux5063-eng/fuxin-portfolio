@@ -413,7 +413,7 @@ export class ModelViewer {
 
   _loop() {
     if (!this.ready) return;
-    if (this.opts.autoRotate && !this._drag) this.tAz += 0.0016 * (0.4 + this.opts.speed * 2);
+    if (this.opts.autoRotate && !this._drag) this.tAz += 0.0026 * (0.4 + this.opts.speed * 2);
     this.az += (this.tAz - this.az) * 0.085;
     this.pol += (this.tPol - this.pol) * 0.085;
     this.dist += (this.tDist - this.dist) * 0.085;
