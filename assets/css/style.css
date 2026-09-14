@@ -750,3 +750,26 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .rail a.on b{color:#ff9a63}
 .rail a.on span{color:#fff}
 .rail__bar{background:linear-gradient(#ff7a3c,#ff9a63)}
+
+/* ============================================================
+   滚动揭示：逐块滑入（位移小、时长 0.7s，保证阅读舒适）
+   ============================================================ */
+.cs__lead,.cs__list,.cs__more,.fig,.tabs,.cmp,.m3d,.phero__meta,.phero__guide,.phero__title,.phero__sub{
+  opacity:0;transform:translateY(16px)}
+.cs__lead.in,.cs__list.in,.cs__more.in,.fig.in,.tabs.in,.cmp.in,.m3d.in,
+.phero__meta.in,.phero__guide.in,.phero__title.in,.phero__sub.in{
+  opacity:1;transform:none;
+  transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+/* 图片：略带上浮+极轻放大，观感更"进入画框" */
+.fig{transform:translateY(20px) scale(.995)}
+.fig.in{transform:none}
+/* 逐条强调：条目本身也参与滑入（每条延迟由 JS 错峰） */
+.cs__list li{opacity:1;transform:none}
+/* 旧规则下线：不再用整段触发子元素，避免"一次性全出" */
+.cs__sec.in .items li,.cs__sec.in .cs__main figure{opacity:1;transform:none;transition:none}
+/* 主图容器裁切视差溢出 */
+.heroFig{overflow:hidden}
+.heroFig img{will-change:transform}
+@media (prefers-reduced-motion:reduce){
+  .cs__lead,.cs__list,.cs__more,.fig,.tabs,.cmp,.m3d,.phero__meta,.phero__guide,.phero__title,.phero__sub{opacity:1;transform:none}
+}

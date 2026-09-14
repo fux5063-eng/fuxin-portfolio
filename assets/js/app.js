@@ -241,7 +241,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260914k').then(mod => {
+    import('./model3d.js?v=20260914L').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -673,7 +673,6 @@
     initCompare(app);
     initTabs(app);
     initFilter(app);
-    staggerReveal(app);
 
     /* 导航高亮：标出当前所在方向/页面 */
     const cur = '#' + (a || '');
@@ -705,15 +704,50 @@
     updateProgress();
   }
 
+  /* ================= 滚动驱动的内容揭示（逐块滑入） ================= */
+  let pendingReveal = [];
+  const REVEAL_SEL = '.rv,.rv-em,.cs__lead,.cs__list,.cs__more,.fig,.tabs,.cmp,.m3d,.phero__meta,.phero__guide,.phero__title,.phero__sub,.cs__sec';
+
   function revealNow() {
-    const els = app.querySelectorAll('.rv, .rv-em, .stagger');
-    if (reduce || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
-    const io = new IntersectionObserver((ents, o) => {
-      ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); o.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    els.forEach(e => io.observe(e));
-    /* 兜底：1.2s 后仍未进入视口的元素也显示出来（避免内容"看不见"） */
-    setTimeout(() => app.querySelectorAll('.rv, .rv-em, .stagger').forEach(e => e.classList.add('in')), 1200);
+    pendingReveal = [...app.querySelectorAll(REVEAL_SEL)];
+    const cnt = new Map();
+    pendingReveal.forEach(el => {
+      const p = el.parentElement || app;
+      const i = cnt.get(p) || 0;
+      cnt.set(p, i + 1);
+      if (!el.style.transitionDelay) el.style.transitionDelay = Math.min(i * 85, 340) + 'ms';
+    });
+    revealPass();
+  }
+
+  function revealPass() {
+    if (!pendingReveal.length) return;
+    const vh = window.innerHeight;
+    const rest = [];
+    for (const el of pendingReveal) {
+      const r = el.getBoundingClientRect();
+      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.bottom > -60);
+      if (show) el.classList.add('in'); else rest.push(el);
+    }
+    pendingReveal = rest;
+  }
+
+  /* 主图轻微视差（26px，随滑动动，幅度小保证舒适） */
+  function parallaxPass() {
+    const vh = window.innerHeight;
+    document.querySelectorAll('.heroFig img').forEach(img => {
+      const r = img.getBoundingClientRect();
+      if (r.bottom < -120 || r.top > vh + 120) return;
+      const p = (r.top + r.height / 2 - vh / 2) / vh;
+      img.style.transform = 'translate3d(0,' + (-p * 26).toFixed(1) + 'px,0) scale(1.045)';
+    });
+  }
+
+  let rafFX = false;
+  function onScrollFX() {
+    if (rafFX) return;
+    rafFX = true;
+    requestAnimationFrame(() => { rafFX = false; revealPass(); parallaxPass(); });
   }
 
   /* ================= 导航状态 ================= */
@@ -967,6 +1001,8 @@
   }
   window.addEventListener('scroll', updateProgress, { passive: true });
   window.addEventListener('resize', updateProgress);
+  window.addEventListener('scroll', onScrollFX, { passive: true });
+  window.addEventListener('resize', onScrollFX);
   if (totop) totop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
   /* 灯箱操作提示（只在灯箱打开时显示） */
