@@ -1292,3 +1292,10 @@ html.dark .hero__panel{color:#c9d3de}
 html.dark .hero__panel b,html.dark .hero__panel strong{color:#ffbe97}
 html.dark .hero__panel em,html.dark .hero__panel i{font-style:normal;color:#e8eef5}
 html.dark .hero__panel span,html.dark .hero__panel p{color:#bcc7d3}
+
+/* 深色主题 · 主 CTA 强制橙色实心（站内 .hero .hero__cta .btn 的 transparent 优先级更高） */
+html.dark .hero .hero__cta>a.btn:first-of-type{
+  background:var(--accent)!important;border-color:var(--accent)!important;color:#0b0d11!important;
+  font-weight:700!important;box-shadow:0 10px 26px rgba(255,138,76,.30)!important}
+html.dark .hero .hero__cta>a.btn:first-of-type:hover{
+  background:#ffa06a!important;border-color:#ffa06a!important;color:#0b0d11!important}
