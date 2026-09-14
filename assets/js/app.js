@@ -512,7 +512,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915Q').then(mod => {
+    import('./model3d.js?v=20260915R').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -575,19 +575,56 @@
   let mountGateFX = () => 0;
 
   /* 项目卡粒子（档位 A：悬停淡入 + 中心遮罩；浅色底用深灰粒子） */
-  const CARD_FX_SAMPLE_ONLY = true;   /* ← 样板模式：只给第一张卡挂粒子；改为 false 即铺满全部项目卡 */
+  const CARD_FX_SAMPLE_ONLY = false;  /* 常驻模式：全部项目卡都挂粒子（如需回到样板，改为 true） */
   let cardFXs = [];
+  let cardObs = null;
   function mountCardFX(scope) {
     cardFXs.forEach(f => f.dispose && f.dispose());
     cardFXs = [];
     let cvs = [...scope.querySelectorAll('canvas.card__fx')];
     if (CARD_FX_SAMPLE_ONLY) cvs = cvs.slice(0, 1);
-    cardFXs = cvs.map(cv => createParticles(cv, {
-      density: 2400, maxN: 60, minN: 34, band: false, freeRatio: 1,
-      link: 92, linkAlpha: .13, speed: .95, dpr: 1.25,
-      dot: 'rgba(28,34,42,.30)', accent: 'rgba(224,98,45,.42)',
-      linkRGB: '28,34,42', glow: '224,98,45',
-    })).filter(Boolean);
+    /* 视口外暂停：14 张卡同时跑会浪费；只让进入视口的卡运行 */
+    if (typeof IntersectionObserver === 'function') {
+      cardObs = new IntersectionObserver(es => {
+        es.forEach(e => {
+          const f = fxs.find(x => x.canvas === e.target);
+          if (!f) return;
+          if (e.isIntersecting) { if (!f.__on) { f.start(); f.__on = true; } }
+          else if (f.__on) { f.stop(); f.__on = false; }
+        });
+      }, { rootMargin: '140px' });
+    }
+    /* 封面为实拍/场景照片的卡：元素本身多，同浓度会显脏 → 自动降一档（纯白底渲染图用满档） */
+    const strengthFor = cv => {
+      try {
+        const img = cv.parentNode && cv.parentNode.querySelector('img');
+        if (!img || !img.complete || !img.naturalWidth) return .85;
+        const c = document.createElement('canvas');
+        c.width = c.height = 32;
+        const x = c.getContext('2d', { willReadFrequently: true });
+        x.drawImage(img, 0, 0, 32, 32);
+        const d = x.getImageData(0, 0, 32, 32).data;
+        let sat = 0, n = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          const mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]);
+          sat += (mx - mn) / 255; n++;
+        }
+        return (sat / n) > .155 ? .72 : 1;
+      } catch (e) { return .9; }
+    };
+    const fxs = cvs.map(cv => {
+      const k = strengthFor(cv);
+      return createParticles(cv, {
+        density: 1850, maxN: 78, minN: 46, band: false, freeRatio: 1,
+        link: 94, linkAlpha: .19 * k, speed: .95, dpr: 1.25,
+        dot: 'rgba(28,34,42,' + (.46 * k).toFixed(2) + ')', accent: 'rgba(224,98,45,' + (.55 * k).toFixed(2) + ')',
+        linkRGB: '28,34,42', glow: '224,98,45',
+      });
+    }).filter(Boolean);
+    cardFXs = fxs;
+    fxs.forEach(f => { f.__on = true; });            /* createParticles 内部已 start()（用于定尺寸） */
+    if (cardObs) cvs.forEach(cv => cardObs.observe(cv));
+    cleanups.push(() => { if (cardObs) cardObs.disconnect(); });
     return cardFXs.length;
   }
 
