@@ -866,6 +866,9 @@
       </div>
       <div class="cards" data-cards>${cards}</div>
       <p class="note">全部 ${d.projects.length} 个项目均来自完整作品集 PDF（本页图片即 PDF 对应页面）。商业项目已按公开边界匿名化处理。</p>
+      <div class="pback">
+        <a class="pback__btn" href="#/">← 回到首页</a>
+      </div>
     </div></section>`;
   }
 
