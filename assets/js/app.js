@@ -483,7 +483,7 @@
     const cvs = scope.querySelectorAll('canvas[data-model]');
     window.__m3dState = { found: cvs.length, imported: false, mounted: 0, err: '' };
     if (!cvs.length) return;
-    import('./model3d.js?v=20260915K').then(mod => {
+    import('./model3d.js?v=20260915L').then(mod => {
       window.__m3dState.imported = true;
       cvs.forEach(cv => {
         const wrap = cv.parentElement;
@@ -607,7 +607,8 @@
           <div class="hero__cta">
             <a class="btn mag" href="#ai">看 AI 产品方向<span class="btn__ar">→</span></a>
             <a class="btn mag" href="#id">看工业设计方向<span class="btn__ar">→</span></a>
-          </div>
+            <button type="button" class="hero__exp" data-exp>或：看我的详细经历 <i>→</i></button>
+            </div>
         </div>
         <div class="hero__panel fade-in">
           <div class="hero__facts">
@@ -647,6 +648,33 @@
         </div>
       </section>
     </div>
+    <!-- 详细经历弹层（内容与「关于我」同源） -->
+    <div class="exp" id="expModal" hidden aria-modal="true" role="dialog" aria-label="详细经历">
+      <div class="exp__mask" data-exp-close></div>
+      <div class="exp__panel">
+        <button type="button" class="exp__x" data-exp-close aria-label="关闭">×</button>
+        <div class="exp__head">
+          <span class="exp__en">EXPERIENCE</span>
+          <h2>详细经历</h2>
+        </div>
+        <div class="exp__body">
+          <figure class="exp__pic"><img src="assets/img/about/portrait.jpg" alt="${esc(SITE.name)}" loading="lazy"></figure>
+          <div class="exp__col">
+            <h3>经历</h3>
+            <ul class="timeline">${ABOUT.timeline.map(t => `<li><time>${esc(t.time)}</time><div><b>${esc(t.org)}</b><span>${esc(t.desc)}</span></div></li>`).join('')}</ul>
+          </div>
+          <div class="exp__col">
+            <h3>技能</h3>
+            <ul class="timeline">${ABOUT.skills.map(k => `<li><time>${esc(k.k)}</time><div><b>${esc(k.v)}</b></div></li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="exp__foot">
+          <span>邮箱 <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a> · 微信 <button class="copy-link" data-copy="${esc(SITE.wechat)}" data-label="微信号">${esc(SITE.wechat)}</button></span>
+          <span class="exp__links"><a href="#about" data-exp-close>完整关于我 →</a><a href="#download" data-exp-close>下载简历 PDF →</a></span>
+        </div>
+      </div>
+    </div>
+
 
     <div class="marquee" aria-hidden="true"><div class="marquee__row">${mq}</div></div>
 
@@ -944,6 +972,7 @@
     safe('gateFX', () => mountGateFX(app));
     safe('cardFX', () => initCardFX(app));
     safe('filter', () => initFilter(app));
+    safe('expModal', () => initExpModal(app));
 
 
     /* 导航高亮：标出当前所在方向/页面 */
@@ -1162,6 +1191,41 @@
       const dx = (e.clientX - (r.left + r.width / 2)) / r.width, dy = (e.clientY - (r.top + r.height / 2)) / r.height;
       m.style.transform = `translate(${(dx * 7).toFixed(2)}px, ${(dy * 6).toFixed(2)}px)`;
     }, { passive: true });
+  }
+
+  /* 详细经历弹层 */
+  function initExpModal(scope) {
+    const modal = scope.querySelector('#expModal');
+    if (!modal) return;
+    const opens = [...scope.querySelectorAll('[data-exp]')];
+    const panel = modal.querySelector('.exp__panel');
+    let lastFocus = null;
+    const open = () => {
+      lastFocus = document.activeElement;
+      modal.hidden = false;
+      requestAnimationFrame(() => modal.classList.add('on'));
+      document.body.classList.add('exp-open');
+      panel && panel.focus && panel.focus();
+    };
+    const close = () => {
+      modal.classList.remove('on');
+      document.body.classList.remove('exp-open');
+      setTimeout(() => { modal.hidden = true; }, 260);
+      lastFocus && lastFocus.focus && lastFocus.focus();
+    };
+    opens.forEach(b => {
+      const h = () => open();
+      b.addEventListener('click', h);
+      cleanups.push(() => b.removeEventListener('click', h));
+    });
+    modal.querySelectorAll('[data-exp-close]').forEach(b => {
+      const h = () => close();
+      b.addEventListener('click', h);
+      cleanups.push(() => b.removeEventListener('click', h));
+    });
+    const onKey = e => { if (e.key === 'Escape' && !modal.hidden) close(); };
+    document.addEventListener('keydown', onKey);
+    cleanups.push(() => { document.removeEventListener('keydown', onKey); document.body.classList.remove('exp-open'); });
   }
 
   /* ================= 复制 / toast ================= */

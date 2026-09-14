@@ -927,3 +927,39 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 /* 方向卡内的可交互粒子层 */
 .gate__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:1;opacity:1}
 .gate__body{z-index:4}
+
+/* ============ 首屏"看详细经历"文字链 + 弹层 ============ */
+.hero__exp{margin-top:16px;display:inline-flex;align-items:center;gap:7px;background:none;border:0;
+  color:rgba(255,255,255,.62);font:500 13.4px/1 inherit;cursor:pointer;letter-spacing:.01em;
+  border-bottom:1px solid rgba(255,255,255,.22);padding:0 0 3px;transition:color .3s,border-color .3s}
+.hero__exp i{font-style:normal;transition:transform .35s cubic-bezier(.2,.7,.3,1)}
+.hero__exp:hover{color:#fff;border-color:rgba(255,255,255,.6)}
+.hero__exp:hover i{transform:translateX(4px)}
+.exp{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:26px}
+.exp[hidden]{display:none}
+.exp__mask{position:absolute;inset:0;background:rgba(8,10,13,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;transition:opacity .28s ease}
+.exp.on .exp__mask{opacity:1}
+.exp__panel{position:relative;width:min(940px,100%);max-height:86vh;overflow:auto;background:#fff;color:var(--ink);
+  border-radius:18px;box-shadow:0 40px 100px -30px rgba(6,8,12,.55);padding:30px 34px 26px;
+  opacity:0;transform:translateY(16px) scale(.985);transition:opacity .3s cubic-bezier(.2,.7,.3,1),transform .34s cubic-bezier(.2,.7,.3,1)}
+.exp.on .exp__panel{opacity:1;transform:none}
+.exp__x{position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+  background:#f4f6f8;cursor:pointer;font-size:19px;line-height:1;color:#5b6672;border-color:rgba(14,18,22,.16);transition:.28s}
+.exp__x:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:rotate(90deg)}
+.exp__head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+.exp__en{font:700 11px/1 ui-monospace,monospace;letter-spacing:.24em;color:var(--accent-d)}
+.exp__head h2{margin:0;font-size:24px;letter-spacing:-.02em}
+.exp__body{display:grid;grid-template-columns:190px 1fr 1fr;gap:26px;align-items:start}
+.exp__pic{margin:0;border-radius:14px;overflow:hidden;background:#eef1f5}
+.exp__pic img{width:100%;display:block}
+.exp__col h3{margin:0 0 12px;font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700}
+.exp .timeline{margin:0}
+.exp__foot{display:flex;flex-wrap:wrap;gap:14px 22px;justify-content:space-between;align-items:center;
+  margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:13.4px;color:var(--muted)}
+.exp__links{display:flex;gap:18px}
+.exp__links a{color:var(--ink);font-weight:600;border-bottom:1px solid rgba(14,18,22,.25);padding-bottom:2px}
+.exp__links a:hover{border-color:var(--accent-d);color:var(--accent-d)}
+body.exp-open{overflow:hidden}
+@media(max-width:900px){.exp__body{grid-template-columns:1fr}.exp__pic{max-width:180px}}
+@media (prefers-reduced-motion:reduce){.exp__panel,.exp__mask{transition:none}}
