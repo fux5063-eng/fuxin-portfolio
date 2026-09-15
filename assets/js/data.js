@@ -322,6 +322,24 @@ const DIRECTIONS = [
             ],
             figures: []
           }
+        ],
+        plates: [
+          { f: 'assets/img/case/id/full/doggie-p11.webp' },
+          { f: 'assets/img/case/id/full/doggie-p12.webp' },
+          { f: 'assets/img/case/id/full/doggie-p13.webp' },
+          { f: 'assets/img/case/id/full/doggie-p14.webp' },
+          { f: 'assets/img/case/id/full/doggie-p15.webp' },
+          { f: 'assets/img/case/id/full/doggie-p16.webp' },
+          { f: 'assets/img/case/id/full/doggie-p17.webp' },
+          { f: 'assets/img/case/id/full/doggie-p18.webp' },
+          { f: 'assets/img/case/id/full/doggie-p19.webp' },
+          { f: 'assets/img/case/id/full/doggie-p20.webp' },
+          { f: 'assets/img/case/id/full/doggie-p21.webp' },
+          { f: 'assets/img/case/id/full/doggie-p22.webp' },
+          { f: 'assets/img/case/id/full/doggie-p23.webp' },
+          { f: 'assets/img/case/id/full/doggie-p24.webp' },
+          { f: 'assets/img/case/id/full/doggie-p25.webp' },
+          { f: 'assets/img/case/id/full/doggie-p26.webp' }
         ]
       },
       {
@@ -341,6 +359,17 @@ const DIRECTIONS = [
             ],
             figures: []
           }
+        ],
+        plates: [
+          { f: 'assets/img/case/id/full/lumora-p27.webp' },
+          { f: 'assets/img/case/id/full/lumora-p28.webp' },
+          { f: 'assets/img/case/id/full/lumora-p29.webp' },
+          { f: 'assets/img/case/id/full/lumora-p30.webp' },
+          { f: 'assets/img/case/id/full/lumora-p31.webp' },
+          { f: 'assets/img/case/id/full/lumora-p32.webp' },
+          { f: 'assets/img/case/id/full/lumora-p33.webp' },
+          { f: 'assets/img/case/id/full/lumora-p34.webp' },
+          { f: 'assets/img/case/id/full/lumora-p35.webp' }
         ]
       }
     ]
