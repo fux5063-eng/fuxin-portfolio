@@ -1713,14 +1713,16 @@ var BGFX = {                    /* ← 全部旋钮集中在这里 */
   dotR: [0.85, 1.8],            /* 点半径区间 px */
   hot: 0.12, hotRGB: '196,88,26', hotA: 0.24,   /* 少量暖色点缀比例/色/透明度 */
   link: 120, linkA: 0.07,       /* 近邻连线的距离与最亮透明度（0 = 不连线） */
-  pr: 200, prA: 0.34,           /* 光标连线半径 / 最亮透明度 */
+  pr: 200, prA: 0.34,           /* 光标柔光/提亮半径 、 暖色连线透明度 */
+  prLink: 130, prLinks: 3,      /* 暖色连线：最远距离 / 只连最近的几颗（避免摊成扇形一坨） */
   glowRGB: '232,89,12', glowA: 0.06,            /* 光标柔光（品牌橙） */
   pushR: 85, pushF: 0.30,       /* 光标推开半径 / 力度 */
   boost: 0.55, grow: 0.60,      /* 光标附近：透明度/半径放大 →「鼠标一放上去就显现」 */
-  orbit: 22,                    /* 光标周围浮现的粒子数（静止时为 0，靠它制造"一放上去就显现"） */
-  orbR: [26, 118],              /* 群体离光标的距离区间 */
-  orbLine: 0.26,                /* 光标→群粒子连线（暖色）透明度 */
-  orbLink: 78, orbLinkA: 0.10,  /* 群内邻近连线距离 / 透明度 */
+  orbit: 18,                    /* 光标周围浮现的粒子数（静止时为 0，靠它制造"一放上去就显现"） */
+  orbR: [58, 168],              /* 群体离光标的距离区间（按面积均匀撒开，别挤在光标处成"一坨"） */
+  orbLines: 3,                  /* 只给最近的几颗连暖色线；全连会变成扇形一坨 */
+  orbLine: 0.22,                /* 光标→群粒子连线（暖色）透明度 */
+  orbLink: 44, orbLinkA: 0.06,  /* 群内邻近连线：距离 / 透明度（短而淡，只作点缀） */
   drift: [5, 15],               /* 水平漂浮速度 px/s（整体缓慢左移） */
   amp: [9, 22],                 /* 纵向漫游幅度 px */
   period: [7, 15],              /* 纵向漫游周期 s */
@@ -1754,12 +1756,13 @@ function bgBuild(reg) {
   for (var k = 0; k < a.length; k++) a[k].by = a[k].y;
   reg.parts = a; reg.n = n;
   /* 光标周围浮现的粒子群（周期轨道，静止时不画） */
-  var cu = [], rmax = Math.min(BGFX.orbR[1], Math.min(W, H) * .34);
+  var cu = [], rmax = Math.min(BGFX.orbR[1], Math.min(W, H) * .38);
+  var r0 = Math.min(BGFX.orbR[0], rmax * .45);
   for (var c = 0; c < BGFX.orbit; c++) {
     cu.push({
       ang: Math.random() * 6.283,
       av: bgRand(.00005, .00014) * (Math.random() < .5 ? -1 : 1),
-      rad: bgRand(Math.min(BGFX.orbR[0], rmax * .35), rmax),
+      rad: Math.sqrt(bgRand(r0 * r0, rmax * rmax)),   /* 面积均匀 → 不往光标处堆 */
       rr: bgRand(.95, 1.9), a0: bgRand(.24, .5),
       ph: Math.random() * 6.283, w: bgRand(.0004, .0012), am: bgRand(2, 7)
     });
@@ -1792,7 +1795,8 @@ function bgDraw(reg, ts, dt) {
   ctx.clearRect(0, 0, W, H);
 
   /* ---- 运动：水平缓慢漂浮（出屏外换边，肉眼看不到跳变）+ 纵向正弦漫游 ---- */
-  var pr2 = BGFX.pr * BGFX.pr, pushR = BGFX.pushR, pushF = BGFX.pushF, pushR2 = pushR * pushR;
+  var pr2 = BGFX.pr * BGFX.pr, prL2 = BGFX.prLink * BGFX.prLink;
+  var pushR = BGFX.pushR, pushF = BGFX.pushF, pushR2 = pushR * pushR;
   for (var i = 0; i < parts.length; i++) {
     var p = parts[i];
     p.x += p.vx * dt;
@@ -1854,19 +1858,23 @@ function bgDraw(reg, ts, dt) {
     g.addColorStop(1, 'rgba(' + BGFX.glowRGB + ',0)');
     ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(mx, my, BGFX.pr, 0, 6.283); ctx.fill();
-    var PB = 4, pbk = [[], [], [], []];
+    /* 只连最近的 prLinks 颗、且不超过 prLink 距离：
+       原来把 pr 半径内的粒子全连上 → 十几条长线以光标为中心摊成一大片扇形（站主嫌挤） */
+    var cand = [];
     for (var n2 = 0; n2 < parts.length; n2++) {
       var pp = parts[n2], ex = pp.x - mx, ey = pp.y - my, e2 = ex * ex + ey * ey;
-      if (e2 < pr2) pbk[Math.min(PB - 1, ((1 - Math.sqrt(e2) / BGFX.pr) * PB) | 0)].push(mx, my, pp.x, pp.y);
+      if (e2 < prL2) cand.push([e2, n2]);
     }
+    cand.sort(function (u1, u2) { return u1[0] - u2[0]; });
+    var M = Math.min(cand.length, BGFX.prLinks || 6);
     ctx.lineWidth = 1;
-    for (var bi2 = 0; bi2 < PB; bi2++) {
-      if (!pbk[bi2].length) continue;
-      ctx.strokeStyle = 'rgba(' + BGFX.glowRGB + ',' + (((bi2 + .5) / PB) * BGFX.prA).toFixed(3) + ')';
-      ctx.beginPath();
-      for (var si = 0; si < pbk[bi2].length; si += 4) { ctx.moveTo(pbk[bi2][si], pbk[bi2][si + 1]); ctx.lineTo(pbk[bi2][si + 2], pbk[bi2][si + 3]); }
-      ctx.stroke();
+    ctx.strokeStyle = 'rgba(' + BGFX.glowRGB + ',' + (BGFX.prA * .9).toFixed(3) + ')';
+    ctx.beginPath();
+    for (var si = 0; si < M; si++) {
+      var v = parts[cand[si][1]];
+      ctx.moveTo(mx, my); ctx.lineTo(v.x, v.y);
     }
+    ctx.stroke();
   }
 
   /* ---- 画点：逐点透明度；光标附近按 boost/grow 放大→「一放上去就显现」---- */
@@ -1892,9 +1900,17 @@ function bgDraw(reg, ts, dt) {
       pts.push(mx + Math.cos(o.ang) * rd, my + Math.sin(o.ang) * rd * .84, o.rr, o.a0);
     }
     ctx.lineWidth = 1;
+    /* 暖色线只连"最近的 N 颗"：全连会变成以光标为中心的扇形一坨（站主嫌挤） */
+    var ord = [];
+    for (var o1 = 0; o1 < pts.length; o1 += 4) {
+      var w1 = pts[o1] - mx, w2 = pts[o1 + 1] - my;
+      ord.push([w1 * w1 + w2 * w2, o1]);
+    }
+    ord.sort(function (p1, p2) { return p1[0] - p2[0]; });
+    var NL = Math.min(ord.length, BGFX.orbLines || 5);
     ctx.strokeStyle = 'rgba(' + BGFX.glowRGB + ',' + (BGFX.orbLine * ca).toFixed(3) + ')';
     ctx.beginPath();
-    for (var t1 = 0; t1 < pts.length; t1 += 4) { ctx.moveTo(mx, my); ctx.lineTo(pts[t1], pts[t1 + 1]); }
+    for (var t1 = 0; t1 < NL; t1++) { var i1 = ord[t1][1]; ctx.moveTo(mx, my); ctx.lineTo(pts[i1], pts[i1 + 1]); }
     ctx.stroke();
     var OL = BGFX.orbLink * BGFX.orbLink;
     ctx.strokeStyle = 'rgba(' + BGFX.dotRGB + ',' + (BGFX.orbLinkA * ca).toFixed(3) + ')';
