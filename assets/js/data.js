@@ -344,7 +344,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', 'Rhino 建模', 'KeyShot 交付'],
         summary: '在既有海上导航设备平台上完成外观协作改款，强化海事设备识别，并建立可延展的系列设计语言。',
         facts: [['角色', '造型推进 · Rhino 建模 · KeyShot 视觉表达'], ['约束', '沿用既有结构、光学组件与安装维护边界'], ['目标', '外观升级 + 系列设计语言']],
-        hero: { f: 'assets/img/cover/navlight.webp', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
+        hero: { f: 'assets/img/cover/navlight.jpg', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
