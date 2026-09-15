@@ -296,7 +296,7 @@ const DIRECTIONS = [
         tags: ['产品定义', 'Rhino 建模', 'CMF'],
         summary: '把牵引、互动玩具携带与简单清洁集中到一个随身产品，从使用任务到产品架构与曲面建模。',
         facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品'], ['完整案例', '见工业设计方向']],
-        hero: { f: 'assets/img/cover/doggie.jpg', cap: 'DOGGIE 多功能宠物牵引绳' },
+        hero: { f: 'assets/img/case/id/doggie-hero-16x10.webp', cap: 'DOGGIE 多功能宠物牵引绳' },
         sections: [
           {
             h: '完整案例', en: 'FULL CASE',
