@@ -203,7 +203,7 @@ body:not(.on-home) #app{padding-top:66px}
 .card__img img{width:100%;height:100%;object-fit:cover;transition:transform .68s cubic-bezier(.22,.7,.3,1)}
 .card:hover .card__img img{transform:scale(1.035)}
 .card__body{padding:16px 17px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
-.card__body h3{font-size:17px;line-height:1.35;min-height:calc(2 * 1.35em)}
+.card__body h3{font-size:17px;line-height:1.35}
 /* 描述固定两行高度：不同项目描述长短不一，否则卡内节奏会错开 */
 .card__body p{font-size:13.5px;color:var(--ink-2);margin:0;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;min-height:calc(2 * 1.6em)}
 .card__foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -656,7 +656,7 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 
 /* 方向页卡片：悬停时浮现关键信息（信息随交互出现） */
 .cards .card{position:relative;overflow:hidden}
-.card__meta{position:absolute;z-index:3;left:0;right:0;bottom:0;padding:16px 18px;
+.card__meta{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;
   background:linear-gradient(transparent,rgba(8,11,15,.86) 46%);color:#fff;
   display:flex;flex-wrap:wrap;gap:7px;opacity:0;transform:translateY(10px);
   transition:opacity .3s ease,transform .34s cubic-bezier(.2,.7,.3,1)}
@@ -664,6 +664,8 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .card__meta i{font-style:normal;font-size:11.8px;border:1px solid rgba(255,255,255,.26);
   background:rgba(255,255,255,.09);border-radius:999px;padding:5px 9px;backdrop-filter:blur(6px)}
 .card__meta b{color:#ffb08a;font-weight:700;margin-right:5px}
+/* DOGGIE 卡（只此一张）：信息条只折 2 行，比同排 3 行少 39px，补足高度让正文与同排齐平 */
+@media (min-width:1001px){.cards .card[data-slug="doggie"] .card__meta{min-height:142.8px}}
 @media(max-width:760px){
   .phero{padding:84px 0 40px}
   .phero__meta{display:none}
@@ -1023,7 +1025,7 @@ body.exp-open{overflow:hidden}
 
 /* 层级：封面图(1) → 粒子(2) → 文字(3)；粒子铺在图片之上，整卡都能看到线性网络 */
 .card__img,.pick__img{position:relative;z-index:1}
-.card__body,.pick__body,.pick__tags{position:relative;z-index:3}
+.card__meta,.card__body,.pick__body,.pick__tags{position:relative;z-index:3}
 /* ============ 卡片粒子：铺满整张卡（图片区 + 文字区），文字浮在粒子之上 ============ */
 .card__img,.pick__img{position:relative}
 .card__fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:2;
