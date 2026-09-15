@@ -1167,7 +1167,7 @@
       })}
       <div class="wrap">
       <div class="dl">${cards}</div>
-      <div class="dl dl--one" style="margin-top:20px">
+      <div class="dl" style="margin-top:20px">
         <div class="dcard dcard--site rv">${dlDecor(1)}
           <div class="dcard__body">
             <b>作品集网站（在线）</b>
@@ -1178,8 +1178,6 @@
             </div>
           </div>
         </div>
-      </div>
-        </a>
       </div>
       <p class="note">PDF 由本人作品集源文件导出，内容与页面一致；商业项目均按公开边界匿名化处理。页面里的模型与原型都可以直接在网页上操作。</p>
     </div></section>`;
