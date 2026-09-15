@@ -1832,7 +1832,9 @@ function bgDraw(reg, ts, dt) {
         for (var a1 = 0; a1 < arr.length; a1++) {
           for (var b1 = same ? a1 + 1 : 0; b1 < nb.length; b1++) {
             var A = arr[a1], B = nb[b1], ddx = A.x - B.x, ddy = A.y - B.y, dd = ddx * ddx + ddy * ddy;
-            if (dd < L2 && A.x >= 0 && A.x <= W && B.x >= 0 && B.x <= W) {   /* 端点出画布就不连，免得出现断线 */
+            /* 端点只要跑到画布外就不连：否则线会在边界被截断，看起来像"断掉的线" */
+            if (dd < L2 && A.x >= 0 && A.x <= W && B.x >= 0 && B.x <= W &&
+                A.y >= 12 && A.y <= H - 12 && B.y >= 12 && B.y <= H - 12) {
               var tt = 1 - Math.sqrt(dd) / BGFX.link, bi = (tt * LB) | 0;
               bk[bi < 0 ? 0 : (bi > LB - 1 ? LB - 1 : bi)].push(A.x, A.y, B.x, B.y);
             }
@@ -1862,7 +1864,7 @@ function bgDraw(reg, ts, dt) {
     var cand = [];
     for (var n2 = 0; n2 < parts.length; n2++) {
       var pp = parts[n2], ex = pp.x - mx, ey = pp.y - my, e2 = ex * ex + ey * ey;
-      if (e2 < prL2) cand.push([e2, n2]);
+      if (e2 < prL2 && pp.y > 12 && pp.y < H - 12) cand.push([e2, n2]);
     }
     cand.sort(function (u1, u2) { return u1[0] - u2[0]; });
     var M = Math.min(cand.length, BGFX.prLinks || 4);
@@ -1880,9 +1882,11 @@ function bgDraw(reg, ts, dt) {
   ctx.lineWidth = 1;
   for (var r2 = 0; r2 < parts.length; r2++) {
     var z = parts[r2], av = z.av || 0, rr = z.r * (1 + av * BGFX.grow);
+    var ev = Math.min(1, Math.min(z.y, H - z.y) / 24);      /* 贴近上下边界淡出：不出现"突然消失"的点 */
+    if (ev <= .02) continue;
     ctx.fillStyle = z.hot
-      ? 'rgba(' + BGFX.hotRGB + ',' + (BGFX.hotA + av * BGFX.boost).toFixed(3) + ')'
-      : 'rgba(' + BGFX.dotRGB + ',' + (z.a0 + av * BGFX.boost).toFixed(3) + ')';
+      ? 'rgba(' + BGFX.hotRGB + ',' + ((BGFX.hotA + av * BGFX.boost) * ev).toFixed(3) + ')'
+      : 'rgba(' + BGFX.dotRGB + ',' + ((z.a0 + av * BGFX.boost) * ev).toFixed(3) + ')';
     ctx.beginPath();
     ctx.arc(z.x, z.y, z.hot ? rr * 1.15 : rr, 0, 6.283);
     ctx.fill();
