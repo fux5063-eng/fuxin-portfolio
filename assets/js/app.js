@@ -1142,8 +1142,21 @@
   }
 
   function viewDownload() {
+    /* 卡片装饰（流光背景 + 粒子画布）：与首页方向卡共用同一套 class 与引擎 */
+    const dlDecor = i => `
+        <div class="gate__flow" data-flow="${i % 2}">
+          <i class="flow__blob b1"></i><i class="flow__blob b2"></i><i class="flow__blob b3"></i>
+          <i class="flow__grid"></i><i class="flow__grain"></i><i class="flow__sheen"></i>
+        </div>
+        <canvas class="gate__fx" aria-hidden="true" data-fx="dl"></canvas>`;
     const cards = DOWNLOADS.map((f, i) => `
-      <a class="rv stagger" style="transition-delay:${Math.min(i * 60, 300)}ms" href="${f.f}" download><b>${esc(f.t)}</b><span>${esc(f.d)} · ${esc(f.s)}</span><span style="color:var(--accent-d);font-weight:700;font-size:13px">下载 PDF →</span></a>`).join('');
+      <a class="dcard rv stagger" style="transition-delay:${Math.min(i * 60, 300)}ms" href="${f.f}" download>${dlDecor(i)}
+        <div class="dcard__body">
+          <b>${esc(f.t)}</b>
+          <span class="dcard__sub">${esc(f.d)}</span>
+          <div class="dcard__foot"><span class="go">下载 PDF <i></i></span><span class="chip">${esc(f.s)}</span></div>
+        </div>
+      </a>`).join('');
     return `
     <section class="sec sec--v2">
       ${pageHero({
@@ -1154,11 +1167,13 @@
       })}
       <div class="wrap">
       <div class="dl">${cards}</div>
-      <div class="dl" style="margin-top:18px;grid-template-columns:1fr">
-        <a href="${SITE.siteUrl}" target="_blank" rel="noopener">
-          <b>作品集网站（在线）</b>
-          <span>同一个网址，方便转发给同事或面试官：${esc(SITE.siteUrl)}</span>
-          <span style="color:var(--accent-d);font-weight:700;font-size:13px">打开网站 →</span>
+      <div class="dl dl--one" style="margin-top:20px">
+        <a class="dcard dcard--wide rv" href="${SITE.siteUrl}" target="_blank" rel="noopener">${dlDecor(1)}
+          <div class="dcard__body">
+            <b>作品集网站（在线）</b>
+            <span class="dcard__sub">同一个网址，方便转发给同事或面试官：${esc(SITE.siteUrl)}</span>
+            <div class="dcard__foot"><span class="go">打开网站 <i></i></span></div>
+          </div>
         </a>
       </div>
       <p class="note">PDF 由本人作品集源文件导出，内容与页面一致；商业项目均按公开边界匿名化处理。页面里的模型与原型都可以直接在网页上操作。</p>
@@ -1373,15 +1388,18 @@
     mountGateFX = scope => {
       gateFXs.forEach(f => f.dispose && f.dispose());
       gateFXs = [...scope.querySelectorAll('canvas.gate__fx')]
-        .map(cv => createParticles(cv, {
-          density: 2600, maxN: 88, minN: 44, band: true, bandBase: .5, bandAmp: .14, bandWidth: 96,
-          freeRatio: .36, link: 108, linkAlpha: .34, speed: 1.5, dpr: 1.25,
-        })).filter(Boolean);
+        .map(cv => createParticles(cv, cv.dataset.fx === 'dl'
+          ? { density: 1900, maxN: 78, minN: 46, band: true, bandBase: .26, bandAmp: .13, bandWidth: 62,
+
+              freeRatio: .30, link: 94, linkAlpha: .44, speed: 1.6, dpr: 1.25 }   /* 下载卡：网更密更亮，且集中在卡上半部 */
+
+          : { density: 2600, maxN: 88, minN: 44, band: true, bandBase: .5, bandAmp: .14, bandWidth: 96,
+              freeRatio: .36, link: 108, linkAlpha: .34, speed: 1.5, dpr: 1.25 })).filter(Boolean);
     };
 
     // ===== 统一卡片交互：倾斜 + 高光跟随（所有卡片共用同一套行为）=====
     initCardFX = function (scope) {
-      const els = [...scope.querySelectorAll('.gate,.card,.pick')];
+      const els = [...scope.querySelectorAll('.gate,.card,.pick,.dcard')];
       els.forEach(el => {
         let raf = 0, lastEv = null, rect = null, ramp = 0, lastT = 0;
         const RAMP_MS = 420;               // 入场渐入时长（用户要求再缓和一档：240 → 420ms）

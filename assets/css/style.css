@@ -225,12 +225,33 @@ body:not(.on-home) #app{padding-top:66px}
 .pd__nav a{color:var(--ink-2)}.pd__nav a:hover{color:var(--accent)}
 
 /* ============ 内页：下载 ============ */
-.dl{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+/* ============ 内页：下载（深色 + 粒子卡，与方向卡同一套语汇） ============ */
+.dl{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.dl--one{grid-template-columns:1fr}
 @media(max-width:760px){.dl{grid-template-columns:1fr}}
-.dl a{border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:6px;transition:.2s}
-.dl a:hover{border-color:var(--ink);background:var(--bg-2)}
-.dl b{font-size:16px}
-.dl span{font-size:13px;color:var(--muted)}
+.dcard{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:186px;
+  border-radius:18px;overflow:hidden;background:#0f1114;color:#fff;text-decoration:none;isolation:isolate;
+  box-shadow:0 16px 38px rgba(15,20,28,.18);
+  transition:transform .28s cubic-bezier(.2,.7,.3,1),box-shadow .28s ease}
+.dcard:hover{transform:translateY(-4px);box-shadow:0 32px 72px rgba(17,18,20,.34)}
+.dcard--wide{min-height:152px}
+.dcard__body{position:relative;z-index:4;display:flex;flex-direction:column;gap:7px;padding:24px 26px 22px}
+.dcard__body b{font-size:17.5px;font-weight:700;letter-spacing:.01em}
+.dcard__sub{font-size:13.2px;line-height:1.6;color:rgba(255,255,255,.74)}
+.dcard__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.16)}
+.dcard__foot .go{font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:8px;color:#fff}
+.dcard__foot .go i{display:inline-block;width:24px;height:1px;background:var(--accent);transition:width .3s ease}
+.dcard:hover .dcard__foot .go i{width:46px}
+.dcard__foot .chip{font-size:11.5px;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;padding:3px 10px;white-space:nowrap}
+/* 与方向卡一致的 hover 反馈：高光跟随 + 流光扫过 */
+.dcard:hover .flow__sheen{opacity:1}
+.dcard:hover .gate__flow::after{left:124%}
+/* 画布"下淡"：粒子集中在卡上半部，文字区只留约 45% 强度，避免连线穿过文字像删除线 */
+.dcard .gate__fx{-webkit-mask-image:linear-gradient(180deg,#000 0 34%,rgba(0,0,0,.55) 54%,rgba(0,0,0,.30) 100%);
+  mask-image:linear-gradient(180deg,#000 0 34%,rgba(0,0,0,.55) 54%,rgba(0,0,0,.30) 100%)}
+@media (prefers-reduced-motion:reduce){.dcard:hover .gate__flow::after{left:-50%}}
 .note{border-left:2px solid var(--line);padding:2px 0 2px 14px;color:var(--muted);font-size:13.5px;margin-top:26px}
 .copy-link{background:none;border:none;padding:0;cursor:pointer;color:inherit;border-bottom:1px dashed currentColor}
 
@@ -561,8 +582,6 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 /* 非首页元素的互动反馈（统一手感） */
 .timeline li{transition:transform .25s ease,background .25s ease;border-radius:10px}
 .timeline li:hover{transform:translateX(4px);background:#f7f9fb}
-.dl a{transition:transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s ease,border-color .25s ease}
-.dl a:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(15,20,28,.12);border-color:#cfd7e0}
 .about__pic{cursor:zoom-in;transition:transform .3s ease,box-shadow .3s ease}
 .about__pic:hover{transform:translateY(-3px);box-shadow:0 24px 56px rgba(17,18,20,.18)}
 .rv.stagger{transition-property:opacity,transform;transition-duration:.6s}
