@@ -1167,12 +1167,11 @@
       })}
       <div class="wrap">
       <div class="dl">${cards}</div>
-      <div class="dl" style="margin-top:20px">
+      <div class="dl dl--one" style="margin-top:20px">
         <div class="dcard dcard--site rv">${dlDecor(1)}
           <div class="dcard__body">
             <b>作品集网站（在线）</b>
-            <span class="dcard__sub">同一个网址，方便转发给同事或面试官：</span>
-            <span class="dcard__url">${esc(SITE.siteUrl)}</span>
+            <span class="dcard__sub">同一个网址，方便转发给同事或面试官：${esc(SITE.siteUrl)}</span>
             <div class="dcard__foot">
               <button class="dlcopy" data-copy="${esc(SITE.siteUrl)}" data-label="网址">复制网址</button>
             </div>
