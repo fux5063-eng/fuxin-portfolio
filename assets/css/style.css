@@ -490,22 +490,21 @@ body:not(.on-home) #app{padding-top:66px}
   font:600 13px/1 inherit;padding:9px 13px;border-radius:999px;transition:all .18s ease}
 .tabs__chip:hover{color:var(--ink);border-color:#cfd7e0;transform:translateY(-1px)}
 .tabs__chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
-.tabs__pane{display:none}
-.tabs__pane.on{display:grid;grid-template-columns:1.45fr 1fr;gap:0;border-top:1px solid var(--line);
-  animation:tabsIn .46s cubic-bezier(.22,.78,.24,1) both}
-.tabs__pane.on > *{animation:tabsUp .58s cubic-bezier(.22,.78,.24,1) both}
-.tabs__pane.on > *:nth-child(2){animation-delay:.07s}
-.tabs__pane.on figure img{animation:tabsZoom 1.1s cubic-bezier(.22,.78,.24,1) both}
-@keyframes tabsIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes tabsUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes tabsZoom{from{transform:scale(1.035)}to{transform:none}}
+/* 切换 = 叠层交叉淡入：所有 pane 叠在同一格，靠透明度柔和过渡（不再 display:none 闪一下） */
+.tabs__panes{display:grid}
+.tabs__pane{grid-area:1/1;align-self:start;display:grid;grid-template-columns:1.45fr 1fr;gap:0;border-top:1px solid var(--line);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .58s cubic-bezier(.22,.7,.3,1),visibility 0s linear .58s}
+.tabs__pane.on{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
 .tabs__pane figure{margin:0;background:#eef1f4;cursor:zoom-in}
-.tabs__pane img{width:100%;display:block}
+.tabs__pane img{width:100%;display:block;transform:scale(1.02);
+  transition:transform .95s cubic-bezier(.22,.7,.3,1),opacity .35s ease}
+.tabs__pane.on img{transform:none}
 .tabs__txt{padding:20px 20px 22px}
 .tabs__txt b{font-size:16.5px;display:block;margin-bottom:9px;color:var(--ink)}
 .tabs__txt p{margin:0;font-size:14.6px;line-height:1.85;color:#3a434e}
 .tabs__foot{padding:10px 14px;font-size:12px;color:var(--muted);background:#f7f9fb;border-top:1px solid var(--line)}
-@media(max-width:780px){.tabs__pane.on{grid-template-columns:1fr}}
+@media(max-width:780px){.tabs__pane{grid-template-columns:1fr}}
 
 /* 联系区二维码卡的副文案 */
 .qrbox span{display:block;font-size:12.6px;color:var(--muted)}

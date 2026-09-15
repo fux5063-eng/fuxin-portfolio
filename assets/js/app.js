@@ -582,21 +582,61 @@
           document.querySelectorAll('[data-sync-target="' + key + '"] [data-o]').forEach(x => x.classList.toggle('on', +x.dataset.o === i));
         }
       };
-      let idx = 0, timer = null, stopped = false;
+      let idx = 0, timer = null, stopped = false, inView = true, preloaded = false;
       const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
-      const play = () => {
-        if (stopped || box.dataset.auto === '0' || chips.length < 2) return;
-        stop();
-        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); }, 3000);
+      /* 预加载本组所有图：切过去时图已经在缓存里（切换"卡一下"的主因） */
+      const preload = () => {
+        if (preloaded) return;
+        preloaded = true;
+        panes.forEach(pn => {
+          const im = pn.querySelector('img');
+          if (!im) return;
+          im.loading = 'eager';
+          const src = im.getAttribute('src');
+          if (src) { const pre = new Image(); pre.decoding = 'async'; pre.src = src; }
+        });
       };
-      chips.forEach(c => c.addEventListener('click', e => {
-        e.preventDefault();
-        idx = +c.dataset.i; setI(idx); stopped = true; stop(); box.classList.add('manual');
-      }));
+      /* 进度条与倒计时用同一起点：重开时把条也归零，避免"条走完了还没切"的卡顿感 */
+      const barRestart = () => {
+        const b = chips[idx] && chips[idx].querySelector('.tabs__prog');
+        if (!b) return;
+        b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
+      };
+      const play = () => {
+        if (stopped || !inView || box.dataset.auto === '0' || chips.length < 2) return;
+        stop();
+        barRestart();
+        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); barRestart(); }, 3000);
+      };
+      /* 悬停标签 / 点击标签都走这里 */
+      const goTo = i => {
+        if (i === idx) return;
+        idx = i; setI(idx);
+        if (timer) barRestart();
+      };
+      chips.forEach(c => {
+        c.addEventListener('mouseenter', () => goTo(+c.dataset.i));
+        c.addEventListener('click', e => {
+          e.preventDefault();
+          goTo(+c.dataset.i); stopped = true; stop(); box.classList.add('manual');
+        });
+      });
       box.addEventListener('mouseenter', stop);
       box.addEventListener('mouseleave', () => { if (!stopped) play(); });
       setI(0);
-      play();
+      /* 滚出视野先停、回来再走（避免滚动时白跑动画）；可见时顺便把图预载了 */
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(es => {
+          es.forEach(en => {
+            inView = en.isIntersecting;
+            if (inView) { preload(); if (!stopped) play(); } else { stop(); }
+          });
+        }, { threshold: 0.02 });
+        io.observe(box);
+        cleanups.push(() => io.disconnect());
+      } else {
+        preload(); play();
+      }
       cleanups.push(() => { stopped = true; stop(); });
     });
   }
