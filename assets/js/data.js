@@ -24,19 +24,6 @@ const SITE = {
 const MARQUEE = ['AI 产品', '工业设计', '机器人产品', 'DesignDNA', 'Rhino 建模', 'KeyShot 渲染',
   '语音闭环', '商业改款', '工作流工具', 'CMF', '结构整合', '视觉交付'];
 
-/* 首页展示的模型（换模型只改这里） */
-const HOME_MODEL = {
-  src: 'assets/models/doggie.glb',
-  title: 'DOGGIE 多功能宠物牵引绳 · 真实建模文件',
-  note: '按建模尺寸关系导出，按住拖动可从任意角度查看体量与曲面'
-};
-/* 首屏"换一个"可轮换的模型（都是我自己的建模文件） */
-const HOME_MODELS = [
-  'assets/models/doggie.glb',
-  'assets/models/lamp-a.glb',
-  'assets/models/lamp-b.glb',
-  'assets/models/wenning.glb',
-];
 
 const DOWNLOADS = [
   { t: 'AI 产品方向作品集', d: '49 页 · 机器人产品 / DesignDNA / 个人 AI 工具 / 实体产品', f: 'download/付昕-AI产品方向作品集.pdf', s: '4.4 MB' },
