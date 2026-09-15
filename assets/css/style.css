@@ -234,7 +234,12 @@ body:not(.on-home) #app{padding-top:66px}
   box-shadow:0 16px 38px rgba(15,20,28,.18);
   transition:transform .28s cubic-bezier(.2,.7,.3,1),box-shadow .28s ease}
 .dcard:hover{transform:translateY(-4px);box-shadow:0 32px 72px rgba(17,18,20,.34)}
-.dcard--wide{min-height:152px}
+.dcard--site{min-height:0;max-width:560px}
+.dcard__url{font-size:12.5px;color:rgba(255,255,255,.68);word-break:break-all}
+.dcard__foot .dlcopy{font-size:12.5px;font-weight:700;color:#fff;background:none;
+  border:1px solid rgba(255,255,255,.34);border-radius:999px;padding:6px 14px;cursor:pointer;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;white-space:nowrap}
+.dcard__foot .dlcopy:hover{background:#fff;color:#0f1114;border-color:#fff}
 .dcard__body{position:relative;z-index:4;display:flex;flex-direction:column;gap:7px;padding:24px 26px 22px}
 .dcard__body b{font-size:17.5px;font-weight:700;letter-spacing:.01em}
 .dcard__sub{font-size:13.2px;line-height:1.6;color:rgba(255,255,255,.74)}

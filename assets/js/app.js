@@ -1168,12 +1168,17 @@
       <div class="wrap">
       <div class="dl">${cards}</div>
       <div class="dl dl--one" style="margin-top:20px">
-        <a class="dcard dcard--wide rv" href="${SITE.siteUrl}" target="_blank" rel="noopener">${dlDecor(1)}
+        <div class="dcard dcard--site rv">${dlDecor(1)}
           <div class="dcard__body">
             <b>作品集网站（在线）</b>
-            <span class="dcard__sub">同一个网址，方便转发给同事或面试官：${esc(SITE.siteUrl)}</span>
-            <div class="dcard__foot"><span class="go">打开网站 <i></i></span></div>
+            <span class="dcard__sub">同一个网址，方便转发给同事或面试官：</span>
+            <span class="dcard__url">${esc(SITE.siteUrl)}</span>
+            <div class="dcard__foot">
+              <button class="dlcopy" data-copy="${esc(SITE.siteUrl)}" data-label="网址">复制网址</button>
+            </div>
           </div>
+        </div>
+      </div>
         </a>
       </div>
       <p class="note">PDF 由本人作品集源文件导出，内容与页面一致；商业项目均按公开边界匿名化处理。页面里的模型与原型都可以直接在网页上操作。</p>
@@ -1784,11 +1789,17 @@ function bgBuildGrid(reg) {
     if (el.classList && el.classList.contains('bgfx')) continue;
     var r = el.getBoundingClientRect();
     if (r.width * r.height < 6000) continue;                 /* 小块（行内元素等）忽略 */
-    var bg = window.getComputedStyle(el).backgroundColor || '';
-    var m = /rgba?\(([^)]+)\)/.exec(bg);
-    if (!m) continue;
-    var v = m[1].split(',').map(function (x) { return parseFloat(x); });
-    if ((v.length > 3 ? v[3] : 1) < .55) continue;            /* 半透明的不算遮挡 */
+    var tag = el.tagName, isMedia = (tag === 'IMG' || tag === 'VIDEO');
+    if (!isMedia) {
+      var bg = window.getComputedStyle(el).backgroundColor || '';
+      var m = /rgba?\(([^)]+)\)/.exec(bg);
+      if (!m) continue;
+      var v = m[1].split(',').map(function (x) { return parseFloat(x); });
+      if ((v.length > 3 ? v[3] : 1) < .55) continue;          /* 半透明的不算遮挡 */
+      var lum = v[0] * .299 + v[1] * .587 + v[2] * .114;
+      if (lum > 238) continue;                                /* 白/近白容器＝与页面底同色，不算遮挡 */
+      if (r.width * r.height > W * H * .92) continue;         /* 铺满整个宿主的容器也是页面底 */
+    }
     n++;
     var x0 = Math.max(0, r.left - hr.left), y0 = Math.max(0, r.top - hr.top);
     var x1 = Math.min(W, r.right - hr.left), y1 = Math.min(H, r.bottom - hr.top);
