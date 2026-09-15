@@ -1169,8 +1169,10 @@
       ${plates}
       ${legacy}
       ${links ? `<div class="pd__links">${links}</div>` : ''}
-      <p class="note">页面图片均取自本人作品集（商业项目已按公开边界匿名化处理），点开可放大；完整过程页见
-        <a href="${d.pdf}" download style="border-bottom:1px solid currentColor">${esc(d.label)}作品集 PDF</a>。</p>
+      <p class="note">${(p.plates && p.plates.length)
+        ? `本项目全部 ${p.plates.length} 页已在本页列出，点开可放大。`
+        : `页面图片均取自本人作品集（商业项目已按公开边界匿名化处理），点开可放大；完整过程页见
+        <a href="${d.pdf}" download style="border-bottom:1px solid currentColor">${esc(d.label)}作品集 PDF</a>。`}</p>
       <div class="pd__nav">
         ${prev ? `<a href="#${d.id}/${prev.slug}">← 上一个：${esc(prev.title)}</a>` : '<span></span>'}
         ${next ? `<a href="#${d.id}/${next.slug}">下一个：${esc(next.title)} →</a>` : `<a href="#${d.id}">${/^[A-Za-z]/.test(d.label) ? '回到 ' + esc(d.label) : '回到' + esc(d.label)} →</a>`}

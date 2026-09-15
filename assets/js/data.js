@@ -103,7 +103,22 @@ const DIRECTIONS = [
             ]
           }
         ],
-        images: ['assets/img/ai/robot-p06.webp', 'assets/img/ai/robot-p08.webp', 'assets/img/ai/robot-p09.webp', 'assets/img/ai/robot-p13.webp', 'assets/img/ai/robot-p15.webp']
+        images: ['assets/img/ai/robot-p06.webp', 'assets/img/ai/robot-p08.webp', 'assets/img/ai/robot-p09.webp', 'assets/img/ai/robot-p13.webp', 'assets/img/ai/robot-p15.webp'],
+        plates: [
+          { f: 'assets/img/ai/robot-p04.webp' },
+          { f: 'assets/img/ai/robot-p05.webp' },
+          { f: 'assets/img/ai/robot-p06.webp' },
+          { f: 'assets/img/ai/robot-p07.webp' },
+          { f: 'assets/img/ai/robot-p08.webp' },
+          { f: 'assets/img/ai/robot-p09.webp' },
+          { f: 'assets/img/ai/robot-p10.webp' },
+          { f: 'assets/img/ai/robot-p11.webp' },
+          { f: 'assets/img/ai/robot-p12.webp' },
+          { f: 'assets/img/ai/robot-p13.webp' },
+          { f: 'assets/img/ai/robot-p14.webp' },
+          { f: 'assets/img/ai/robot-p15.webp' },
+          { f: 'assets/img/ai/robot-p16.webp' }
+        ]
       },
       {
         slug: 'designdna', title: 'DesignDNA · AI 设计工作台', en: 'DESIGNDNA · AI DESIGN WORKBENCH',
