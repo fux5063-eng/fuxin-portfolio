@@ -676,7 +676,15 @@
         if (stopped || !inView || box.dataset.auto === '0' || chips.length < 2) return;
         stop();
         barRestart();
-        timer = setInterval(() => { idx = (idx + 1) % chips.length; setI(idx); barRestart(); }, 3000);
+        let waits = 0;
+        timer = setInterval(() => {
+          /* 下一张图没就绪就先不切，避免"切过去是空白"（最多等 2 拍，防卡死） */
+          const nx = panes[(idx + 1) % chips.length];
+          const nim = nx && nx.querySelector('img');
+          if (nim && !(nim.complete && nim.naturalWidth > 0) && waits < 2) { waits++; return; }
+          waits = 0;
+          idx = (idx + 1) % chips.length; setI(idx); barRestart();
+        }, 3000);
       };
       /* 悬停标签 / 点击标签都走这里 */
       const goTo = i => {
