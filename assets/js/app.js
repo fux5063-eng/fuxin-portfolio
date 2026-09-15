@@ -1227,20 +1227,19 @@
   function revealPass() {
     if (!pendingReveal.length && !shownReveal.length) return;
     const vh = window.innerHeight;
-    /* ① 回收：完全离开视口（无论是上方还是下方）→ 撤掉 .in 放回待出现队列，
-       再次进入视口时重新播放入场动画（上下滚都有"出现"的感觉） */
+    /* ① 回收：上边缘只剩不到 100px 时就开始"收"（看得见），或已完全滑到下方（不可见，避免闪烁） */
     const keep = [];
     for (const el of shownReveal) {
       const r = el.getBoundingClientRect();
-      if (r.bottom < -60 || r.top > vh + 60) { el.classList.remove('in'); pendingReveal.push(el); }
+      if (r.bottom < 100 || r.top > vh) { el.classList.remove('in'); pendingReveal.push(el); }
       else keep.push(el);
     }
     shownReveal = keep;
-    /* ② 出现：进入视口即揭示（只对尚未出现的元素） */
+    /* ② 出现：顶部已进入画面才揭示（从上方回来的元素要等它真正进来，避免与回收来回打架） */
     const rest = [];
     for (const el of pendingReveal) {
       const r = el.getBoundingClientRect();
-      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.bottom > 0);
+      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.top > -2);
       if (show) { el.classList.add('in'); shownReveal.push(el); } else rest.push(el);
     }
     pendingReveal = rest;
