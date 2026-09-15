@@ -28,7 +28,7 @@
     const st = m.static;
     const imgs = (st.images || []).map(it => `
           <figure class="m3di__item">
-            <img src="${esc(it.f)}"${vattrs(it.f, '(max-width:1000px) 100vw, 47vw')} alt="${esc(it.alt || '')}" loading="lazy" decoding="async">
+            <img src="${esc(it.f)}"${vattrs(it.f, '(max-width:1000px) 100vw, 47vw')}${bgc(it.f)}${dim(it.f)} alt="${esc(it.alt || '')}" loading="lazy" decoding="async">
             <figcaption>${esc(it.cap || '')}</figcaption>
           </figure>`).join('');
     return `
@@ -72,8 +72,8 @@
     return `
       <figure class="cmpwrap">
         <div class="cmp" data-cmp>
-          <img src="${esc(c.before.f)}"${vattrs(c.before.f, '(max-width:1000px) 100vw, 47vw')} alt="${esc(c.before.label || '过程')}" loading="lazy" decoding="async">
-          <div class="cmp__after"><img src="${esc(c.after.f)}"${vattrs(c.after.f, '(max-width:1000px) 100vw, 47vw')} alt="${esc(c.after.label || '成品')}" loading="lazy" decoding="async"></div>
+          <img src="${esc(c.before.f)}"${vattrs(c.before.f, '(max-width:1000px) 100vw, 47vw')}${bgc(c.before.f)}${dim(c.before.f)} alt="${esc(c.before.label || '过程')}" loading="lazy" decoding="async">
+          <div class="cmp__after"><img src="${esc(c.after.f)}"${vattrs(c.after.f, '(max-width:1000px) 100vw, 47vw')}${bgc(c.after.f)}${dim(c.after.f)} alt="${esc(c.after.label || '成品')}" loading="lazy" decoding="async"></div>
           <span class="cmp__line"></span>
           <span class="cmp__knob">↔</span>
           <span class="cmp__tag cmp__tag--l">${esc(c.before.label || '过程')}</span>
@@ -531,7 +531,7 @@
         <div class="tabs__panes">
           ${list.map((x, i) => `
             <div class="tabs__pane${i === 0 ? ' on' : ''}" data-i="${i}" role="tabpanel">
-              <figure class="shot"><img src="${esc(x.f)}"${vattrs(x.f, '(max-width:1000px) 100vw, 47vw')} alt="${esc(x.t)}" loading="lazy" decoding="async"></figure>
+              <figure class="shot"><img src="${esc(x.f)}"${vattrs(x.f, '(max-width:1000px) 100vw, 47vw')}${bgc(x.f)}${dim(x.f)} alt="${esc(x.t)}" loading="lazy" decoding="async"></figure>
               <div class="tabs__txt"><b>${esc(x.t)}</b><p>${esc(x.d || '')}</p></div>
             </div>`).join('')}
         </div>
@@ -889,7 +889,7 @@
       return `
       <a class="pick rv" href="#${dirId}/${slug}">
         <canvas class="card__fx" aria-hidden="true"></canvas>
-        <div class="pick__img"><img src="${esc(cover)}"${vattrs(cover, '(max-width:700px) 92vw, (max-width:1100px) 46vw, 33vw')} alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}" decoding="async"></div>
+        <div class="pick__img"><img src="${esc(cover)}"${vattrs(cover, '(max-width:700px) 92vw, (max-width:1100px) 46vw, 33vw')}${bgc(cover)}${dim(cover)} alt="${esc(p.title)}" loading="${idx < 2 ? 'eager' : 'lazy'}" decoding="async"></div>
         <div class="pick__body">
           <div class="pick__eyebrow">${esc(dir.label)} · ${esc(fact[0])}</div>
           <h3>${esc(p.title)}</h3>
@@ -970,7 +970,7 @@
       <section class="sec" id="aboutTeaser">
         <div class="wrap">
           <div class="about">
-            <div class="about__pic rv"><img src="assets/img/about/portrait.webp" alt="${esc(SITE.name)}" loading="lazy"></div>
+            <div class="about__pic rv"><img src="assets/img/about/portrait.webp"${vattrs('assets/img/about/portrait.webp', '(max-width:1000px) 92vw, 360px')}${bgc('assets/img/about/portrait.webp')}${dim('assets/img/about/portrait.webp')} alt="${esc(SITE.name)}" loading="lazy"></div>
             <div class="rv">
               <div class="en-label"><b>03</b>ABOUT ME</div>
               <h2 style="margin:10px 0 14px">${esc(SITE.name)} · 产品设计 2027 届</h2>
@@ -1043,7 +1043,7 @@
     const cards = d.projects.map(p => `
       <a class="card rv" data-slug="${p.slug}" href="${p.link || "#" + d.id + "/" + p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
         <canvas class="card__fx" aria-hidden="true"></canvas>
-        <div class="card__img"><img src="${coverOf(p, d)}"${vattrs(coverOf(p, d), '(max-width:640px) 92vw, (max-width:1000px) 46vw, 21vw')} alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
+        <div class="card__img"><img src="${coverOf(p, d)}"${vattrs(coverOf(p, d), '(max-width:640px) 92vw, (max-width:1000px) 46vw, 21vw')}${bgc(coverOf(p, d))}${dim(coverOf(p, d))} alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
         <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
         <div class="card__body">
           <div class="tags">${tags(p.tags.slice(0, 3))}</div>
@@ -1102,7 +1102,7 @@
     /* 图片块：fig--wide 占两列，fig--plate 占整行 */
     const fig = (f, cls, sizes) => `
       <figure class="fig ${f.wide ? 'fig--wide' : ''} ${cls || ''}">
-        <img src="${f.f}"${vattrs(f.f, sizes)} alt="${esc(f.cap || p.title)}" loading="lazy" decoding="async">
+        <img src="${f.f}"${vattrs(f.f, sizes)}${bgc(f.f)}${dim(f.f)} alt="${esc(f.cap || p.title)}" loading="lazy" decoding="async">
         ${f.cap ? `<figcaption>${esc(f.cap)}</figcaption>` : ''}
       </figure>`;
     const figs = list => {
@@ -1141,7 +1141,7 @@
 
     const hero = p.hero ? `
       <figure class="heroFig shot">
-        <img src="${p.hero.f}"${vattrs(p.hero.f, '(max-width:1000px) 100vw, 1180px')} alt="${esc(p.hero.cap || p.title)}" loading="eager" fetchpriority="high" decoding="async">
+        <img src="${p.hero.f}"${vattrs(p.hero.f, '(max-width:1000px) 100vw, 1180px')}${bgc(p.hero.f)}${dim(p.hero.f)} alt="${esc(p.hero.cap || p.title)}" loading="eager" fetchpriority="high" decoding="async">
         ${p.hero.cap ? `<figcaption>${esc(p.hero.cap)}</figcaption>` : ''}
       </figure>` : '';
     const plates = (p.plates && p.plates.length)
@@ -1197,7 +1197,7 @@
       })}
       <div class="wrap">
       <div class="about">
-        <figure class="about__pic shot rv"><img src="assets/img/about/portrait.webp" alt="${esc(SITE.name)}" loading="lazy"></figure>
+        <figure class="about__pic shot rv"><img src="assets/img/about/portrait.webp"${vattrs('assets/img/about/portrait.webp', '(max-width:1000px) 92vw, 360px')}${bgc('assets/img/about/portrait.webp')}${dim('assets/img/about/portrait.webp')} alt="${esc(SITE.name)}" loading="lazy"></figure>
         <div>
           <p style="color:var(--ink-2)">${esc(ABOUT.intro)}</p>
           <h4 style="margin:26px 0 4px">实践经历</h4>
@@ -1764,6 +1764,14 @@ function vsrcset(p) {
   if (v[2]) out.push(p.replace(/\.webp$/i, '-md.webp') + ' ' + v[2] + 'w');
   out.push(p + ' ' + v[0] + 'w');
   return out.join(', ');
+}
+function bgc(p) {                          /* 加载前的占位底色 */
+  var c = (typeof IMGC !== 'undefined' && IMGC[p]) || '';
+  return c ? ' style="background:' + c + '"' : '';
+}
+function dim(p) {                          /* 预留位置：避免图片加载时页面跳动 */
+  var d = (typeof IMD !== 'undefined' && IMD[p]) || null;
+  return d ? ' width="' + d[0] + '" height="' + d[1] + '"' : '';
 }
 function vattrs(p, sizes) {
   var s = vsrcset(p);
