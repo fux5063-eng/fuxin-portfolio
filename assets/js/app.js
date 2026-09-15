@@ -1715,7 +1715,7 @@ var BGFX = {                    /* ← 全部旋钮集中在这里 */
   link: 120, linkA: 0.07,       /* 近邻连线的距离与最亮透明度（0 = 不连线） */
   pr: 200, prA: 0.26,           /* 光标柔光/提亮半径 、 与光标连线的透明度 */
   prLink: 130, prLinks: 4,      /* 光标当作"网里的一个点"：只连最近的 4 颗、限 130px 内 */
-  glowRGB: '232,89,12', glowA: 0.05,            /* 光标处一层很淡的暖光（不想要就设 0） */
+  glowRGB: '232,89,12', glowA: 0,               /* 光标柔光：默认关（它被卡片切断时会露馅）；想开就设 .05 */
   pushR: 85, pushF: 0.30,       /* 光标推开半径 / 力度 */
   boost: 0.62, grow: 0.70,      /* 光标附近：透明度/半径放大 →「靠近就有反应」 */
   drift: [5, 15],               /* 水平漂浮速度 px/s（整体缓慢左移） */
@@ -1772,6 +1772,56 @@ function bgInset(host) {
   }
   if (ins > 0) ins += 70;                         /* 页头下方那条渐隐带也一起让开 */
   return Math.max(0, Math.min(ins, host.clientHeight - 90));
+}
+
+/* ===== 遮挡网格：宿主里"不透明内容块"（卡片/图片/深色块）占的格子 =====
+   粒子层在内容之下是对的，但线穿过去会被切断，看着像"断线/交界很生硬"。
+   所以把不透明块标成格子，画线时采样几个点，一旦碰到就整条不画（宁可少一条线，不要半截线）。 */
+function bgBuildGrid(reg) {
+  var host = reg.host, W = Math.max(1, host.clientWidth), H = Math.max(1, host.clientHeight);
+  var cell = 24, gw = Math.ceil(W / cell), gh = Math.ceil(H / cell);
+  var data = new Uint8Array(gw * gh);
+  var hr = host.getBoundingClientRect();
+  var all = host.querySelectorAll('*'), n = 0;
+  for (var i = 0; i < all.length && n < 220; i++) {
+    var el = all[i];
+    if (el.classList && el.classList.contains('bgfx')) continue;
+    var r = el.getBoundingClientRect();
+    if (r.width * r.height < 6000) continue;                 /* 小块（行内元素等）忽略 */
+    var bg = window.getComputedStyle(el).backgroundColor || '';
+    var m = /rgba?\(([^)]+)\)/.exec(bg);
+    if (!m) continue;
+    var v = m[1].split(',').map(function (x) { return parseFloat(x); });
+    if ((v.length > 3 ? v[3] : 1) < .55) continue;            /* 半透明的不算遮挡 */
+    n++;
+    var x0 = Math.max(0, r.left - hr.left), y0 = Math.max(0, r.top - hr.top);
+    var x1 = Math.min(W, r.right - hr.left), y1 = Math.min(H, r.bottom - hr.top);
+    var cx0 = Math.floor(x0 / cell), cx1 = Math.floor(x1 / cell);
+    var cy0 = Math.floor(y0 / cell), cy1 = Math.floor(y1 / cell);
+    for (var cy = cy0; cy <= cy1 && cy < gh; cy++)
+      for (var cx = cx0; cx <= cx1 && cx < gw; cx++) data[cy * gw + cx] = 1;
+  }
+  reg.grid = { cell: cell, gw: gw, gh: gh, data: data, n: n };
+  return reg.grid;
+}
+function bgBlockedAt(reg, x, y) {                             /* 画布坐标 → 查遮挡 */
+  var g = reg.grid;
+  if (!g) return false;
+  var hx = x, hy = y + reg.top;
+  var cx = (hx / g.cell) | 0, cy = (hy / g.cell) | 0;
+  if (cx < 0 || cy < 0 || cx >= g.gw || cy >= g.gh) return false;
+  return g.data[cy * g.gw + cx] === 1;
+}
+function bgSegFree(reg, x1, y1, x2, y2) {                     /* 线段是否整段都没碰到内容块 */
+  if (!reg.grid) return true;
+  var dx = x2 - x1, dy = y2 - y1;
+  var len = Math.sqrt(dx * dx + dy * dy);
+  var steps = Math.max(1, Math.ceil(len / 10));
+  for (var i = 0; i <= steps; i++) {
+    var t = i / steps;
+    if (bgBlockedAt(reg, x1 + dx * t, y1 + dy * t)) return false;
+  }
+  return true;
 }
 
 function bgSize(reg) {
@@ -1832,9 +1882,10 @@ function bgDraw(reg, ts, dt) {
         for (var a1 = 0; a1 < arr.length; a1++) {
           for (var b1 = same ? a1 + 1 : 0; b1 < nb.length; b1++) {
             var A = arr[a1], B = nb[b1], ddx = A.x - B.x, ddy = A.y - B.y, dd = ddx * ddx + ddy * ddy;
-            /* 端点只要跑到画布外就不连：否则线会在边界被截断，看起来像"断掉的线" */
+            /* 端点跑到画布外、或者整段要穿过不透明内容块 → 都不画（否则会出现"半截线"） */
             if (dd < L2 && A.x >= 0 && A.x <= W && B.x >= 0 && B.x <= W &&
-                A.y >= 12 && A.y <= H - 12 && B.y >= 12 && B.y <= H - 12) {
+                A.y >= 12 && A.y <= H - 12 && B.y >= 12 && B.y <= H - 12 &&
+                bgSegFree(reg, A.x, A.y, B.x, B.y)) {
               var tt = 1 - Math.sqrt(dd) / BGFX.link, bi = (tt * LB) | 0;
               bk[bi < 0 ? 0 : (bi > LB - 1 ? LB - 1 : bi)].push(A.x, A.y, B.x, B.y);
             }
@@ -1854,17 +1905,20 @@ function bgDraw(reg, ts, dt) {
 
   /* ---- 光标：柔光 + 到粒子的连线（暖色，一眼看出能交互）---- */
   if (mon) {
-    var g = ctx.createRadialGradient(mx, my, 0, mx, my, BGFX.pr);
-    g.addColorStop(0, 'rgba(' + BGFX.glowRGB + ',' + BGFX.glowA + ')');
-    g.addColorStop(1, 'rgba(' + BGFX.glowRGB + ',0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(mx, my, BGFX.pr, 0, 6.283); ctx.fill();
+    if (BGFX.glowA > .004) {                          /* 柔光默认关闭，避免被卡片切成硬边 */
+      var g = ctx.createRadialGradient(mx, my, 0, mx, my, BGFX.pr);
+      g.addColorStop(0, 'rgba(' + BGFX.glowRGB + ',' + BGFX.glowA + ')');
+      g.addColorStop(1, 'rgba(' + BGFX.glowRGB + ',0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(mx, my, BGFX.pr, 0, 6.283); ctx.fill();
+    }
     /* 光标作为"网里的一个点"：只连最近的 prLinks 颗、且不超过 prLink 距离。
        用和网点一样的颜色（不是暖色），看起来就是这层网多接了一个节点 ✓ */
     var cand = [];
     for (var n2 = 0; n2 < parts.length; n2++) {
       var pp = parts[n2], ex = pp.x - mx, ey = pp.y - my, e2 = ex * ex + ey * ey;
-      if (e2 < prL2 && pp.y > 12 && pp.y < H - 12) cand.push([e2, n2]);
+      if (e2 < prL2 && pp.y > 12 && pp.y < H - 12 && !bgBlockedAt(reg, pp.x, pp.y) &&
+          bgSegFree(reg, mx, my, pp.x, pp.y)) cand.push([e2, n2]);
     }
     cand.sort(function (u1, u2) { return u1[0] - u2[0]; });
     var M = Math.min(cand.length, BGFX.prLinks || 4);
@@ -1883,7 +1937,7 @@ function bgDraw(reg, ts, dt) {
   for (var r2 = 0; r2 < parts.length; r2++) {
     var z = parts[r2], av = z.av || 0, rr = z.r * (1 + av * BGFX.grow);
     var ev = Math.min(1, Math.min(z.y, H - z.y) / 24);      /* 贴近上下边界淡出：不出现"突然消失"的点 */
-    if (ev <= .02) continue;
+    if (ev <= .02 || bgBlockedAt(reg, z.x, z.y)) continue;   /* 落在内容块里的点直接不画 */
     ctx.fillStyle = z.hot
       ? 'rgba(' + BGFX.hotRGB + ',' + ((BGFX.hotA + av * BGFX.boost) * ev).toFixed(3) + ')'
       : 'rgba(' + BGFX.dotRGB + ',' + ((z.a0 + av * BGFX.boost) * ev).toFixed(3) + ')';
@@ -1909,7 +1963,11 @@ function bgTick(ts) {
   for (i = 0; i < L.length; i++) {
     var reg = L[i], hr = rects[i];
     if (!hr || hr.height < 120 || hr.bottom < -40 || hr.top > vh + 40 || hr.width < 80) continue;
-    if (reg.insetH !== hr.height || reg.inset === undefined) { reg.inset = bgInset(reg.host); reg.insetH = hr.height; }
+    if (reg.insetH !== hr.height || reg.inset === undefined) {
+      reg.inset = bgInset(reg.host);
+      reg.insetH = hr.height;
+      bgBuildGrid(reg);
+    }
     var ins = reg.inset || 0;
     reg.bandH = Math.min(hr.height - ins, vh);
     var top = Math.max(ins, Math.min(hr.height - reg.bandH, -hr.top));
