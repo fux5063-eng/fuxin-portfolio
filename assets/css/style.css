@@ -1166,3 +1166,9 @@ body.exp-open{overflow:hidden}
   transition:opacity .28s cubic-bezier(.2,.7,.3,1),transform .28s cubic-bezier(.2,.7,.3,1)}
 .mback.on{display:flex;transform:none;opacity:1}
 @media (min-width:901px){.mback{display:none !important}}
+
+/* 下拉刷新指示器（移动端） */
+.ptr{position:fixed;left:50%;top:8px;transform:translate(-50%,-46px);z-index:88;display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;background:rgba(16,16,18,.86);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:12px;letter-spacing:.02em;opacity:0;pointer-events:none;transition:opacity .16s ease}
+.ptr i{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.32);border-top-color:#fff}
+.ptr.ready i{border-top-color:#ff6a1a}
+@media (hover:hover){.ptr{display:none}}

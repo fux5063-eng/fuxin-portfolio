@@ -1590,3 +1590,41 @@
   window.addEventListener('hashchange', render);
   render();
 })();
+
+/* 移动端下拉刷新：仅在页面顶部、单指下拉超过 90px 时触发（不干扰滚动，桌面端隐藏） */
+(() => {
+  let y0 = null, ind = null;
+  const mk = () => {
+    if (ind) return ind;
+    ind = document.createElement('div');
+    ind.className = 'ptr';
+    ind.innerHTML = '<i></i><span>下拉刷新</span>';
+    document.body.appendChild(ind);
+    return ind;
+  };
+  addEventListener('touchstart', e => {
+    y0 = (window.scrollY <= 2 && e.touches.length === 1) ? e.touches[0].clientY : null;
+  }, { passive: true });
+  addEventListener('touchmove', e => {
+    if (y0 == null) return;
+    const dy = e.touches[0].clientY - y0;
+    if (dy < 8) return;
+    const el = mk(), p = Math.min(dy / 120, 1);
+    el.classList.add('on');
+    el.style.opacity = p.toFixed(2);
+    el.style.transform = 'translate(-50%,' + (Math.min(dy, 96) - 46) + 'px)';
+    el.classList.toggle('ready', dy > 90);
+    el.querySelector('span').textContent = dy > 90 ? '松手刷新' : '下拉刷新';
+  }, { passive: true });
+  addEventListener('touchend', () => {
+    if (y0 == null) { return; }
+    const el = ind;
+    if (el && el.classList.contains('ready')) {
+      el.querySelector('span').textContent = '刷新中…';
+      location.reload();
+      return;
+    }
+    if (el) { el.classList.remove('on', 'ready'); el.style.opacity = ''; el.style.transform = ''; }
+    y0 = null;
+  });
+})();
