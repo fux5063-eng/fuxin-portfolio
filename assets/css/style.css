@@ -79,7 +79,8 @@ body.nav-solid .nav{background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
 .hero__meta b{color:rgba(255,255,255,.82);font-weight:600}
 .hero__panel{display:grid;gap:10px}
 .hero__facts{display:grid;gap:13px;border-left:1px solid rgba(255,255,255,.16);padding-left:20px}
-.hero__facts > div{display:grid;grid-template-columns:66px 1fr;gap:12px;align-items:baseline}
+.hero__facts > div{display:grid;grid-template-columns:66px 1fr;gap:12px;align-items:start}
+.hero__facts > div b{line-height:1.04}
 .hero__facts b{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
 .hero__facts span{font-size:13px;color:rgba(255,255,255,.68);line-height:1.6}
 body:not(.on-home) #app{padding-top:66px}
