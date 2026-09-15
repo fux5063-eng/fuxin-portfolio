@@ -1561,6 +1561,12 @@
   window.addEventListener('scroll', onScrollFX, { passive: true });
   window.addEventListener('resize', onScrollFX);
   if (totop) totop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  /* 左上角 Logo：其他页点击 → 回主页（原有行为不变）；已经在主页点击 → 平滑滚回最上面 */
+  const navBrand = document.querySelector('.nav__brand');
+  if (navBrand) navBrand.addEventListener('click', (e) => {
+    const rt = (location.hash || '').replace(/^#\/?/, '');
+    if (!rt) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
 
   /* 灯箱操作提示（只在灯箱打开时显示） */
   const lbHint = document.createElement('div');
