@@ -1256,6 +1256,9 @@
     requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
     setTimeout(() => document.querySelector('.hero')?.classList.add('in'), 800);
     safe('heroFX', () => mountHeroFX(app));
+  safe('dotGrid', () => mountDotGrid(app));
+
+
     revealNow();
     updateNav();
     isHome ? FX.start() : FX.stop();
@@ -1696,3 +1699,62 @@ function vattrs(p, sizes) {
   return s ? ' srcset="' + s + '" sizes="' + (sizes || '100vw') + '"' : '';
 }
 /* ==================================================================== */
+/* ===== 白底点阵：状态放 window.__dotFx，懒初始化（避免模块末尾 var 未赋值 → NaN）===== */
+function dotState() {
+  var s = window.__dotFx;
+  if (!s) s = window.__dotFx = { bound: false, raf: 0, x: 0, y: 0, live: false };
+  return s;
+}
+function dotHost() {
+  return document.querySelector('#app > .pd, #app > .sec, .sheet');
+}
+function dotApply() {
+  var st = dotState();
+  st.raf = 0;
+  var h = dotHost();
+  if (!h) return;
+  if (!st.rect || st.host !== h) { st.host = h; st.rect = h.getBoundingClientRect(); }
+  var r = st.rect;
+  var x = Number(st.x), y = Number(st.y);
+  if (!isFinite(x)) x = 0;
+  if (!isFinite(y)) y = 0;
+  h.style.setProperty('--dx', (x - r.left).toFixed(1) + 'px');
+  h.style.setProperty('--dy', (y - r.top).toFixed(1) + 'px');
+  var inView = r.top < window.innerHeight * 0.98 && r.bottom > 0;
+  h.classList.toggle('dot-on', !!(st.live && inView));
+}
+function dotQueue() {
+  var st = dotState();
+  if (!st.raf) st.raf = requestAnimationFrame(dotApply);
+}
+function dotBind() {
+  var st = dotState();
+  if (st.bound) return;
+  st.bound = true;
+  window.addEventListener('pointermove', function (e) {
+    var s = dotState();
+    s.x = e.clientX; s.y = e.clientY; s.live = true;
+    dotQueue();
+  }, { passive: true });
+  var kill = function () { dotState().rect = null; dotQueue(); };
+  window.addEventListener('scroll', kill, { passive: true });
+  window.addEventListener('resize', kill, { passive: true });
+  document.addEventListener('pointerleave', function () { dotState().live = false; dotQueue(); });
+  document.addEventListener('pointerup', function (e) {
+    if (e.pointerType === 'touch') { dotState().live = false; dotQueue(); }
+  }, { passive: true });
+}
+function mountDotGrid(scope) {
+  var h = dotHost();
+  if (!h) return;
+  if (!h.querySelector(':scope > .dotfx')) {
+    ['dotfx', 'dotlt', 'dglow'].forEach(function (c) {
+      var d = document.createElement('div');
+      d.className = c;
+      d.setAttribute('aria-hidden', 'true');
+      h.insertBefore(d, h.firstChild);
+    });
+  }
+  dotBind();
+  dotApply();
+}
