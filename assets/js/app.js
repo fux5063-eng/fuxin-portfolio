@@ -734,7 +734,7 @@
       const k = strengthFor(cv);
       return createParticles(cv, {
         density: 1350, maxN: 130, minN: 82, band: false, freeRatio: 1,
-        link: 104, linkAlpha: .38 * k, speed: 2.2, dpr: 1, dotScale: 1.65,
+        link: 104, linkAlpha: .38 * k, speed: 2.2, dpr: Math.min(window.devicePixelRatio || 1, 2), dotScale: 1.65,
         dot: 'rgba(236,243,250,' + (.70 * k).toFixed(2) + ')', accent: 'rgba(255,158,102,' + (.85 * k).toFixed(2) + ')',
         linkRGB: '214,228,242', glow: '255,158,102',
       });
