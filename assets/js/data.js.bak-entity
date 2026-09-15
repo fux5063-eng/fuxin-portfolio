@@ -304,42 +304,50 @@ const DIRECTIONS = [
         images: ['assets/img/ai/internship-p39.webp']
       },
       {
-        slug: 'doggie', link: '#/id/doggie', title: 'DOGGIE 多功能宠物牵引绳', en: 'DOGGIE PET LEASH',
-        badge: '实体产品 · AI 辅助流程',
+        slug: 'entity', title: '实体产品设计：DOGGIE & Lumora', en: 'PHYSICAL PRODUCT DESIGN',
+        badge: '两个产品',
         tags: ['产品定义', 'Rhino 建模', 'CMF'],
-        summary: '把牵引、互动玩具携带与简单清洁集中到一个随身产品，从使用任务到产品架构与曲面建模。',
-        facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品'], ['完整案例', '见工业设计方向']],
-        hero: { f: 'assets/img/cover/doggie.jpg', cap: 'DOGGIE 多功能宠物牵引绳' },
+        summary: '两个实体产品：DOGGIE 多功能宠物牵引绳与 Lumora 光健康伴护仪，从使用任务到产品架构、曲面建模与 CMF。',
+        facts: [['角色', '产品定义 · 建模 · 渲染（独立完成）'], ['品类', '便携宠物用品 + 居家康养照明'], ['证据', '连续 Rhino / KeyShot 工程']],
+        hero: { f: 'assets/img/cover/entity-2up.webp', cap: 'DOGGIE 与 Lumora 两个实体产品' },
         sections: [
           {
-            h: '完整案例', en: 'FULL CASE',
-            lead: '这个项目在工业设计方向里有完整过程记录：从使用任务拆解、结构排布到 Rhino 建模与 KeyShot 交付。',
+            h: '为什么做', en: 'WHY',
+            lead: 'AI 产品最终要落到实体上——所以除了软件与原型，我保留了完整的两条实体产品线。',
             items: [
-              '产品与设计过程见工业设计方向 · DOGGIE 多功能宠物牵引绳。',
-              '在 AI 方向里它是「AI 辅助流程」的实体产品落点：需求整理、方案对比与交付物节点由 AI 工具辅助推进。'
+              '品类覆盖便携宠物用品与居家康养照明，方法一致：先定义使用任务，再定产品架构，最后做曲面与 CMF。'
             ],
             figures: []
-          }
-        ]
-      },
-      {
-        slug: 'lumora', link: '#/id/lumora', title: 'Lumora 光健康伴护仪', en: 'LUMORA CARE DEVICE',
-        badge: '实体产品 · AI 辅助流程',
-        tags: ['造型与形态', 'CMF', '结构配合'],
-        summary: '以光健康为切入的伴护设备，完成外观造型、材质与结构配合的整体推进。',
-        facts: [['角色', '造型 · CMF · 结构配合（独立完成）'], ['品类', '居家康养照明'], ['完整案例', '见工业设计方向']],
-        hero: { f: 'assets/img/cover/lumora.webp', cap: 'Lumora 光健康伴护仪' },
-        sections: [
+          },
           {
-            h: '完整案例', en: 'FULL CASE',
-            lead: '这个项目在工业设计方向里有完整过程记录：形态推演、CMF 与结构配合。',
+            h: 'DOGGIE 多功能宠物牵引绳', en: 'PROJECT 01',
+            lead: '把牵引、互动玩具携带与简单清洁集中到一个随身产品。',
             items: [
-              '产品与设计过程见工业设计方向 · Lumora 光健康伴护仪。',
-              '在 AI 方向里它同样属于「AI 辅助流程」的实体产品落点。'
+              '透明球仓收纳玩具球，可拆卸清洁刷清理宠物脚底，垃圾袋收纳位于把手内部。',
+              '连续 Rhino 与 KeyShot 文件记录从造型发散、分件、概念结构到最终渲染的推进过程。'
             ],
-            figures: []
+            figures: [ { f: 'assets/img/ai/entity-p41.webp', cap: '' } ],
+            links: [ { t: '看 DOGGIE 完整案例（含可拖动模型）', u: '#id/doggie' } ]
+          },
+          {
+            h: 'Lumora 光健康伴护仪', en: 'PROJECT 02',
+            lead: '折叠灯臂、物理控制与柜体收纳，适配居家多场景。',
+            items: [
+              '灯臂收入柜体侧面，降低非使用状态的空间占用。',
+              '尺寸与收纳关系在建模阶段持续校验，统一展开态与收纳态的尺寸基准。'
+            ],
+            figures: [ { f: 'assets/img/ai/entity-p45.webp', cap: '' }, { f: 'assets/img/ai/entity-p47.webp', cap: '' } ],
+            links: [ { t: '看 Lumora 完整案例', u: '#id/lumora' } ]
+          },
+          {
+            h: '边界说明', en: 'BOUNDARY',
+            items: [
+              '两个产品均由本人独立完成产品定义、建模与渲染。',
+              '未制作实物样机；握持与收纳关系以建模尺寸与纸质测试校核，不作为结构验证。'
+            ]
           }
-        ]
+        ],
+        images: ['assets/img/ai/entity-p41.webp', 'assets/img/ai/entity-p45.webp', 'assets/img/ai/entity-p47.webp']
       }
     ]
   },

@@ -931,7 +931,7 @@
     const pick = FILTER_ORDER.filter(t => allTags.includes(t));
     const chips = ['全部', ...(pick.length >= 4 ? pick : allTags.slice(0, 8))];
     const cards = d.projects.map(p => `
-      <a class="card rv" data-slug="${p.slug}" href="#${d.id}/${p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
+      <a class="card rv" data-slug="${p.slug}" href="${p.link || "#" + d.id + "/" + p.slug}" data-tags="${esc((p.tags || []).join('|'))}">
         <canvas class="card__fx" aria-hidden="true"></canvas>
         <div class="card__img"><img src="${coverOf(p, d)}" alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
         <div class="card__meta">${(p.facts || []).slice(0, 3).map(f => `<i><b>${esc(f[0])}</b>${esc(f[1])}</i>`).join('')}</div>
