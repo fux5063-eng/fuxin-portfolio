@@ -1628,3 +1628,11 @@
     y0 = null;
   });
 })();
+/* 下拉刷新兜底：部分浏览器手指抬起时以 touchcancel 结束手势，这里同样收尾 */
+addEventListener('touchcancel', () => {
+  const el = document.querySelector('.ptr');
+  if (!el) return;
+  const sp = el.querySelector('span');
+  if (el.classList.contains('ready')) { if (sp) sp.textContent = '刷新中…'; location.reload(); }
+  else { el.classList.remove('on','ready'); el.style.opacity=''; el.style.transform=''; }
+});
