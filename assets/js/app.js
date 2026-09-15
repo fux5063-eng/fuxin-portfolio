@@ -1256,7 +1256,7 @@
     requestAnimationFrame(() => document.querySelector('.hero')?.classList.add('in'));
     setTimeout(() => document.querySelector('.hero')?.classList.add('in'), 800);
     safe('heroFX', () => mountHeroFX(app));
-  safe('dotGrid', () => mountDotGrid(app));
+  safe('bgField', () => mountBgField(app));
 
 
     revealNow();
@@ -1698,63 +1698,289 @@ function vattrs(p, sizes) {
   var s = vsrcset(p);
   return s ? ' srcset="' + s + '" sizes="' + (sizes || '100vw') + '"' : '';
 }
-/* ==================================================================== */
-/* ===== 白底点阵：状态放 window.__dotFx，懒初始化（避免模块末尾 var 未赋值 → NaN）===== */
-function dotState() {
-  var s = window.__dotFx;
-  if (!s) s = window.__dotFx = { bound: false, raf: 0, x: 0, y: 0, live: false };
+
+/* ===== B 方案：白底漂浮微粒子（与首屏同一套语汇的反色铺面）=====
+   做法：每个白底宿主内挂一张"跟随视口的画布"——画布高 = min(宿主高, 视口高)，
+   滚动时贴住可见带（transform 平移）⇒ 案例页 6637px 白底也只占一屏位图，
+   无巨型画布、无粒子回收跳变；画布是宿主直接子元素 + z-index:-1 ⇒ 白底之上、内容之下。
+   开销：全部宿主都不可见时循环自动停（零开销）；可见时仅 1~2 张画布在画。 */
+
+var BGFX = {                    /* ← 全部旋钮集中在这里 */
+  density: 8000,                /* 每多少 px² 一颗（越小越密） */
+  nMin: 44, nMax: 190,          /* 一屏粒子上/下限 */
+  dotRGB: '17,18,20',           /* 点色（反色：深灰） */
+  dotA: [0.20, 0.40],           /* 静态透明度：淡而可见 →「若隐若现」 */
+  dotR: [0.85, 1.8],            /* 点半径区间 px */
+  hot: 0.12, hotRGB: '196,88,26', hotA: 0.24,   /* 少量暖色点缀比例/色/透明度 */
+  link: 120, linkA: 0.07,       /* 近邻连线的距离与最亮透明度（0 = 不连线） */
+  pr: 200, prA: 0.34,           /* 光标连线半径 / 最亮透明度 */
+  glowRGB: '232,89,12', glowA: 0.06,            /* 光标柔光（品牌橙） */
+  pushR: 85, pushF: 0.30,       /* 光标推开半径 / 力度 */
+  boost: 0.55, grow: 0.60,      /* 光标附近：透明度/半径放大 →「鼠标一放上去就显现」 */
+  orbit: 22,                    /* 光标周围浮现的粒子数（静止时为 0，靠它制造"一放上去就显现"） */
+  orbR: [26, 118],              /* 群体离光标的距离区间 */
+  orbLine: 0.26,                /* 光标→群粒子连线（暖色）透明度 */
+  orbLink: 78, orbLinkA: 0.10,  /* 群内邻近连线距离 / 透明度 */
+  drift: [5, 15],               /* 水平漂浮速度 px/s（整体缓慢左移） */
+  amp: [9, 22],                 /* 纵向漫游幅度 px */
+  period: [7, 15],              /* 纵向漫游周期 s */
+  dpr: 1.25
+};
+
+function bgState() {
+  var s = window.__bgFx;
+  if (!s) s = window.__bgFx = { list: [], raf: 0, px: -9999, py: -9999, live: false, vis: false, last: 0 };
   return s;
 }
-function dotHost() {
-  return document.querySelector('#app > .pd, #app > .sec, .sheet');
-}
-function dotApply() {
-  var st = dotState();
-  st.raf = 0;
-  var h = dotHost();
-  if (!h) return;
-  if (!st.rect || st.host !== h) { st.host = h; st.rect = h.getBoundingClientRect(); }
-  var r = st.rect;
-  var x = Number(st.x), y = Number(st.y);
-  if (!isFinite(x)) x = 0;
-  if (!isFinite(y)) y = 0;
-  h.style.setProperty('--dx', (x - r.left).toFixed(1) + 'px');
-  h.style.setProperty('--dy', (y - r.top).toFixed(1) + 'px');
-  var inView = r.top < window.innerHeight * 0.98 && r.bottom > 0;
-  h.classList.toggle('dot-on', !!(st.live && inView));
-}
-function dotQueue() {
-  var st = dotState();
-  if (!st.raf) st.raf = requestAnimationFrame(dotApply);
-}
-function dotBind() {
-  var st = dotState();
-  if (st.bound) return;
-  st.bound = true;
-  window.addEventListener('pointermove', function (e) {
-    var s = dotState();
-    s.x = e.clientX; s.y = e.clientY; s.live = true;
-    dotQueue();
-  }, { passive: true });
-  var kill = function () { dotState().rect = null; dotQueue(); };
-  window.addEventListener('scroll', kill, { passive: true });
-  window.addEventListener('resize', kill, { passive: true });
-  document.addEventListener('pointerleave', function () { dotState().live = false; dotQueue(); });
-  document.addEventListener('pointerup', function (e) {
-    if (e.pointerType === 'touch') { dotState().live = false; dotQueue(); }
-  }, { passive: true });
-}
-function mountDotGrid(scope) {
-  var h = dotHost();
-  if (!h) return;
-  if (!h.querySelector(':scope > .dotfx')) {
-    ['dotfx', 'dotlt', 'dglow'].forEach(function (c) {
-      var d = document.createElement('div');
-      d.className = c;
-      d.setAttribute('aria-hidden', 'true');
-      h.insertBefore(d, h.firstChild);
+function bgRand(a, b) { return a + Math.random() * (b - a); }
+
+function bgBuild(reg) {
+  var W = Math.max(1, reg.cv.clientWidth), H = Math.max(1, reg.cv.clientHeight);
+  var n = Math.round(W * H / BGFX.density);
+  n = Math.max(BGFX.nMin, Math.min(BGFX.nMax, n));
+  var a = [];
+  for (var i = 0; i < n; i++) {
+    a.push({
+      x: Math.random() * (W + 60) - 30, y: Math.random() * H,
+      by: 0, vy: 0, vx: -bgRand(BGFX.drift[0], BGFX.drift[1]) / 60,
+      r: bgRand(BGFX.dotR[0], BGFX.dotR[1]),
+      a0: bgRand(BGFX.dotA[0], BGFX.dotA[1]),
+      hot: Math.random() < BGFX.hot,
+      ph: Math.random() * 6.283, ph2: Math.random() * 6.283,
+      w: 6.283 / (bgRand(BGFX.period[0], BGFX.period[1]) * 1000),
+      am: bgRand(BGFX.amp[0], BGFX.amp[1])
     });
   }
-  dotBind();
-  dotApply();
+  for (var k = 0; k < a.length; k++) a[k].by = a[k].y;
+  reg.parts = a; reg.n = n;
+  /* 光标周围浮现的粒子群（周期轨道，静止时不画） */
+  var cu = [], rmax = Math.min(BGFX.orbR[1], Math.min(W, H) * .34);
+  for (var c = 0; c < BGFX.orbit; c++) {
+    cu.push({
+      ang: Math.random() * 6.283,
+      av: bgRand(.00005, .00014) * (Math.random() < .5 ? -1 : 1),
+      rad: bgRand(Math.min(BGFX.orbR[0], rmax * .35), rmax),
+      rr: bgRand(.95, 1.9), a0: bgRand(.24, .5),
+      ph: Math.random() * 6.283, w: bgRand(.0004, .0012), am: bgRand(2, 7)
+    });
+  }
+  reg.cur = cu; reg.curA = 0;
+  return a;
+}
+
+function bgSize(reg) {
+  var W = Math.max(1, reg.host.clientWidth), H = Math.max(1, reg.bandH);
+  if (reg.W === W && reg.H === H) return false;
+  reg.W = W; reg.H = H;
+  reg.cv.style.height = H + 'px';
+  reg.cv.width = Math.round(W * BGFX.dpr);
+  reg.cv.height = Math.round(H * BGFX.dpr);
+  reg.ctx.setTransform(BGFX.dpr, 0, 0, BGFX.dpr, 0, 0);
+  bgBuild(reg);
+  return true;
+}
+
+function bgDraw(reg, ts, dt) {
+  var ctx = reg.ctx, W = reg.W, H = reg.H, parts = reg.parts, st = bgState();
+  var mx = st.px - reg.vx, my = st.py - reg.vy;
+  var mon = st.live && mx > -260 && my > -260 && mx < W + 260 && my < H + 260;
+  reg.mon = mon;                 /* 诊断用：验收脚本读它判断"指针是否落在本画布内" */
+  /* 浮现/收起的幅度按【时间】算（帧率无关）：0.32s 内浮现，离开约 0.35s 收起 */
+  if (mon) { if (!reg.liveAt) reg.liveAt = ts; } else reg.liveAt = 0;
+  reg.curA = mon ? Math.min(1, (ts - reg.liveAt) / 320)
+                 : (reg.curA || 0) * Math.max(0, 1 - dt * .10);
+  ctx.clearRect(0, 0, W, H);
+
+  /* ---- 运动：水平缓慢漂浮（出屏外换边，肉眼看不到跳变）+ 纵向正弦漫游 ---- */
+  var pr2 = BGFX.pr * BGFX.pr, pushR = BGFX.pushR, pushF = BGFX.pushF, pushR2 = pushR * pushR;
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i];
+    p.x += p.vx * dt;
+    if (p.x < -32) { p.x = W + 30; p.y = p.by = Math.random() * H; }
+    p.y = p.by + Math.sin(ts * p.w + p.ph) * p.am + Math.sin(ts * p.w * 1.7 + p.ph2) * (p.am * .35);
+    if (mon) {
+      var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
+      if (d2 < pushR2 && d2 > 1) {                    /* 光标推开 */
+        var d = Math.sqrt(d2), f = 1 - d / pushR;
+        p.x += dx / d * pushF * f * dt * 2.2;
+        p.by += dy / d * pushF * f * dt * 2.2;
+        p.vy += dy / d * pushF * f * dt;
+      }
+      p.av = d2 < pr2 ? (1 - Math.sqrt(d2) / BGFX.pr) : 0;   /* 光标附近提亮 */
+    } else { p.av = 0; }
+    p.by += p.vy * dt; p.vy *= 1 - .045 * dt;
+    if (p.by < 0) { p.by = 0; p.vy = 0; }
+    if (p.by > H) { p.by = H; p.vy = 0; }
+  }
+
+  /* ---- 近邻连线（分 5 档批量描线，避免每线一次 stroke）---- */
+  if (BGFX.link > 0) {
+    var LB = 5, bk = [[], [], [], [], []], L2 = BGFX.link * BGFX.link, cell = BGFX.link, grid = {};
+    for (var j = 0; j < parts.length; j++) {
+      var q = parts[j], kk = ((q.x / cell) | 0) + '_' + ((q.y / cell) | 0);
+      (grid[kk] || (grid[kk] = [])).push(q);
+    }
+    for (var kk2 in grid) {
+      var g2 = kk2.split('_'), gx = +g2[0], gy = +g2[1], arr = grid[kk2];
+      for (var ox = 0; ox <= 1; ox++) for (var oy = (ox === 0 ? 0 : -1); oy <= 1; oy++) {
+        var nb = grid[(gx + ox) + '_' + (gy + oy)];
+        if (!nb) continue;
+        var same = ox === 0 && oy === 0;
+        for (var a1 = 0; a1 < arr.length; a1++) {
+          for (var b1 = same ? a1 + 1 : 0; b1 < nb.length; b1++) {
+            var A = arr[a1], B = nb[b1], ddx = A.x - B.x, ddy = A.y - B.y, dd = ddx * ddx + ddy * ddy;
+            if (dd < L2) {
+              var tt = 1 - Math.sqrt(dd) / BGFX.link, bi = (tt * LB) | 0;
+              bk[bi < 0 ? 0 : (bi > LB - 1 ? LB - 1 : bi)].push(A.x, A.y, B.x, B.y);
+            }
+          }
+        }
+      }
+    }
+    ctx.lineWidth = 1;
+    for (var m = 0; m < LB; m++) {
+      if (!bk[m].length) continue;
+      ctx.strokeStyle = 'rgba(' + BGFX.dotRGB + ',' + (((m + .5) / LB) * BGFX.linkA).toFixed(3) + ')';
+      ctx.beginPath();
+      for (var s2 = 0; s2 < bk[m].length; s2 += 4) { ctx.moveTo(bk[m][s2], bk[m][s2 + 1]); ctx.lineTo(bk[m][s2 + 2], bk[m][s2 + 3]); }
+      ctx.stroke();
+    }
+  }
+
+  /* ---- 光标：柔光 + 到粒子的连线（暖色，一眼看出能交互）---- */
+  if (mon) {
+    var g = ctx.createRadialGradient(mx, my, 0, mx, my, BGFX.pr);
+    g.addColorStop(0, 'rgba(' + BGFX.glowRGB + ',' + BGFX.glowA + ')');
+    g.addColorStop(1, 'rgba(' + BGFX.glowRGB + ',0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(mx, my, BGFX.pr, 0, 6.283); ctx.fill();
+    var PB = 4, pbk = [[], [], [], []];
+    for (var n2 = 0; n2 < parts.length; n2++) {
+      var pp = parts[n2], ex = pp.x - mx, ey = pp.y - my, e2 = ex * ex + ey * ey;
+      if (e2 < pr2) pbk[Math.min(PB - 1, ((1 - Math.sqrt(e2) / BGFX.pr) * PB) | 0)].push(mx, my, pp.x, pp.y);
+    }
+    ctx.lineWidth = 1;
+    for (var bi2 = 0; bi2 < PB; bi2++) {
+      if (!pbk[bi2].length) continue;
+      ctx.strokeStyle = 'rgba(' + BGFX.glowRGB + ',' + (((bi2 + .5) / PB) * BGFX.prA).toFixed(3) + ')';
+      ctx.beginPath();
+      for (var si = 0; si < pbk[bi2].length; si += 4) { ctx.moveTo(pbk[bi2][si], pbk[bi2][si + 1]); ctx.lineTo(pbk[bi2][si + 2], pbk[bi2][si + 3]); }
+      ctx.stroke();
+    }
+  }
+
+  /* ---- 画点：逐点透明度；光标附近按 boost/grow 放大→「一放上去就显现」---- */
+  ctx.lineWidth = 1;
+  for (var r2 = 0; r2 < parts.length; r2++) {
+    var z = parts[r2], av = z.av || 0, rr = z.r * (1 + av * BGFX.grow);
+    ctx.fillStyle = z.hot
+      ? 'rgba(' + BGFX.hotRGB + ',' + (BGFX.hotA + av * BGFX.boost).toFixed(3) + ')'
+      : 'rgba(' + BGFX.dotRGB + ',' + (z.a0 + av * BGFX.boost).toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.arc(z.x, z.y, z.hot ? rr * 1.15 : rr, 0, 6.283);
+    ctx.fill();
+  }
+
+  /* ---- 光标周围的粒子群：静止时完全不画，鼠标一放上去才浮现（本次体验的核心）---- */
+  var ca = reg.curA || 0;
+  if (ca > .02 && reg.cur) {
+    var pts = [], NC = reg.cur;
+    for (var q3 = 0; q3 < NC.length; q3++) {
+      var o = NC[q3];
+      o.ang += o.av * dt * 16.667;
+      var rd = o.rad + Math.sin(ts * o.w + o.ph) * o.am;
+      pts.push(mx + Math.cos(o.ang) * rd, my + Math.sin(o.ang) * rd * .84, o.rr, o.a0);
+    }
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(' + BGFX.glowRGB + ',' + (BGFX.orbLine * ca).toFixed(3) + ')';
+    ctx.beginPath();
+    for (var t1 = 0; t1 < pts.length; t1 += 4) { ctx.moveTo(mx, my); ctx.lineTo(pts[t1], pts[t1 + 1]); }
+    ctx.stroke();
+    var OL = BGFX.orbLink * BGFX.orbLink;
+    ctx.strokeStyle = 'rgba(' + BGFX.dotRGB + ',' + (BGFX.orbLinkA * ca).toFixed(3) + ')';
+    ctx.beginPath();
+    for (var a3 = 0; a3 < pts.length; a3 += 4) {
+      for (var b3 = a3 + 4; b3 < pts.length; b3 += 4) {
+        var ex = pts[a3] - pts[b3], ey = pts[a3 + 1] - pts[b3 + 1];
+        if (ex * ex + ey * ey < OL) { ctx.moveTo(pts[a3], pts[a3 + 1]); ctx.lineTo(pts[b3], pts[b3 + 1]); }
+      }
+    }
+    ctx.stroke();
+    for (var d3 = 0; d3 < pts.length; d3 += 4) {
+      ctx.fillStyle = 'rgba(' + BGFX.dotRGB + ',' + (pts[d3 + 3] * ca + .16 * ca).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(pts[d3], pts[d3 + 1], pts[d3 + 2], 0, 6.283); ctx.fill();
+    }
+  }
+}
+
+function bgTick(ts) {
+  var st = bgState(); st.raf = 0;
+  st.ticks = (st.ticks || 0) + 1;
+  var dt = st.last ? Math.min(2.5, Math.max(.4, (ts - st.last) / 16.667)) : 1;
+  st.last = ts;
+  var vh = window.innerHeight, any = false;
+  var L = st.list, i;
+  /* 先批量读布局（避免读-写-读抖动），再写样式 */
+  var rects = [];
+  for (i = 0; i < L.length; i++) {
+    var r = L[i];
+    r.host.isConnected ? rects.push(r.host.getBoundingClientRect()) : rects.push(null);
+  }
+  for (i = 0; i < L.length; i++) {
+    var reg = L[i], hr = rects[i];
+    if (!hr || hr.height < 120 || hr.bottom < -40 || hr.top > vh + 40 || hr.width < 80) continue;
+    reg.bandH = Math.min(hr.height, vh);
+    var top = Math.max(0, Math.min(hr.height - reg.bandH, -hr.top));
+    if (reg.top !== top) { reg.cv.style.transform = 'translate3d(0,' + top + 'px,0)'; reg.top = top; }
+    if (!reg.on) { reg.on = true; reg.cv.classList.add('on'); }
+    bgSize(reg);
+    reg.vx = hr.left; reg.vy = hr.top + top;
+    try { bgDraw(reg, ts, dt); } catch (err) { st.err = '' + (err && err.stack ? err.stack.split('\n')[0] + ' @' + (err.stack.split('\n')[1] || '') : err); }
+    any = true;
+  }
+  st.vis = any;
+  if (any) bgArm();
+}
+function bgArm() {
+  var st = bgState();
+  if (!st.raf) st.raf = requestAnimationFrame(bgTick);
+}
+function bgMount(host) {
+  var cv = document.createElement('canvas');
+  cv.className = 'bgfx';
+  cv.setAttribute('aria-hidden', 'true');
+  host.insertBefore(cv, host.firstChild);
+  var reg = { host: host, cv: cv, ctx: cv.getContext('2d'), parts: [], W: 0, H: 0, top: -1, bandH: 0 };
+  if (!reg.ctx) return;
+  bgState().list.push(reg);
+  return reg;
+}
+function mountBgField(scope) {
+  var st = bgState();
+  st.list = st.list.filter(function (r) { return r.host.isConnected; });
+  var hosts = document.querySelectorAll('#app > .pd, #app > .sec, .sheet, .foot');
+  for (var i = 0; i < hosts.length; i++) {
+    var h = hosts[i], has = false;
+    for (var j = 0; j < st.list.length; j++) if (st.list[j].host === h) { has = true; break; }
+    if (has) continue;
+    if (h.querySelector(':scope > .bgfx')) continue;
+    bgMount(h);
+  }
+  if (!st.bound) {
+    st.bound = true;
+    window.addEventListener('scroll', bgArm, { passive: true });
+    window.addEventListener('resize', bgArm, { passive: true });
+    window.addEventListener('pointermove', function (e) {
+      var s = bgState(); s.px = e.clientX; s.py = e.clientY; s.live = true;
+      if (s.vis) bgArm();
+    }, { passive: true });
+    window.addEventListener('pointerdown', function (e) {
+      var s = bgState(); s.px = e.clientX; s.py = e.clientY; s.live = true; bgArm();
+    }, { passive: true });
+    document.addEventListener('pointerleave', function () { bgState().live = false; bgArm(); });
+    document.addEventListener('pointerup', function (e) {
+      if (e.pointerType === 'touch') { bgState().live = false; bgArm(); }
+    }, { passive: true });
+  }
+  bgArm();
 }

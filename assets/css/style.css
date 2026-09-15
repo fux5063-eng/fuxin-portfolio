@@ -1184,32 +1184,12 @@ body.exp-open{overflow:hidden}
 .ptr.ready i{animation-play-state:running;border-top-color:var(--accent)}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
 
-/* ===== 白底点阵交互（V2 标准）=====
-   放在 .sheet 内、z-index:-1 → 白底之上、内容之下（.sheet 自身是层叠上下文）
-   点阵静态铺底；.dotlt 用跟随光标的光罩点亮邻近点；.dglow 是那圈很淡的橙光 */
-.sheet{--dx:-9999px;--dy:-9999px}
-.dotfx,.dotlt{position:absolute;inset:0;pointer-events:none;z-index:-1;
-  background-image:radial-gradient(circle,rgba(17,18,20,.075) 1.05px,transparent 1.15px);
-  background-size:28px 28px;background-position:0 0}
-.dotlt{z-index:-1;
-  background-image:radial-gradient(circle,rgba(17,18,20,.42) 1.35px,transparent 1.45px);
-  -webkit-mask-image:radial-gradient(circle 150px at var(--dx) var(--dy),#000 0%,rgba(0,0,0,.55) 42%,transparent 100%);
-  mask-image:radial-gradient(circle 150px at var(--dx) var(--dy),#000 0%,rgba(0,0,0,.55) 42%,transparent 100%);
-  opacity:0;transition:opacity .28s ease}
-.sheet.dot-on .dotlt{opacity:1}
-.dglow{position:absolute;inset:0;pointer-events:none;z-index:-1;
-  background:radial-gradient(circle 190px at var(--dx) var(--dy),rgba(232,89,12,.055),transparent 70%);
-  opacity:0;transition:opacity .28s ease}
-.sheet.dot-on .dglow{opacity:1}
-.dotfx{animation:dotbreathe 9s ease-in-out infinite alternate}
-@keyframes dotbreathe{0%{opacity:.86}100%{opacity:1}}
-@media (hover:none){.dglow{background:radial-gradient(circle 170px at var(--dx) var(--dy),rgba(232,89,12,.075),transparent 70%)}}
+/* ===== B 方案：白底漂浮微粒子（画布跟随视口，见 app.js mountBgField）=====
+   画布是宿主直接子元素 + z-index:-1 ⇒ 落在白底之上、内容之下。
+   宿主自身必须是层叠上下文（.sheet / .foot 本来就是；section 由下一条规则补上）。 */
+.bgfx{position:absolute;left:0;top:0;width:100%;height:100%;display:block;
+  pointer-events:none;z-index:-1;opacity:0;transition:opacity .6s ease}
+.bgfx.on{opacity:1}
 
-/* 方向页/案例页的白底容器（section.pd / section.sec）需要成为层叠上下文，
-   负 z-index 的点阵层才会落在"白底之上、内容之下" */
+/* 方向页/案例页的白底 section 需要成为层叠上下文，负 z-index 的粒子层才会落在「白底之上、内容之下」 */
 #app > .pd,#app > .sec{position:relative;z-index:1}
-
-/* 光罩位置缓动（注册自定义属性后才能过渡；不支持的浏览器则直接跟手，不影响功能） */
-@property --dx{syntax:'<length>';inherits:true;initial-value:-9999px}
-@property --dy{syntax:'<length>';inherits:true;initial-value:-9999px}
-.dotlt,.dglow{transition:opacity .28s ease,--dx .16s ease-out,--dy .16s ease-out}
