@@ -698,7 +698,7 @@ const DIRECTIONS = [
         tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '建模、造型与效果表达的日常练习，用于保持形态手感与渲染表达的手感。',
         facts: [['形式', '练习集合'], ['重点', '形态与效果表达'], ['说明', '非商业项目']],
-        hero: { f: 'assets/img/cover/exercises.webp', cap: '形态与效果表达练习' },
+        hero: { f: 'assets/img/cover/exercises.jpg', cap: '形态与效果表达练习' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
