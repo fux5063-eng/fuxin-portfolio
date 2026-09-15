@@ -344,7 +344,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', 'Rhino 建模', 'KeyShot 交付'],
         summary: '在既有海上导航设备平台上完成外观协作改款，强化海事设备识别，并建立可延展的系列设计语言。',
         facts: [['角色', '造型推进 · Rhino 建模 · KeyShot 视觉表达'], ['约束', '沿用既有结构、光学组件与安装维护边界'], ['目标', '外观升级 + 系列设计语言']],
-        hero: { f: 'assets/img/cover/navlight.jpg', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
+        hero: { f: 'assets/img/cover/navlight.webp', cap: '改款后的外观与项目背景（商业信息已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -514,7 +514,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', '模型迭代', '视觉与版式'],
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
-        hero: { f: 'assets/img/cover/wateralarm.jpg', cap: '穿戴与落水识别场景表达（已匿名化）' },
+        hero: { f: 'assets/img/cover/wateralarm.webp', cap: '穿戴与落水识别场景表达（已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
@@ -698,7 +698,7 @@ const DIRECTIONS = [
         tags: ['Rhino 建模', '造型与形态', 'KeyShot 交付'],
         summary: '建模、造型与效果表达的日常练习，用于保持形态手感与渲染表达的手感。',
         facts: [['形式', '练习集合'], ['重点', '形态与效果表达'], ['说明', '非商业项目']],
-        hero: { f: 'assets/img/cover/exercises.jpg', cap: '形态与效果表达练习' },
+        hero: { f: 'assets/img/cover/exercises.webp', cap: '形态与效果表达练习' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
