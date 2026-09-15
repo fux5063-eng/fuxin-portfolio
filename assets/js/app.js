@@ -815,12 +815,22 @@
         <div class="hero__panel fade-in">
           <div class="hero__facts">
             <div class="facts__track">
-              <div><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
-              <div><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
-              <div><b>03</b><span>商业改款：航标灯外观改款、落水报警终端与智能锁系列</span></div>
-              <div aria-hidden="true"><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
-              <div aria-hidden="true"><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
-              <div aria-hidden="true"><b>03</b><span>商业改款：航标灯外观改款、落水报警终端与智能锁系列</span></div>
+              <div><b>01</b><span>毕业设计进行中 · 桌面陪伴型机器人：真实硬件与语音闭环</span></div>
+              <div><b>02</b><span>自研 AI 工具体系：Skill Hub · Camera · 模式切换器 · Codex Meter</span></div>
+              <div><b>03</b><span>商业改款交付：航标灯外观改款 · 落水报警终端 · 智能锁系列</span></div>
+              <div><b>04</b><span>「金种子」项目 · 第一作者 / 项目负责人</span></div>
+              <div><b>05</b><span>优必行（优必选体系）产品组 · 产品实习生 2026.07–11</span></div>
+              <div><b>06</b><span>省级大创 · 成员：微课内容与公众号排版</span></div>
+              <div><b>07</b><span>云尚教育 ID 班助教 · 美院青年协会秘书部部长</span></div>
+              <div><b>08</b><span>本站作品集 · 信息架构 / 数据 / 动效独立实现</span></div>
+              <div aria-hidden="true"><b>01</b><span>毕业设计进行中 · 桌面陪伴型机器人：真实硬件与语音闭环</span></div>
+              <div aria-hidden="true"><b>02</b><span>自研 AI 工具体系：Skill Hub · Camera · 模式切换器 · Codex Meter</span></div>
+              <div aria-hidden="true"><b>03</b><span>商业改款交付：航标灯外观改款 · 落水报警终端 · 智能锁系列</span></div>
+              <div aria-hidden="true"><b>04</b><span>「金种子」项目 · 第一作者 / 项目负责人</span></div>
+              <div aria-hidden="true"><b>05</b><span>优必行（优必选体系）产品组 · 产品实习生 2026.07–11</span></div>
+              <div aria-hidden="true"><b>06</b><span>省级大创 · 成员：微课内容与公众号排版</span></div>
+              <div aria-hidden="true"><b>07</b><span>云尚教育 ID 班助教 · 美院青年协会秘书部部长</span></div>
+              <div aria-hidden="true"><b>08</b><span>本站作品集 · 信息架构 / 数据 / 动效独立实现</span></div>
             </div>
           </div>
         </div>
