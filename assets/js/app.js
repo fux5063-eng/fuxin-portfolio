@@ -141,6 +141,9 @@
      统一粒子引擎（主页背景 + 内页页头共用）
      稳定性：dt 归一化 · 双频正弦漫游（不用逐帧随机）· 网格近邻连线 · resize 缩放不重建
      ============================================================ */
+  /* 指针自检开关：仅当 URL 里带 ptrdebug=1 时打开（用于核对"粒子中心是否落在光标上"） */
+  if (/ptrdebug=1/.test(location.href)) window.__ptrDbg = 1;
+
   function createParticles(cv, opts) {
     if (!cv || !cv.getContext) return null;
     const ctx = cv.getContext('2d');
@@ -161,8 +164,25 @@
        一页 20+ 画布 = 每次鼠标移动触发 20+ 次强制布局（这才是交互延迟的元凶）。
        现改为：全局只挂一套监听；矩形带缓存，滚动/缩放统一换代刷新。 */
     const FX = (window.__fxReg = window.__fxReg || { list: [], bound: false, gen: 0, epoch: 0, dirty: false, moving: false });
-    let myRect = null, myGen = -1, myT = 0, myEpoch = -1;
-    function measure() { myRect = cv.getBoundingClientRect(); myGen = FX.gen; myT = performance.now(); myEpoch = FX.epoch; }
+    let myRect = null, myGen = -1, myT = 0, myEpoch = -1, layW = 0, layH = 0;
+    /* 指针 → 画布局部坐标。注意两件事：
+       ① 元素可能带缩放/透视（卡片悬停倾斜含 scale(1.012)）→ 画布被拉伸，
+          必须按"布局尺寸 ÷ 渲染尺寸"折算，否则离画布原点越远偏得越多（实测卡右侧偏 5~7px）。
+       ② 缩放为 1 时 sx=sy=1，与旧逻辑完全等价。 */
+    function setLocal(px, py, r) {
+      if (!r.width || !r.height) return;
+      const sx = (layW && r.width) ? layW / r.width : 1;
+      const sy = (layH && r.height) ? layH / r.height : 1;
+      const x = (px - r.left) * sx, y = (py - r.top) * sy;
+      mouse.x = x; mouse.y = y;
+      mouse.on = x > -80 && y > -80 && x < (layW || r.width) + 80 && y < (layH || r.height) + 80;
+    }
+    function measure() {
+      myRect = cv.getBoundingClientRect(); myGen = FX.gen; myT = performance.now(); myEpoch = FX.epoch;
+      /* 元素自己动了（入场揭示/悬停抬升）而指针没动时，局部坐标也要跟着重算，
+         否则 rect 更新了、圆心仍停在旧位置（实测残留 9~10px）。 */
+      if (FX.inWindow && FX.px != null) setLocal(FX.px, FX.py, myRect);
+    }
     function nearPointer(m) {
       return FX.px != null && m && FX.px > m.left - 240 && FX.px < m.right + 240 &&
              FX.py > m.top - 240 && FX.py < m.bottom + 240;
@@ -187,17 +207,14 @@
       measure();
     }
     function onPointerMove(e) {
-      const r = rectNow(e);
-      const x = e.clientX - r.left, y = e.clientY - r.top;
-      mouse.x = x; mouse.y = y;
-      mouse.on = x > -80 && y > -80 && x < r.width + 80 && y < r.height + 80;
+      setLocal(e.clientX, e.clientY, rectNow(e));
     }
     function onPointerLeave() { mouse.on = false; mouse.x = -9999; mouse.y = -9999; }
     FX.list.push({ cv: cv, move: onPointerMove, leave: onPointerLeave, frame: onFrame });
     if (!FX.bound) {
       FX.bound = true;
       const fire = e => {
-        FX.px = e.clientX; FX.py = e.clientY;
+        FX.px = e.clientX; FX.py = e.clientY; FX.inWindow = true;
         for (let i = 0; i < FX.list.length; i++) {
           const it = FX.list[i];
           if (it.cv.isConnected) it.move(e);
@@ -206,6 +223,7 @@
       window.addEventListener('pointermove', fire, { passive: true });
       window.addEventListener('pointerdown', fire, { passive: true });
       document.addEventListener('pointerleave', () => {
+        FX.inWindow = false;
         for (let i = 0; i < FX.list.length; i++) { if (FX.list[i].cv.isConnected) FX.list[i].leave(); }
       });
       const dirty = () => { FX.gen++; FX.list = FX.list.filter(it => it.cv.isConnected); };
@@ -274,6 +292,7 @@
 
     function size(rebuild) {
       const pw = Math.max(1, cv.clientWidth), phh = Math.max(1, cv.clientHeight);
+      layW = pw; layH = phh;      /* 布局尺寸（未受 transform 影响），setLocal 折算缩放用 */
       const ow = W, oh = H;
       W = pw; H = phh;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
@@ -379,6 +398,17 @@
           for (let si = 0; si < seg.length; si += 4) { ctx.moveTo(seg[si], seg[si + 1]); ctx.lineTo(seg[si + 2], seg[si + 3]); }
           ctx.stroke();
         }
+      }
+      /* 指针自检标尺（默认不画）：红十字中心 = 引擎认定的指针位置，用它和你的光标尖端比对 */
+      if (window.__ptrDbg && mouse.on) {
+        const dbx = Math.round(mouse.x), dby = Math.round(mouse.y);
+        ctx.strokeStyle = '#ff2222'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(dbx - 15, dby); ctx.lineTo(dbx - 3, dby);
+        ctx.moveTo(dbx + 3, dby); ctx.lineTo(dbx + 15, dby);
+        ctx.moveTo(dbx, dby - 15); ctx.lineTo(dbx, dby - 3);
+        ctx.moveTo(dbx, dby + 3); ctx.lineTo(dbx, dby + 15);
+        ctx.stroke();
       }
       for (const p of parts) {
         ctx.beginPath();
