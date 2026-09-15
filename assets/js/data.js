@@ -514,7 +514,7 @@ const DIRECTIONS = [
         tags: ['造型与形态', '模型迭代', '视觉与版式'],
         summary: '围绕穿戴、识别与海上使用场景，完成多方向造型探索、模型迭代与视觉提案。',
         facts: [['角色', '多方向造型探索与对比 · 模型迭代 · 提案'], ['形式', '匿名化商业项目（客户信息与未公开内容已移除）'], ['阶段', '三组形态方向均为阶段性探索']],
-        hero: { f: 'assets/img/cover/wateralarm.webp', cap: '穿戴与落水识别场景表达（已匿名化）' },
+        hero: { f: 'assets/img/cover/wateralarm.jpg', cap: '穿戴与落水识别场景表达（已匿名化）' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
