@@ -160,9 +160,9 @@
        性能要点：原来每个画布各挂一套 window 监听、事件里再 getBoundingClientRect()，
        一页 20+ 画布 = 每次鼠标移动触发 20+ 次强制布局（这才是交互延迟的元凶）。
        现改为：全局只挂一套监听；矩形带缓存，滚动/缩放统一换代刷新。 */
-    const FX = (window.__fxReg = window.__fxReg || { list: [], bound: false, gen: 0 });
-    let myRect = null, myGen = -1, myT = 0;
-    function measure() { myRect = cv.getBoundingClientRect(); myGen = FX.gen; myT = performance.now(); }
+    const FX = (window.__fxReg = window.__fxReg || { list: [], bound: false, gen: 0, epoch: 0, dirty: false, moving: false });
+    let myRect = null, myGen = -1, myT = 0, myEpoch = -1;
+    function measure() { myRect = cv.getBoundingClientRect(); myGen = FX.gen; myT = performance.now(); myEpoch = FX.epoch; }
     function nearPointer(m) {
       return FX.px != null && m && FX.px > m.left - 240 && FX.px < m.right + 240 &&
              FX.py > m.top - 240 && FX.py < m.bottom + 240;
@@ -175,13 +175,16 @@
       if (e && performance.now() - myT > 90 && nearPointer(myRect)) measure();
       return myRect;
     }
-    /* 每帧兜底：平滑位移在指针停下后还会继续走一小段（实测残留 ~11px）→
-       指针在附近或悬停中时逐帧校正，使"引擎认的指针位置"始终等于真实指针位置。 */
+    /* 逐帧兜底：只在"有位移发生"的那些帧里工作（FX.epoch 由 style 变更/transition/scroll 推进）。
+       位移在指针停下后还会继续走一小段（实测残留 ~11px），所以运动结束后还要补测一帧；
+       完全静止时 myEpoch === FX.epoch，这里直接 return —— 一次布局都不读，这是"不卡"的关键。 */
     function onFrame() {
       const t = performance.now();
       if (myGen !== FX.gen) { measure(); return; }
-      if (!myRect || t - myT < 40) return;
-      if (mouse.on || nearPointer(myRect)) { myRect = cv.getBoundingClientRect(); myT = t; }
+      if (!myRect || myEpoch === FX.epoch) return;
+      if (!(mouse.on || nearPointer(myRect))) return;
+      if (FX.moving && t - myT < 40) return;   /* 运动中限频；静止后的收尾帧不限频 */
+      measure();
     }
     function onPointerMove(e) {
       const r = rectNow(e);
@@ -208,6 +211,16 @@
       const dirty = () => { FX.gen++; FX.list = FX.list.filter(it => it.cv.isConnected); };
       window.addEventListener('scroll', dirty, { passive: true });
       window.addEventListener('resize', dirty, { passive: true });
+      /* 位移来源不止 scroll：hover 抬升/淡入是 CSS transition，卡片倾斜与入场揭示是 JS 逐帧写 style。
+         这些都不触发 scroll/resize，所以统一标记为"有位移"，由渲染循环推进代次（见 runShared）。
+         moving() 只是置一个布尔位，开销可忽略。 */
+      const moving = () => { FX.dirty = true; };
+      window.addEventListener('scroll', moving, { passive: true });
+      document.addEventListener('transitionrun', moving, true);
+      document.addEventListener('transitionstart', moving, true);
+      document.addEventListener('animationstart', moving, true);
+      /* 注：这里刻意不用 MutationObserver —— 它要为子树里每一次 style 写入记账，
+         滚动时每帧十几次写入会变成额外开销。改由真正写位移的代码直接打标记（见 revealPass / 卡片倾斜）。 */
     }
 
     /* 共享动画循环：原来每个画布各跑一个 requestAnimationFrame（一页十几个循环），
@@ -225,7 +238,10 @@
         t.tick(ts);
       }
       if (live) {
-        /* 指针附近的画布逐帧校正 rect（见 onFrame） */
+        /* 运动代次：本帧有位移事件 → epoch+1；（刚停下来）下一帧再推一次，给各画布做收尾校正；
+           其余帧 epoch 不动 ⇒ 附近的画布也一次布局都不读。 */
+        if (FX.dirty) { FX.epoch++; FX.dirty = false; FX.moving = true; }
+        else if (FX.moving) { FX.epoch++; FX.moving = false; }
         for (let k = 0; k < FX.list.length; k++) {
           const it = FX.list[k];
           if (it.frame && it.cv.isConnected) it.frame();
@@ -1352,6 +1368,7 @@
         el.style.transition = 'opacity .12s linear, transform .12s linear';
         el.style.opacity = p.toFixed(3);
         el.style.transform = 'translateY(' + ((1 - p) * 68).toFixed(1) + 'px)';
+        if (window.__fxReg) window.__fxReg.dirty = true;   /* 有位移发生 → 让粒子层本帧校正指针坐标 */
         rest.push(el);
       }
     }
@@ -1449,6 +1466,7 @@
           el.style.setProperty('--mx', (px * 2).toFixed(3));
           el.style.setProperty('--my', (py * 2).toFixed(3));
           el.style.transform = 'perspective(1000px) rotateX(' + (-py * ky).toFixed(2) + 'deg) rotateY(' + (px * kx).toFixed(2) + 'deg) translateY(-' + (lift * e).toFixed(2) + 'px) scale(' + (1 + .012 * e).toFixed(4) + ')';
+          if (window.__fxReg) window.__fxReg.dirty = true;   /* 倾斜也在改位移 → 同上 */
           if (ramp < 1) tick();                             // 入场期间自驱动，不依赖鼠标是否移动
         };
         const onEnter = e => {
