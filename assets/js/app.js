@@ -1113,8 +1113,8 @@
       const grid = anySmall ? 'figs--small' : (list.length > 1 ? 'figs--grid' : 'figs--one');
 
       const gs = anySmall ? '(max-width:1000px) 45vw, 240px'
-        : (list.length > 1 ? '(max-width:1000px) 100vw, 47vw' : '(max-width:1000px) 100vw, 66vw');
-      const wide = '(max-width:1000px) 100vw, 66vw';
+        : (list.length > 1 ? '(max-width:1000px) 100vw, 390px' : '(max-width:1000px) 100vw, 1180px');
+      const wide = '(max-width:1000px) 100vw, 790px';
       return `<div class="figs ${grid}">${list.map(f => fig(f, null, f.wide ? wide : gs)).join('')}</div>`;
     };
 
@@ -1141,11 +1141,11 @@
 
     const hero = p.hero ? `
       <figure class="heroFig shot">
-        <img src="${p.hero.f}"${vattrs(p.hero.f, '(max-width:1000px) 100vw, 66vw')} alt="${esc(p.hero.cap || p.title)}" loading="eager" fetchpriority="high" decoding="async">
+        <img src="${p.hero.f}"${vattrs(p.hero.f, '(max-width:1000px) 100vw, 1180px')} alt="${esc(p.hero.cap || p.title)}" loading="eager" fetchpriority="high" decoding="async">
         ${p.hero.cap ? `<figcaption>${esc(p.hero.cap)}</figcaption>` : ''}
       </figure>` : '';
     const plates = (p.plates && p.plates.length)
-      ? `<div class="plates">${p.plates.map(f => fig(f, 'fig--plate', '(max-width:1000px) 100vw, 66vw')).join('')}</div>` : '';
+      ? `<div class="plates">${p.plates.map(f => fig(f, 'fig--plate', '(max-width:1000px) 100vw, 1180px')).join('')}</div>` : '';
     /* 老项目：整页图仍作为图集放在最后 */
     const legacy = (!p.sections && p.images && p.images.length)
       ? `<div class="plates" style="margin-top:26px">${p.images.map(f => fig({ f }, 'fig--plate')).join('')}</div>` : '';
@@ -1759,6 +1759,7 @@ function imgv(p) { return (typeof IMGV !== 'undefined' && IMGV[p]) || null; }
 function vsrcset(p) {
   var v = imgv(p); if (!v) return '';
   var out = [];
+  if (v[3]) out.push(p.replace(/\.webp$/i, '-xs.webp') + ' ' + v[3] + 'w');
   if (v[1]) out.push(p.replace(/\.webp$/i, '-sm.webp') + ' ' + v[1] + 'w');
   if (v[2]) out.push(p.replace(/\.webp$/i, '-md.webp') + ' ' + v[2] + 'w');
   out.push(p + ' ' + v[0] + 'w');
