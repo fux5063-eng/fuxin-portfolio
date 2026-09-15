@@ -4,7 +4,6 @@
   const app = document.getElementById('app');
   const body = document.body;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = window.matchMedia('(pointer:fine)').matches;
 
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const dir = id => DIRECTIONS.find(d => d.id === id);
@@ -725,9 +724,8 @@
   }
 
   /* 卡片交互 / 方向卡流光：模块作用域占位
-     （真正的实现定义在下面 if (fine) 块内 —— 那里是自定义光标的分支，
-       但 render() 需要调用它们，所以用占位变量把引用提到模块作用域，
-       避免"块作用域函数在块外不可见"导致整页渲染中断） */
+     （render() 需要调用它们，所以用占位变量把引用提到模块作用域，
+      避免"块作用域函数在块外不可见"导致整页渲染中断） */
   let initCardFX = () => 0;
   let gateFlowInit = () => {};
   let mountGateFX = () => 0;
@@ -1363,33 +1361,12 @@
     const solid = window.scrollY > 40 || !onHome;
     body.classList.toggle('nav-solid', solid);
     body.classList.toggle('nav-dark', onHome && !solid);
-    body.classList.toggle('on-ink', !(onHome && !solid));
   }
   window.addEventListener('scroll', updateNav, { passive: true });
 
   /* ================= 动态背景（首页） ================= */
 
-  /* ================= 光标 / 倾斜 / 磁吸 ================= */
-  if (fine) {
-    const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    (function loop() {
-      rx += (mx - rx) * .18; ry += (my - ry) * .18;
-      dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
-      ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
-      requestAnimationFrame(loop);
-    })();
-    document.addEventListener('mouseover', e => {
-      const t = e.target.closest('a,button,.gate,.card,.shot,.copy-link,input');
-      body.classList.toggle('cur-hover', !!t);
-    });
-  } else {
-    document.getElementById('cur-dot')?.remove();
-    document.getElementById('cur-ring')?.remove();
-  }
-
-  {   /* 粒子层对所有设备挂载（手机也能看到）；仅"自定义光标"仍留在 fine 分支里 */
+  {   /* 粒子层：所有设备都挂载（手机也能看到）*/
     // 方向卡内的粒子层（与主页同一引擎 → 自动获得指针交互）
     let gateFXs = [];
 
