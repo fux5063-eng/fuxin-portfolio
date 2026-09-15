@@ -814,9 +814,14 @@
         </div>
         <div class="hero__panel fade-in">
           <div class="hero__facts">
-            <div><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
-            <div><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
-            <div><b>03</b><span>商业改款：航标灯外观改款、落水报警终端与智能锁系列</span></div>
+            <div class="facts__track">
+              <div><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
+              <div><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
+              <div><b>03</b><span>商业改款：航标灯外观改款、落水报警终端与智能锁系列</span></div>
+              <div aria-hidden="true"><b>01</b><span>进行中的毕业设计：桌面陪伴型机器人（真实硬件 + 语音闭环）</span></div>
+              <div aria-hidden="true"><b>02</b><span>自研 AI 工具：Skill Hub / Camera / 模式切换器 / Codex Meter</span></div>
+              <div aria-hidden="true"><b>03</b><span>商业改款：航标灯外观改款、落水报警终端与智能锁系列</span></div>
+            </div>
           </div>
         </div>
       </div>
