@@ -786,8 +786,8 @@
           <h3>${esc(p.title)}</h3>
           <p>${esc(shortText(p.summary, 42))}</p>
           <span class="pick__go">看完整案例 <i></i></span>
+          <div class="pick__tags">${(p.tags || []).slice(0, 3).map(t => `<span>${esc(t)}</span>`).join('')}</div>
         </div>
-        <div class="pick__tags">${(p.tags || []).slice(0, 3).map(t => `<span>${esc(t)}</span>`).join('')}</div>
       </a>`;
     };
     const picks = PICKS.map((k, i) => pickCard(k, i)).join('');

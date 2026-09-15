@@ -204,7 +204,7 @@ body:not(.on-home) #app{padding-top:66px}
 .card__body{padding:16px 17px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
 .card__body h3{font-size:17px;line-height:1.35}
 /* 描述固定两行高度：不同项目描述长短不一，否则卡内节奏会错开 */
-.card__body p{font-size:13.5px;color:var(--ink-2);margin:0;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(2 * 1.6em)}
+.card__body p{font-size:13.5px;color:var(--ink-2);margin:0;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;min-height:calc(2 * 1.6em)}
 .card__foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .tag{display:inline-block;font-size:11.5px;color:var(--ink-2);background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
@@ -833,13 +833,13 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 .pick__body{padding:16px 18px 18px}
 .pick__eyebrow{font:700 11px/1 ui-monospace,monospace;letter-spacing:.16em;color:var(--accent-d);text-transform:uppercase}
 .pick h3{margin:9px 0 7px;font-size:19px;letter-spacing:-.02em}
-.pick p{margin:0;font-size:14.2px;line-height:1.78;color:var(--muted)}
+.pick p{margin:0;font-size:14.2px;line-height:1.78;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;min-height:calc(2*1.78em)}
 .pick__go{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:13.4px;font-weight:700;color:var(--ink)}
 .pick__go i{width:18px;height:1px;background:currentColor;transition:width .4s cubic-bezier(.2,.7,.3,1)}
 .pick:hover .pick__go i{width:30px}
-.pick__tags{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:72%}
-.pick__tags span{font-size:11px;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.9);
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(14,18,22,.06)}
+.pick__tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.pick__tags span{font-size:11px;padding:4px 10px;border-radius:999px;background:var(--bg-2);
+  border:1px solid var(--line);color:var(--ink-2)}
 @media(max-width:820px){.picks{grid-template-columns:1fr}}
 .en-label b{color:var(--accent-d);margin-right:9px;font-weight:800}
 /* 动效提速：揭示时长 0.7s→0.55s，卷帘 1s→0.8s */
