@@ -1,7 +1,7 @@
 /* 站点内容数据 —— 全部取自本人作品集（2026-09-13 终审版）与 career/master-profile.md，未新增未经验证的事实 */
 const SITE = {
   /* 低分辨率图片清单（渲染时按原尺寸显示，避免拉伸变糊） */
-  smallImgs: ["assets/img/case/id/doggie-bg-1.jpg", "assets/img/case/id/doggie-bg-1.webp", "assets/img/case/id/doggie-bg-2.jpg", "assets/img/case/id/doggie-bg-2.webp", "assets/img/case/id/doggie-bg-3.jpg", "assets/img/case/id/doggie-bg-3.webp", "assets/img/case/id/doggie-bg-4.jpg", "assets/img/case/id/doggie-bg-4.webp"],
+  smallImgs: ["assets/img/case/id/doggie-ref-1.jpg", "assets/img/case/id/doggie-ref-1.webp", "assets/img/case/id/doggie-ref-2.jpg", "assets/img/case/id/doggie-ref-2.webp", "assets/img/case/id/doggie-ref-3.jpg", "assets/img/case/id/doggie-ref-3.webp", "assets/img/case/id/doggie-ref-4.jpg", "assets/img/case/id/doggie-ref-4.webp"],
 
   name: '付昕', en: 'FU XIN',
   role: '产品设计 · 工业设计 · AI 产品',
@@ -406,10 +406,10 @@ const DIRECTIONS = [
             ],
             quote: ['设计机会', '把互动与随手清洁变成结构上顺手就能完成的动作，而不是额外多带一件东西。'],
             figures: [
-              { f: 'assets/img/case/id/doggie-bg-1.webp', cap: '使用场景：遛狗与互动' },
-              { f: 'assets/img/case/id/doggie-bg-2.webp', cap: '现有产品形态参考' },
-              { f: 'assets/img/case/id/doggie-bg-3.webp', cap: '手持方式与材质' },
-              { f: 'assets/img/case/id/doggie-bg-4.webp', cap: '功能细节参考' }
+              { f: 'assets/img/case/id/doggie-ref-1.webp', cap: '使用场景：遛狗与互动' },
+              { f: 'assets/img/case/id/doggie-ref-2.webp', cap: '现有产品形态参考' },
+              { f: 'assets/img/case/id/doggie-ref-3.webp', cap: '手持方式与材质' },
+              { f: 'assets/img/case/id/doggie-ref-4.webp', cap: '功能细节参考' }
             ]
           },
           {
