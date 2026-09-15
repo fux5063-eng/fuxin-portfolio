@@ -161,22 +161,40 @@
        一页 20+ 画布 = 每次鼠标移动触发 20+ 次强制布局（这才是交互延迟的元凶）。
        现改为：全局只挂一套监听；矩形带缓存，滚动/缩放统一换代刷新。 */
     const FX = (window.__fxReg = window.__fxReg || { list: [], bound: false, gen: 0 });
-    let myRect = null, myGen = -1;
-    function rectNow() {
-      if (myGen !== FX.gen || !myRect) { myRect = cv.getBoundingClientRect(); myGen = FX.gen; }
+    let myRect = null, myGen = -1, myT = 0;
+    function measure() { myRect = cv.getBoundingClientRect(); myGen = FX.gen; myT = performance.now(); }
+    function nearPointer(m) {
+      return FX.px != null && m && FX.px > m.left - 240 && FX.px < m.right + 240 &&
+             FX.py > m.top - 240 && FX.py < m.bottom + 240;
+    }
+    function rectNow(e) {
+      if (myGen !== FX.gen || !myRect) { measure(); return myRect; }
+      /* 入场揭示(.rv)/滚动驱动位移/悬停抬升只改 transform，不触发 scroll/resize，
+         光靠"换代刷新"的缓存会一直偏（实测偏到 70px = 用户说的"粒子中心不在鼠标上"）。
+         指针靠近时才按 90ms 限频重测一次；远处画布一次都不测。 */
+      if (e && performance.now() - myT > 90 && nearPointer(myRect)) measure();
       return myRect;
     }
+    /* 每帧兜底：平滑位移在指针停下后还会继续走一小段（实测残留 ~11px）→
+       指针在附近或悬停中时逐帧校正，使"引擎认的指针位置"始终等于真实指针位置。 */
+    function onFrame() {
+      const t = performance.now();
+      if (myGen !== FX.gen) { measure(); return; }
+      if (!myRect || t - myT < 40) return;
+      if (mouse.on || nearPointer(myRect)) { myRect = cv.getBoundingClientRect(); myT = t; }
+    }
     function onPointerMove(e) {
-      const r = rectNow();
+      const r = rectNow(e);
       const x = e.clientX - r.left, y = e.clientY - r.top;
       mouse.x = x; mouse.y = y;
       mouse.on = x > -80 && y > -80 && x < r.width + 80 && y < r.height + 80;
     }
     function onPointerLeave() { mouse.on = false; mouse.x = -9999; mouse.y = -9999; }
-    FX.list.push({ cv: cv, move: onPointerMove, leave: onPointerLeave });
+    FX.list.push({ cv: cv, move: onPointerMove, leave: onPointerLeave, frame: onFrame });
     if (!FX.bound) {
       FX.bound = true;
       const fire = e => {
+        FX.px = e.clientX; FX.py = e.clientY;
         for (let i = 0; i < FX.list.length; i++) {
           const it = FX.list[i];
           if (it.cv.isConnected) it.move(e);
@@ -206,7 +224,14 @@
         live = true;
         t.tick(ts);
       }
-      if (live) scheduleShared();
+      if (live) {
+        /* 指针附近的画布逐帧校正 rect（见 onFrame） */
+        for (let k = 0; k < FX.list.length; k++) {
+          const it = FX.list[k];
+          if (it.frame && it.cv.isConnected) it.frame();
+        }
+        scheduleShared();
+      }
     }
 
     function build() {
