@@ -631,9 +631,9 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
 @keyframes scrollHint{0%,100%{opacity:.35;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
 
 /* 分级揭示（信息随滚动/交互出现，起强调作用） */
-.rv{opacity:0;transform:translateY(18px)}
-.rv.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
-.rv-em{opacity:0;transform:translateY(26px)}
+.rv{opacity:0;transform:translateY(38px)}
+.rv.in{opacity:1;transform:none;transition:opacity .72s cubic-bezier(.2,.7,.3,1),transform .72s cubic-bezier(.2,.7,.3,1)}
+.rv-em{opacity:0;transform:translateY(34px)}
 .rv-em.in{opacity:1;transform:none;transition:opacity .48s cubic-bezier(.2,.7,.3,1),transform .48s cubic-bezier(.2,.7,.3,1)}
 /* 强调：小标题的下划线在进入视口时拉开 */
 .cs__main h2{position:relative;padding-bottom:12px}

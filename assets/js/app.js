@@ -1208,10 +1208,12 @@
 
   /* ================= 滚动驱动的内容揭示（逐块滑入） ================= */
   let pendingReveal = [];
+  let shownReveal = [];
   const REVEAL_SEL = '.rv,.rv-em,.cs__lead,.cs__list,.cs__more,.fig,.tabs,.cmp,.m3d,.phero__meta,.phero__guide,.phero__title,.phero__sub,.cs__sec';
 
   function revealNow() {
     pendingReveal = [...app.querySelectorAll(REVEAL_SEL)];
+    shownReveal = [];
     const cnt = new Map();
     pendingReveal.forEach(el => {
       const p = el.parentElement || app;
@@ -1223,13 +1225,23 @@
   }
 
   function revealPass() {
-    if (!pendingReveal.length) return;
+    if (!pendingReveal.length && !shownReveal.length) return;
     const vh = window.innerHeight;
+    /* ① 回收：完全离开视口（无论是上方还是下方）→ 撤掉 .in 放回待出现队列，
+       再次进入视口时重新播放入场动画（上下滚都有"出现"的感觉） */
+    const keep = [];
+    for (const el of shownReveal) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -60 || r.top > vh + 60) { el.classList.remove('in'); pendingReveal.push(el); }
+      else keep.push(el);
+    }
+    shownReveal = keep;
+    /* ② 出现：进入视口即揭示（只对尚未出现的元素） */
     const rest = [];
     for (const el of pendingReveal) {
       const r = el.getBoundingClientRect();
-      const show = (r.width === 0 && r.height === 0) || r.top < vh * 0.94;
-      if (show) el.classList.add('in'); else rest.push(el);
+      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.bottom > 0);
+      if (show) { el.classList.add('in'); shownReveal.push(el); } else rest.push(el);
     }
     pendingReveal = rest;
   }
