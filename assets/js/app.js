@@ -1704,11 +1704,12 @@ var BGFX = {                    /* ← 全部旋钮集中在这里 */
   density: 8000,                /* 每多少 px² 一颗（越小越密） */
   nMin: 44, nMax: 190,          /* 一屏粒子上/下限 */
   dotRGB: '17,18,20',           /* 点色（反色：深灰） */
+  linkRGB: '232,89,12',         /* 连线色（品牌橙：细细的橙色线） */
   dotA: [0.20, 0.40],           /* 静态透明度：淡而可见 →「若隐若现」 */
   dotR: [0.85, 1.8],            /* 点半径区间 px */
   hot: 0.12, hotRGB: '196,88,26', hotA: 0.24,   /* 少量暖色点缀比例/色/透明度 */
-  link: 120, linkA: 0.07,       /* 近邻连线的距离与最亮透明度（0 = 不连线） */
-  pr: 200, prA: 0.26,           /* 光标柔光/提亮半径 、 与光标连线的透明度 */
+  link: 120, linkA: 0.14,       /* 近邻连线：距离 / 最亮透明度（橙色细线） */
+  pr: 200, prA: 0.30,           /* 光标柔光/提亮半径 、 与光标连线的透明度 */
   prLink: 130, prLinks: 4,      /* 光标当作"网里的一个点"：只连最近的 4 颗、限 130px 内 */
   glowRGB: '232,89,12', glowA: 0,               /* 光标柔光：默认关（它被卡片切断时会露馅）；想开就设 .05 */
   pushR: 85, pushF: 0.30,       /* 光标推开半径 / 力度 */
@@ -1891,7 +1892,7 @@ function bgDraw(reg, ts, dt) {
     ctx.lineWidth = 1;
     for (var m = 0; m < LB; m++) {
       if (!bk[m].length) continue;
-      ctx.strokeStyle = 'rgba(' + BGFX.dotRGB + ',' + (((m + .5) / LB) * BGFX.linkA).toFixed(3) + ')';
+      ctx.strokeStyle = 'rgba(' + BGFX.linkRGB + ',' + (((m + .5) / LB) * BGFX.linkA).toFixed(3) + ')';
       ctx.beginPath();
       for (var s2 = 0; s2 < bk[m].length; s2 += 4) { ctx.moveTo(bk[m][s2], bk[m][s2 + 1]); ctx.lineTo(bk[m][s2 + 2], bk[m][s2 + 3]); }
       ctx.stroke();
@@ -1918,7 +1919,7 @@ function bgDraw(reg, ts, dt) {
     cand.sort(function (u1, u2) { return u1[0] - u2[0]; });
     var M = Math.min(cand.length, BGFX.prLinks || 4);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(' + BGFX.dotRGB + ',' + BGFX.prA.toFixed(3) + ')';
+    ctx.strokeStyle = 'rgba(' + BGFX.linkRGB + ',' + BGFX.prA.toFixed(3) + ')';
     ctx.beginPath();
     for (var si = 0; si < M; si++) {
       var v = parts[cand[si][1]];
