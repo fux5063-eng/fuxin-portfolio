@@ -78,11 +78,13 @@ body.nav-solid .nav{background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
 .hero__meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:28px;font-size:12.8px;color:rgba(255,255,255,.55)}
 .hero__meta b{color:rgba(255,255,255,.82);font-weight:600}
 .hero__panel{display:grid;gap:10px}
-.hero__facts{border-left:1px solid rgba(255,255,255,.16);padding-left:20px;height:222px;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16px,#000 calc(100% - 34px),transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 16px,#000 calc(100% - 34px),transparent 100%)}
-.facts__track{display:grid;animation:factsRoll 32s linear infinite}
-.facts__track > div{display:grid;grid-template-columns:66px 1fr;gap:12px;align-items:baseline;margin-bottom:13px}
-@keyframes factsRoll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-@media (prefers-reduced-motion:reduce){.facts__track{animation:none}}
+.hero__facts{display:grid;gap:13px;border-left:1px solid rgba(255,255,255,.16);padding-left:20px;animation:factsFloat 7s ease-in-out infinite}
+.hero__facts > div{display:grid;grid-template-columns:66px 1fr;gap:12px;align-items:baseline;animation:factsItem 6s ease-in-out infinite}
+.hero__facts > div:nth-child(2){animation-delay:.8s}
+.hero__facts > div:nth-child(3){animation-delay:1.6s}
+@keyframes factsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes factsItem{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.hero__facts,.hero__facts > div{animation:none}}
 .hero__facts b{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
 .hero__facts span{font-size:13px;color:rgba(255,255,255,.68);line-height:1.6}
 body:not(.on-home) #app{padding-top:66px}
