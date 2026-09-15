@@ -617,13 +617,19 @@ body.on-home.nav-dark .nav a.on,body.nav-dark .nav a.on{color:#fff}
   border-radius:999px;padding:8px 13px;font-size:12.6px;color:#c8d2dc;transition:all .22s ease}
 .phero__chip b{color:#fff;font-weight:700;margin-right:6px}
 .phero__chip:hover{border-color:rgba(255,154,99,.55);background:rgba(255,154,99,.12);transform:translateY(-2px)}
-/* ==== 返回上一级（页头胶囊）：与全站按钮语言一致，常态描边、悬停实心白 ==== */
-.phero__back{position:relative;z-index:3;display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;
-  padding:12px 21px 12px 17px;border-radius:999px;border:1px solid #fff;
-  background:#fff;box-shadow:0 10px 26px rgba(0,0,0,.26);
-  font:700 14.6px/1 inherit;color:#14181d;letter-spacing:.01em;
+/* ==== 返回上一级（页头胶囊）：改用首页三颗入口按钮的同一套语言 —— 常态透明描边，悬停实心白 + 扫光 ==== */
+.phero__back{position:relative;z-index:3;overflow:hidden;display:inline-flex;align-items:center;gap:9px;margin-bottom:26px;
+  padding:12px 22px;border-radius:999px;border:1px solid rgba(255,255,255,.34);
+  background:transparent;color:#fff;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  font:600 14px/1 inherit;
   transition:background .26s,border-color .26s,color .26s,box-shadow .26s,transform .26s}
-.phero__back:hover{background:#0f1216;border-color:#0f1216;color:#fff;transform:translateY(-2px)}
+.phero__back:hover{background:#fff;border-color:#fff;color:#0e1216;transform:translateY(-1px);animation:btnFlick .46s ease 1}
+.phero__back::after{content:'';position:absolute;top:0;bottom:0;left:0;width:42%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:translateX(-170%) skewX(-14deg);transition:transform .62s cubic-bezier(.22,.7,.3,1);pointer-events:none}
+.phero__back:hover::after{transform:translateX(260%) skewX(-14deg)}
+.phero__back:hover .btn__ar{transform:translateX(-4px)}
+@media (prefers-reduced-motion:reduce){.phero__back:hover{animation:none}.phero__back::after{display:none}}
 .phero__scroll{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:2;
   color:#77828e;font:600 10.5px/1 ui-monospace,monospace;letter-spacing:.22em;
   display:flex;flex-direction:column;align-items:center;gap:7px}

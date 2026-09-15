@@ -411,7 +411,7 @@
     <header class="phero">
       <canvas class="phero__fx" aria-hidden="true"></canvas>
       <div class="wrap">
-        ${o.backHref === false ? '' : `<a class="phero__back" href="${o.backHref || '#/'}">← ${esc(o.backText || '返回首页')}</a>`}
+        ${o.backHref === false ? '' : `<a class="phero__back" href="${o.backHref || '#/'}"><span class="btn__ar">←</span>${esc(o.backText || '返回首页')}</a>`}
         <div class="phero__en">${esc(o.en || '')}</div>
         <h1 class="phero__title rv-em">${esc(o.title || '')}</h1>
         ${o.sub ? `<p class="phero__sub rv-em" style="transition-delay:.10s">${esc(o.sub)}</p>` : ''}
