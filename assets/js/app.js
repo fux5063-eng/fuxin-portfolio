@@ -883,10 +883,12 @@
     <section class="contact" id="contact">
       <div class="wrap">
         <div class="contact__grid">
-          <div>
+          <div class="contact__top">
             <div class="en-label" style="color:rgba(255,255,255,.55)">CONTACT</div>
             <h2>聊聊产品、设计或 AI 工具</h2>
             <p class="contact__lead">2027 届校招，意向城市深圳、广州。工业设计与 AI 产品两个方向都可以聊；需要完整作品集或某个项目的更多过程记录，邮件或微信找我就好。</p>
+          </div>
+          <div>
             <div class="contact__list">
               <div class="crow">
                 <i>✉</i>
