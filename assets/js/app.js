@@ -1753,6 +1753,27 @@ function bgBuild(reg) {
   return a;
 }
 
+/* 宿主顶部若有不透明的深色页头（如 .phero），粒子层要从它下面开始——
+   否则粒子/连线被那块深色盖住，看起来像"断掉的线"（站主问过"这断开的是啥"）。
+   返回：相对宿主顶部的起始偏移 px（顶部没有深色块时返回 0）。 */
+function bgInset(host) {
+  var ins = 0, hr = host.getBoundingClientRect(), kids = host.children;
+  for (var i = 0; i < kids.length; i++) {
+    var k = kids[i];
+    if (k.classList && k.classList.contains('bgfx')) continue;
+    var bg = window.getComputedStyle(k).backgroundColor || '';
+    var m = /rgba?\(([^)]+)\)/.exec(bg);
+    if (!m) break;
+    var v = m[1].split(',').map(function (x) { return parseFloat(x); });
+    var a = v.length > 3 ? v[3] : 1;
+    var lum = v[0] * .299 + v[1] * .587 + v[2] * .114;
+    if (a < .85 || lum > 150) break;              /* 透明/浅色 → 白底内容区开始 */
+    ins = k.getBoundingClientRect().bottom - hr.top;
+  }
+  if (ins > 0) ins += 70;                         /* 页头下方那条渐隐带也一起让开 */
+  return Math.max(0, Math.min(ins, host.clientHeight - 90));
+}
+
 function bgSize(reg) {
   var W = Math.max(1, reg.host.clientWidth), H = Math.max(1, reg.bandH);
   if (reg.W === W && reg.H === H) return false;
@@ -1811,7 +1832,7 @@ function bgDraw(reg, ts, dt) {
         for (var a1 = 0; a1 < arr.length; a1++) {
           for (var b1 = same ? a1 + 1 : 0; b1 < nb.length; b1++) {
             var A = arr[a1], B = nb[b1], ddx = A.x - B.x, ddy = A.y - B.y, dd = ddx * ddx + ddy * ddy;
-            if (dd < L2) {
+            if (dd < L2 && A.x >= 0 && A.x <= W && B.x >= 0 && B.x <= W) {   /* 端点出画布就不连，免得出现断线 */
               var tt = 1 - Math.sqrt(dd) / BGFX.link, bi = (tt * LB) | 0;
               bk[bi < 0 ? 0 : (bi > LB - 1 ? LB - 1 : bi)].push(A.x, A.y, B.x, B.y);
             }
@@ -1884,8 +1905,10 @@ function bgTick(ts) {
   for (i = 0; i < L.length; i++) {
     var reg = L[i], hr = rects[i];
     if (!hr || hr.height < 120 || hr.bottom < -40 || hr.top > vh + 40 || hr.width < 80) continue;
-    reg.bandH = Math.min(hr.height, vh);
-    var top = Math.max(0, Math.min(hr.height - reg.bandH, -hr.top));
+    if (reg.insetH !== hr.height || reg.inset === undefined) { reg.inset = bgInset(reg.host); reg.insetH = hr.height; }
+    var ins = reg.inset || 0;
+    reg.bandH = Math.min(hr.height - ins, vh);
+    var top = Math.max(ins, Math.min(hr.height - reg.bandH, -hr.top));
     if (reg.top !== top) { reg.cv.style.transform = 'translate3d(0,' + top + 'px,0)'; reg.top = top; }
     if (!reg.on) { reg.on = true; reg.cv.classList.add('on'); }
     bgSize(reg);
