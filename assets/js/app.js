@@ -1231,7 +1231,7 @@
     const keep = [];
     for (const el of shownReveal) {
       const r = el.getBoundingClientRect();
-      if (r.bottom < 100 || r.top > vh) { el.classList.remove('in'); pendingReveal.push(el); }
+      if (r.bottom < 100 || r.top > vh) { el.classList.remove('in'); el.style.transition = ''; el.style.opacity = ''; el.style.transform = ''; pendingReveal.push(el); }
       else keep.push(el);
     }
     shownReveal = keep;
@@ -1239,8 +1239,22 @@
     const rest = [];
     for (const el of pendingReveal) {
       const r = el.getBoundingClientRect();
-      const show = (r.width === 0 && r.height === 0) || (r.top < vh * 0.94 && r.top > -2);
-      if (show) { el.classList.add('in'); shownReveal.push(el); } else rest.push(el);
+      let p;
+      if (r.width === 0 && r.height === 0) { el.classList.add('in'); shownReveal.push(el); continue; }
+      if (r.top < 0) p = r.bottom / Math.max(1, r.height * 0.5);
+      else p = (vh - r.top) / (vh * 0.4);
+      p = Math.max(0, Math.min(1, p));
+      if (p <= 0) { rest.push(el); continue; }
+      if (p >= 1) {
+        el.style.transition = ''; el.style.opacity = ''; el.style.transform = '';
+        el.classList.add('in'); shownReveal.push(el);
+      } else {
+        el.classList.remove('in');
+        el.style.transition = 'opacity .12s linear, transform .12s linear';
+        el.style.opacity = p.toFixed(3);
+        el.style.transform = 'translateY(' + ((1 - p) * 68).toFixed(1) + 'px)';
+        rest.push(el);
+      }
     }
     pendingReveal = rest;
   }
