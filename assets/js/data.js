@@ -26,8 +26,8 @@ const MARQUEE = ['AI 产品', '工业设计', '机器人产品', 'DesignDNA', 'R
 
 
 const DOWNLOADS = [
-  { t: 'AI 产品方向作品集', d: '50 页 · 机器人产品 / DesignDNA / 个人 AI 工具 / 实体产品', f: 'download/付昕-AI产品方向作品集.pdf', s: '4.4 MB' },
-  { t: '工业设计方向作品集', d: '52 页 · 航标灯 / 牵引绳 / Lumora / 商业产品设计', f: 'download/付昕-工业设计作品集.pdf', s: '7.1 MB' },
+  { t: 'AI 产品方向作品集', d: '50 页 · 机器人产品 / DesignDNA / 个人 AI 工具 / 实体产品', f: 'download/付昕-AI产品方向作品集.pdf', s: '4.5 MB' },
+  { t: '工业设计方向作品集', d: '52 页 · 航标灯 / 牵引绳 / Lumora / 商业产品设计', f: 'download/付昕-工业设计作品集.pdf', s: '7.2 MB' },
   { t: '产品设计 / 工业设计 简历', d: 'PDF · 1 页', f: 'download/付昕-产品设计工业设计-简历.pdf', s: '0.47 MB' },
   { t: 'AI 智能硬件与机器人产品 简历', d: 'PDF · 1 页', f: 'download/付昕-AI智能硬件与机器人产品-简历.pdf', s: '0.46 MB' },
   { t: 'AI 智能硬件与产品设计 综合简历', d: 'PDF · 2 页', f: 'download/付昕-AI智能硬件与产品设计-简历.pdf', s: '0.55 MB' }
