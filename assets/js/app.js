@@ -1330,7 +1330,7 @@
     document.getElementById('cur-ring')?.remove();
   }
 
-  if (fine) {
+  {   /* 粒子层对所有设备挂载（手机也能看到）；仅"自定义光标"仍留在 fine 分支里 */
     // 方向卡内的粒子层（与主页同一引擎 → 自动获得指针交互）
     let gateFXs = [];
 
