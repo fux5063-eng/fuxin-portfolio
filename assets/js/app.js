@@ -265,7 +265,7 @@
         }
         if (mouse.on) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
-          if (d2 < 31000 && d2 > 1) { const d = Math.sqrt(d2), f = (1 - d / 176) * .5; p.vx += dx / d * f * dt; p.vy += dy / d * f * dt; }
+          if (d2 < 14400 && d2 > 1) { const d = Math.sqrt(d2), t = 1 - d / 120, ux = dx / d, uy = dy / d; p.vx += (-uy * .32 + ux * .10) * t * dt; p.vy += (ux * .32 + uy * .10) * t * dt; }
         }
         p.vx *= 1 - .014 * dt; p.vy *= 1 - .014 * dt;
         const sp = Math.hypot(p.vx, p.vy), mx = (p.free ? .9 : 1.6) * o.speed;
