@@ -368,7 +368,7 @@
 
   /* 主页背景粒子 */
   const FX = createParticles(document.getElementById('fx'), {
-    density: 10500, maxN: 240, bandAmp: .115, bandWidth: 74, freeRatio: .28, link: 130, linkAlpha: .44, speed: 1.95,
+    density: 8200, maxN: 260, band: true, bandAmp: .34, bandBase: .52, bandWidth: 132, freeRatio: .42, link: 130, linkAlpha: .44, speed: 1.95,
   }) || { start() {}, stop() {} };
 
   /* 内页页头粒子（尺寸小、密度低） */
