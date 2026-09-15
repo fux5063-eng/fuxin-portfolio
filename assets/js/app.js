@@ -1171,6 +1171,18 @@
     safe('gateFlow', () => gateFlowInit());
     safe('gateFX', () => mountGateFX(app));
     safe('cardParticles', () => mountCardFX(app));
+  /* 移动端左上角返回键：非首页显示，点击回上一页（仅手机显示，见 CSS） */
+  (() => {
+    let mb = document.getElementById('mback');
+    if (!mb) {
+      mb = document.createElement('button');
+      mb.id = 'mback'; mb.type = 'button'; mb.className = 'mback';
+      mb.setAttribute('aria-label', '返回上一页'); mb.textContent = '←';
+      mb.addEventListener('click', () => { if (history.length > 1) history.back(); else location.hash = '#/'; });
+      document.body.appendChild(mb);
+    }
+    mb.classList.toggle('on', !!(location.hash || '').replace(/^#\/?/, ''));
+  })();
     safe('cardFX', () => initCardFX(app));
     safe('jump', () => initJump(app)); safe('filter', () => initFilter(app));
 
