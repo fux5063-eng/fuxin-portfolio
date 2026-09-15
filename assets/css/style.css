@@ -494,8 +494,9 @@ body:not(.on-home) #app{padding-top:66px}
 .tabs__panes{display:grid}
 .tabs__pane{grid-area:1/1;align-self:start;display:grid;grid-template-columns:1.45fr 1fr;gap:0;border-top:1px solid var(--line);
   opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .58s cubic-bezier(.22,.7,.3,1),visibility 0s linear .58s}
-.tabs__pane.on{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+  transition:opacity .24s ease-out,visibility 0s linear .24s}
+.tabs__pane.on{opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .52s cubic-bezier(.22,.7,.3,1),visibility 0s linear 0s}
 .tabs__pane figure{margin:0;background:#eef1f4;cursor:zoom-in}
 .tabs__pane img{width:100%;display:block;transform:scale(1.02);
   transition:transform .95s cubic-bezier(.22,.7,.3,1),opacity .35s ease}
