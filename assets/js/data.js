@@ -124,7 +124,7 @@ const DIRECTIONS = [
         tags: ['AI 工具设计', '约束与评审', '造型与形态'],
         summary: '面向工业设计改款任务的 AI 协同工作台：先用产品 DNA 与约束地图控制探索范围，再通过逐条评审支持人工决策。',
         facts: [['角色', '产品定义 · 流程与交互设计'], ['验证案例', 'Fusion Audio 高端户外便携音响改款'], ['机制', '四步流程 · 全程可回溯']],
-        hero: { f: 'assets/img/cover/designdna.webp', cap: 'DesignDNA 工作台界面' },
+        hero: { f: 'assets/img/cover/designdna-ui.webp', cap: 'DesignDNA 工作台：项目简报 · 变体树 · 约束评审' },
         sections: [
           {
             h: '为什么做', en: 'WHY',
